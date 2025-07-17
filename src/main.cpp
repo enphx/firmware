@@ -16,9 +16,8 @@ void setup() {
 void loop() {
   print_adc_vals();
   //Serial.println(SOC_ADC_PATT_LEN_MAX);
-  Serial.println(portTICK_PERIOD_MS);
   // adc_init(core0_task_handle);
-  vTaskDelay(1000);
+  vTaskDelay(100);
   
 }
 

@@ -36,14 +36,14 @@ uint16_t get_adc_conversion_count() {return conversion_count;}
 void reset_adc_conversion_count() {conversion_count = 0;}
 
 static const uint32_t DATA_BUFFER_SIZES[NUM_CHANNELS] = {
-    1,
-    1,
-    1,
-    1,
-    256,
-    256,
-    1,
-    1,
+    512,
+    512,
+    512,
+    512,
+    512,
+    512,
+    512,
+    512,
 };
 
 
@@ -214,7 +214,7 @@ void handle_data(adc_digi_output_data_t *data, uint16_t verbose) {
     uint16_t channel = 0;
     uint16_t channel_count = 0;
     uint16_t prev_channel = data[0].type1.channel;
-    size_t i = i;
+    size_t i = 1;
 
     while (1) {
         channel = data[i].type1.channel;
