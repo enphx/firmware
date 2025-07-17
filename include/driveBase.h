@@ -1,6 +1,7 @@
 #ifndef DRIVEBASE_H
 #define DRIVEBASE_H
 
+#include "low_level/tapefollowingsensor.h"
 #include <Arduino.h>
 
 enum tapeState {
@@ -11,13 +12,14 @@ enum tapeState {
   Right,
 };
 
-class EncoderMotor {};
+class EncoderMotor {
+  void setSpeed(float speed);
+};
 
 class DriveBase {
 public:
-  DriveBase(void);
-
-  void begin();
+  DriveBase(EncoderMotor *m_leftMotor, EncoderMotor *m_rightMotor,
+            TapeFollowingSensor *m_tapeFollowingSensor);
 
   void update(void);
 
@@ -25,19 +27,15 @@ public:
 
   void setBaseSpeed(float speed);
 
-  const tapeState getTapeState();
-
-  const tapeState getSide();
-
 private:
-  float calculateError();
+  float calculateCorrection();
   void findTape();
   EncoderMotor *leftMotor, *rightMotor;
+  TapeFollowingSensor *tapeFollowingSensor;
 
   float Kp = 0.0f, Kd = 0.0f, Ki = 0.0f;
-  tapeState Distance, Side;
-  int error, previousError;
-  int lastDifferenceReadingLeft, lastDifferenceReadingRight;
+  int error = 0, previousError;
+  tapeState previousTapeState, previousSide;
   float baseSpeed;
   uint64_t timeLastUpdated;
   uint32_t deltaT;
