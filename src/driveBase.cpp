@@ -1,10 +1,13 @@
 #include "driveBase.h"
 
-// TODO: Write DriveBase Control
-DriveBase::DriveBase(void) {}
+const char *TAG = "DRIVEBASE";
 
-void DriveBase::begin() {
-  timeLastUpdated = micros();
+// TODO: Write DriveBase Control
+DriveBase::DriveBase(EncoderMotor *m_leftMotor, EncoderMotor *m_rightMotor,
+                     TapeFollowingSensor *m_tapeFollowingSensor) {
+  leftMotor = m_leftMotor;
+  rightMotor = m_rightMotor;
+  tapeFollowingSensor = m_tapeFollowingSensor;
 }
 
 void DriveBase::setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd) {
@@ -17,19 +20,33 @@ void DriveBase::update(void) {
   deltaT = micros() - timeLastUpdated;
   timeLastUpdated += deltaT;
 
-}
-void setBaseSpeed(float speed) {}
+  previousError = error;
 
-const tapeState DriveBase::getTapeState(void) {
-  return Distance;
+  if (tapeFollowingSensor->getTapeState() == tapeState::OutOfBounds) {
+    findTape();
+    return;
+  }
+
+  error = tapeFollowingSensor->getError();
+
+  if (previousTapeState == tapeState::OutOfBounds) {
+    previousError = error;
+  }
+
+  previousTapeState = tapeFollowingSensor->getTapeState();
+  previousSide = tapeFollowingSensor->getSide();
+}
+void DriveBase::setBaseSpeed(float speed) { baseSpeed = speed; }
+
+float DriveBase::calculateCorrection(void) {
+  float proportionalTerm = Kp * 0.001f;
+  float derrivativeTerm = Kd * 0.001f * (error - previousError) / float(deltaT);
+  return (proportionalTerm + derrivativeTerm) * baseSpeed;
 }
 
-const tapeState  DriveBase::getSide(void) {
-  return Side;
-}
+void DriveBase::findTape(void) {
+  if (tapeFollowingSensor->getSide() == tapeState::Left) {
 
-float DriveBase::calculateError(void) {
-  return 0.0f;
+    return;
+  }
 }
-
-void DriveBase::findTape(void) {}
