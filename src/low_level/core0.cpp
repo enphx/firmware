@@ -70,7 +70,7 @@ void core0_task(void *data) {
 void core0_init() {
   xTaskCreatePinnedToCore(core0_task,
                           "core0_task",
-                          32768,
+                          16384,
                           NULL,
                           2,
                           &core0_task_handle,

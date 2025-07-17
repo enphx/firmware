@@ -11,8 +11,14 @@ void low_level_init() {
 }
 
 void print_adc_vals() {
-  for (uint16_t i = 0; i < 8; i++) {
-    ESP_LOGI(TAG, "ch: %hu, val: %hu", i, get_convolved_value(i));
-  }
-  ESP_LOGI(TAG, "Done printing adc values.");
+  ESP_LOGI(TAG, "0: %hu, 1: %hu, 2: %hu, 3: %hu, 4: %hu, 5: %hu, 6: %hu, 7: %hu,",
+           get_convolved_value(0),
+           get_convolved_value(1),
+           get_convolved_value(2),
+           get_convolved_value(3),
+           get_convolved_value(4),
+           get_convolved_value(5),
+           get_convolved_value(6),
+           get_convolved_value(7)
+         );
 }
