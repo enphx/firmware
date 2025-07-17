@@ -13,10 +13,10 @@ public:
 
   void setArmPosition(float radius, float height, float theta);
 
-
 private:
 
   float targetRadius, targetHeight, targetTheta;
+  float currentRadius, currentHeight, currentTheta;
 };
 
 #endif
