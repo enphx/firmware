@@ -13,8 +13,6 @@ enum tapeState {
 
 class EncoderMotor {};
 
-class TapeFollowingSenosr {};
-
 class DriveBase {
 public:
   DriveBase(void);
@@ -35,7 +33,6 @@ private:
   float calculateError();
   void findTape();
   EncoderMotor *leftMotor, *rightMotor;
-  TapeFollowingSenosr *tapeFollowingSensor;
 
   float Kp = 0.0f, Kd = 0.0f, Ki = 0.0f;
   tapeState Distance, Side;
