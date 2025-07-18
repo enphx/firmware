@@ -89,13 +89,15 @@ void EncoderMotor::update(void) {
   previousTickCount = currentTickCount;
 
   error = currentSpeed - targetSpeed;
-  ESP_LOGI(TAG, "Id: %c, error: %f, currentSpeed: %f", ID, error, currentSpeed);
-  cumulativeError += error;
+  cumulativeError += error * deltaT;
 
-  cumulativeError = cumulativeError > 100 ? 100 : cumulativeError;
-  cumulativeError = cumulativeError < -100 ? -100 : cumulativeError;
+  float maxCumError = 100 * 0.05;
+  cumulativeError = cumulativeError > maxCumError ? maxCumError : cumulativeError;
+  cumulativeError = cumulativeError < -maxCumError ? -maxCumError : cumulativeError;
 
   float power = calculatePID();
+
+  // ESP_LOGI(TAG, "Id: %c, error: %f, cum error: %f, power: %f currentSpeed: %f, kP: %f, kI: %f, kD: %f", ID, error, cumulativeError, power, currentSpeed, kP, kI, kD);
 
   if (power >= 0) {
     setPWM(power, 1);
@@ -126,10 +128,10 @@ void EncoderMotor::setSpeed(float speed) { targetSpeed = speed * backwards; }
 void EncoderMotor::setPWM(float dutyCycle, uint8_t m_direction) {
   if (direction != m_direction) {
     ledcWrite(pwmPin, 0);
-    shiftReg->setBit(!m_direction, dirBit);
     delayMicroseconds(1000);
   }
   direction = m_direction;
+  shiftReg->setBit(direction, dirBit);
 
 
   dutyCycle = dutyCycle > 1 ? 1 : dutyCycle;
