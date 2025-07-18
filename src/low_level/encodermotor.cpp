@@ -1,4 +1,5 @@
 #include "low_level/encodermotor.h"
+#include "constants.h"
 #include "include/low_level/encodermotor.h"
 #include "driver/gpio.h"
 #include <Arduino.h>
@@ -40,7 +41,7 @@ void EncoderMotor::init() {
   pinMode(encoderPin2, INPUT);
   pinMode(pwmPin, OUTPUT);
 
-  ledcAttach(pwmPin, pwmFrequency, 12);
+  ledcAttach(pwmPin, PWM_FREQUENCY, 12);
 
   attachInterruptArg(encoderPin1, EncoderMotor::genericEncoderHandler, this,
                      CHANGE);
@@ -85,7 +86,7 @@ void EncoderMotor::update(void) {
   timeLastUpdated = t;
 
   currentSpeed = (float)(currentTickCount - previousTickCount) / ((float)deltaT) *
-                 ticksPerRev * PI * wheelDiameter;
+                 ticksPerRev * PI * WHEEL_DIAMETER;
   previousTickCount = currentTickCount;
 
   error = currentSpeed - targetSpeed;
@@ -128,7 +129,7 @@ void EncoderMotor::setSpeed(float speed) { targetSpeed = speed * backwards; }
 void EncoderMotor::setPWM(float dutyCycle, uint8_t m_direction) {
   if (direction != m_direction) {
     ledcWrite(pwmPin, 0);
-    delayMicroseconds(1000);
+    vTaskDelay(pdMS_TO_TICKS(1));
   }
   direction = m_direction;
   shiftReg->setBit(direction, dirBit);
