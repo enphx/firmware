@@ -1,29 +1,38 @@
 #include <Arduino.h>
+#include "include/low_level/encodermotor.h"
 #include "include/low_level.h"
-#include "soc/soc_caps.h"
-#include "esp_adc/adc_continuous.h"
-#include "low_level/tapefollowingsensor.h"
 
+EncoderMotor motor1();
 
-TapeFollowingSensor tapeFollowingSensor;
+uint32_t prev_t = 0;
+uint32_t t = 0;
+float speed = 0.1;
+
 void setup() {
-  Serial.begin(115200);
-  while (!Serial) {}
-
-  delay(1000);
-
+  delay(100);
   low_level_init();
-
+  t = micros();
+  set_speed(speed);
 }
+
+#define DELAY_TIME 2000
+
 
 void loop() {
-  tapeFollowingSensor.update();
-  Serial.println(tapeFollowingSensor.getError());
-  // print_adc_vals();
-  //Serial.println(SOC_ADC_PATT_LEN_MAX);
-  // adc_init(core0_task_handle);
-  vTaskDelay(10);
-  
+//  t = millis();
+//  if (t - prev_t > 100) {
+//    prev_t = t;
+//    if (speed >= 2) {
+//      speed = 0.1;
+//    }
+//
+//    if (speed < 0.001) {
+//      speed -= 0.1;
+//    } else {
+//      speed += 0.1;
+//    }
+//    set_speed(speed);
+//  }
+  low_level_update();
+  vTaskDelay(5);
 }
-
-
