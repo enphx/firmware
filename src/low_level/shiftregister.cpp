@@ -2,7 +2,7 @@
 #include "driver/gpio.h"
 #include "include/low_level/io.h"
 
-const char* TAG = "SHIFT_REGISTER";
+static const char* TAG = "SHIFT_REGISTER";
 
 void ShiftRegister::init() {
   gpio_set_direction((gpio_num_t)PIN_SHIFT_REG_DATA, GPIO_MODE_OUTPUT);

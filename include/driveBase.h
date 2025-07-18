@@ -2,19 +2,8 @@
 #define DRIVEBASE_H
 
 #include "low_level/tapefollowingsensor.h"
+#include "low_level/encodermotor.h"
 #include <Arduino.h>
-
-enum tapeState {
-  Difference,
-  Inversion,
-  OutOfBounds,
-  Left,
-  Right,
-};
-
-class EncoderMotor {
-  void setSpeed(float speed);
-};
 
 class DriveBase {
 public:
@@ -26,6 +15,8 @@ public:
   void setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd);
 
   void setBaseSpeed(float speed);
+
+  void followLine(bool m_lineFollow);
 
 private:
   float calculateCorrection();
@@ -39,6 +30,7 @@ private:
   float baseSpeed;
   uint64_t timeLastUpdated;
   uint32_t deltaT;
+  bool lineFollow = true;
 };
 
 #endif

@@ -1,6 +1,6 @@
 #include "driveBase.h"
 
-const char *TAG = "DRIVEBASE";
+static const char *TAG = "DRIVEBASE";
 
 // TODO: Write DriveBase Control
 DriveBase::DriveBase(EncoderMotor *m_leftMotor, EncoderMotor *m_rightMotor,
@@ -16,10 +16,15 @@ void DriveBase::setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd) {
   Kd = m_Kd;
 }
 
+void DriveBase::followLine(bool m_lineFollow) { lineFollow = m_lineFollow; }
+
 void DriveBase::update(void) {
   deltaT = micros() - timeLastUpdated;
   timeLastUpdated += deltaT;
-
+  if (!lineFollow) {
+    leftMotor->setSpeed(baseSpeed);
+    rightMotor->setSpeed(baseSpeed);
+  }
   previousError = error;
 
   if (tapeFollowingSensor->getTapeState() == tapeState::OutOfBounds) {
@@ -32,6 +37,9 @@ void DriveBase::update(void) {
   if (previousTapeState == tapeState::OutOfBounds) {
     previousError = error;
   }
+
+  leftMotor->setSpeed(baseSpeed + calculateCorrection());
+  rightMotor->setSpeed(baseSpeed - calculateCorrection());
 
   previousTapeState = tapeFollowingSensor->getTapeState();
   previousSide = tapeFollowingSensor->getSide();
@@ -46,7 +54,10 @@ float DriveBase::calculateCorrection(void) {
 
 void DriveBase::findTape(void) {
   if (tapeFollowingSensor->getSide() == tapeState::Left) {
-
+    leftMotor->setSpeed(baseSpeed);
+    rightMotor->setSpeed(0.2 * baseSpeed);
     return;
   }
+  rightMotor->setSpeed(baseSpeed);
+  leftMotor->setSpeed(0.2 * baseSpeed);
 }
