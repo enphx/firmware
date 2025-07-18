@@ -8,49 +8,61 @@
 
 static const char* TAG = "LOW LEVEL";
 
-ShiftRegister shiftReg;
+ShiftRegister *shiftReg;
 
 #define MOTOR_TICKS_PER_REV
 
-EncoderMotor motorL(
-  &shiftReg,
-  true, //not backwards
-  PIN_M1_ENC2,
-  PIN_M1_ENC1,
-  PIN_M1_PWM,
-  BIT_M1_DIR,
-  44 * 21, // ticks per revolution; we kinda made this up lol...
-  2,  // kP
-  0.05,   // kI
-  1,  // kD
-  'L'
-);
+EncoderMotor *motorL;
+EncoderMotor *motorR;
 
-EncoderMotor motorR(
-  &shiftReg,
-  false, //not backwards
-  PIN_M2_ENC2,
-  PIN_M2_ENC1,
-  PIN_M2_PWM,
-  BIT_M2_DIR,
-  44 * 21, // ticks per revolution; we kinda made this up lol...
-  2,  // kP
-  0.05,   // kI
-  1,  // kD
-  'R'
-);
+// EncoderMotor motorL(
+//   &shiftReg,
+//   true, //not backwards
+//   PIN_M1_ENC2,
+//   PIN_M1_ENC1,
+//   PIN_M1_PWM,
+//   BIT_M1_DIR,
+//   44 * 21, // ticks per revolution; we kinda made this up lol...
+//   2,  // kP
+//   0.05,   // kI
+//   1,  // kD
+//   'L'
+// );
+//
+// EncoderMotor motorR(
+//   &shiftReg,
+//   false, //not backwards
+//   PIN_M2_ENC2,
+//   PIN_M2_ENC1,
+//   PIN_M2_PWM,
+//   BIT_M2_DIR,
+//   44 * 21, // ticks per revolution; we kinda made this up lol...
+//   2,  // kP
+//   0.05,   // kI
+//   1,  // kD
+//   'R'
+// );
+//
+void low_levelAssignMotors(EncoderMotor *m_leftMotor, EncoderMotor *m_rightMotor) {
+  motorL = m_leftMotor;
+  motorR = m_rightMotor;
+}
+
+void low_levelAssignLowestLevelObjects(ShiftRegister *m_shiftRegister) {
+  shiftReg = m_shiftRegister;
+}
 
 void low_level_init() {
   ESP_LOGI(TAG, "init...");
   core0_init();
-  shiftReg.init();
-  motorL.init();
-  motorR.init();
+  shiftReg->init();
+  motorL->init();
+  motorR->init();
 }
 
 void set_speed(float speed) {
-  motorL.setSpeed(speed);
-  motorR.setSpeed(speed);
+  motorL->setSpeed(speed);
+  motorR->setSpeed(speed);
 }
 
 void print_adc_vals() {
@@ -67,6 +79,6 @@ void print_adc_vals() {
 }
 
 void low_level_update(){
-  motorR.update();
-  motorL.update();
+  motorR->update();
+  motorL->update();
 }
