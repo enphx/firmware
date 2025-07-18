@@ -33,9 +33,6 @@ public:
   long getTickCount(void);
 
 private:
-  static constexpr float wheelDiameter = 0.07;
-  static constexpr int pwmFrequency = 1000;
-
   void setPID(float m_kP, float m_kI, float m_kD);
 
   void setPWM(float dutycycle, uint8_t m_direction);

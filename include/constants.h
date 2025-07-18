@@ -1,0 +1,6 @@
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
+#define PWM_FREQUENCY 1000
+#define WHEEL_DIAMETER 0.07
+#define VOLTS_PER_DEGREE_INT_POT 50.05
+#endif
