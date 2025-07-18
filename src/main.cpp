@@ -6,7 +6,7 @@ EncoderMotor motor1();
 
 uint32_t prev_t = 0;
 uint32_t t = 0;
-float speed = 0.1;
+float speed = 1.4;
 
 void setup() {
   delay(100);
@@ -19,20 +19,12 @@ void setup() {
 
 
 void loop() {
-//  t = millis();
-//  if (t - prev_t > 100) {
-//    prev_t = t;
-//    if (speed >= 2) {
-//      speed = 0.1;
-//    }
-//
-//    if (speed < 0.001) {
-//      speed -= 0.1;
-//    } else {
-//      speed += 0.1;
-//    }
-//    set_speed(speed);
-//  }
+  t = millis();
+  if (t - prev_t > 1000) {
+    prev_t = t;
+    speed = -speed;
+    set_speed(speed);
+  }
   low_level_update();
   vTaskDelay(5);
 }

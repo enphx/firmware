@@ -14,35 +14,36 @@ ShiftRegister shiftReg;
 
 EncoderMotor motorL(
   &shiftReg,
-  1, //not backwards
-  PIN_M1_ENC1,
+  true, //not backwards
   PIN_M1_ENC2,
+  PIN_M1_ENC1,
   PIN_M1_PWM,
   BIT_M1_DIR,
   44 * 21, // ticks per revolution; we kinda made this up lol...
-  2.1,  // kP
-  0.01, // kI
-  0.02,  // kD
+  2,  // kP
+  0.05,   // kI
+  1,  // kD
   'L'
 );
 
 EncoderMotor motorR(
   &shiftReg,
-  0, //not backwards
-  PIN_M2_ENC1,
+  false, //not backwards
   PIN_M2_ENC2,
+  PIN_M2_ENC1,
   PIN_M2_PWM,
   BIT_M2_DIR,
   44 * 21, // ticks per revolution; we kinda made this up lol...
-  2.1,  // kP
-  0.01, // kI
-  0.02,  // kD
+  2,  // kP
+  0.05,   // kI
+  1,  // kD
   'R'
 );
 
 void low_level_init() {
   ESP_LOGI(TAG, "init...");
   core0_init();
+  shiftReg.init();
   motorL.init();
   motorR.init();
 }
