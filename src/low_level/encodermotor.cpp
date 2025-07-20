@@ -91,7 +91,7 @@ void EncoderMotor::update(void) {
   error = currentSpeed - targetSpeed;
   cumulativeError += error * deltaT;
 
-  float maxCumError = 100 * 0.2;
+  float maxCumError = 100 * 0.05;
   cumulativeError = cumulativeError > maxCumError ? maxCumError : cumulativeError;
   cumulativeError = cumulativeError < -maxCumError ? -maxCumError : cumulativeError;
 

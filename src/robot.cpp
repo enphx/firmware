@@ -16,6 +16,8 @@ Robot::Robot()
 {
   low_levelAssignMotors(&leftMotor, &rightMotor);
   low_levelAssignLowestLevelObjects(&shiftRegister);
+  driveBase.setLineFollowingPID(5.0, 0, 2.0);
+  driveBase.followLine(true);
 }
 
 void Robot::init() {
@@ -23,7 +25,7 @@ void Robot::init() {
 }
 
 void Robot::update() {
-  driveBase.setBaseSpeed(2.1);
+  driveBase.setBaseSpeed(1.5);
   low_level_update();
   driveBase.update();
 }
