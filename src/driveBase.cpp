@@ -19,6 +19,7 @@ void DriveBase::setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd) {
 void DriveBase::followLine(bool m_lineFollow) { lineFollow = m_lineFollow; }
 
 void DriveBase::update(void) {
+  tapeFollowingSensor->update();
   deltaT = micros() - timeLastUpdated;
   timeLastUpdated += deltaT;
   if (!lineFollow) {
@@ -47,7 +48,7 @@ void DriveBase::update(void) {
 void DriveBase::setBaseSpeed(float speed) { baseSpeed = speed; }
 
 float DriveBase::calculateCorrection(void) {
-  float proportionalTerm = Kp * 0.001f;
+  float proportionalTerm = Kp * 0.001f * 0.001;
   float derrivativeTerm = Kd * 0.001f * (error - previousError) / float(deltaT);
   return (proportionalTerm + derrivativeTerm) * baseSpeed;
 }

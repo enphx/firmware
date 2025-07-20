@@ -1,6 +1,8 @@
 #include "low_level/tapefollowingsensor.h"
 #include "low_level/core0.h"
 
+static const char *TAG = "TAPEFOLLOWING";
+
 TapeFollowingSensor::TapeFollowingSensor(void) {}
 
 int TapeFollowingSensor::getError(void) { return error; }
@@ -14,6 +16,8 @@ void TapeFollowingSensor::update(void) {
 
   int leftError = reflectanceReadingLeft;
   int rightError = reflectanceReadingRight;
+
+  // ESP_LOGI(TAG, "LEFT %u, \t RIGHT %u", reflectanceReadingLeft, reflectanceReadingRight);
 
   if (reflectanceReadingLeft > UPPER_REFLECTANCE_READING_THRESHOLD &&
       reflectanceReadingRight > UPPER_REFLECTANCE_READING_THRESHOLD) {
