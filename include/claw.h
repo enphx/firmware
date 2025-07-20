@@ -26,7 +26,6 @@ public:
 
 private:
   Servo leftServo, rightServo;
-  
 };
 
 #endif
