@@ -3,18 +3,15 @@
 
 #include <Arduino.h>
 
-#define SERVO_MIN_DUTY_CYCLE 0.02
-#define SERVO_MIN_DUTY_CYCLE 0.12
-
 class Servo {
 public:
-  Servo(uint8_t m_pwmPin, float m_minAngle, float m_maxAngle);
+  Servo(uint8_t m_pwmPin, float m_minDutyCycle, float m_maxDutyCycle);
   void init(void);
 
   void setAngle(float angle);
 private:
   uint16_t pwmPin;
-  float minAngle, maxAngle;
+  float minDutyCycle, maxDutyCycle;
 };
 
 #endif
