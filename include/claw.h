@@ -2,6 +2,7 @@
 #define CLAW_H
 
 #include <Arduino.h>
+#include "low_level/servodriver.h"
 
 struct MagnetometerReadings {
   float x;
@@ -11,17 +12,20 @@ struct MagnetometerReadings {
 
 class Claw {
 public:
-  Claw(void);
+  Claw(uint8_t m_leftServiPin, uint8_t m_rightServoPin);
   
-  void begin();
+  void init(void);
   
   void open(void);
   
   void close(void);
 
-  float getRangeFindetValue(void);
+  float getRangeFinderValue(void);
 
   MagnetometerReadings getMagnotometerValues(void);
+
+private:
+  Servo leftServo, rightServo;
   
 };
 
