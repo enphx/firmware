@@ -2,18 +2,16 @@
 #include "constants.h"
 #include "low_level/core0.h"
 
-PotentiometerMotor::PotentiometerMotor(
-    ShiftRegister *m_shiftRegister, const bool m_backwards,
-    const uint8_t m_pwmPin, const uint8_t m_adcChannel,
-    const uint8_t m_directionBit, const float m_minAnlge,
-    const float m_maxAngle, const float m_Kp, const float m_Ki,
-    const float m_Kd, const char m_ID)
+PotentiometerMotor::PotentiometerMotor(ShiftRegister *m_shiftRegister,
+                                       const bool m_backwards,
+                                       const uint8_t m_pwmPin,
+                                       const uint8_t m_adcChannel,
+                                       const uint8_t m_directionBit,
+                                       const float m_Kp, const float m_Ki,
+                                       const float m_Kd, const char m_ID)
     : shiftRegister(m_shiftRegister), pwmPin(m_pwmPin),
-      adcChannel(m_adcChannel), directionBit(m_directionBit),
-      minAngle(m_minAnlge), maxAngle(m_maxAngle), Kp(m_Kp), Ki(m_Ki), Kd(m_Kd),
-      ID(m_ID) {
-
-  currentAngle = minAngle;
+      adcChannel(m_adcChannel), directionBit(m_directionBit), Kp(m_Kp),
+      Ki(m_Ki), Kd(m_Kd), ID(m_ID) {
 
   if (m_backwards) {
     backwards = -1;
