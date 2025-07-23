@@ -1,3 +1,5 @@
+#ifndef ADC_H
+#define ADC_H
 #include "esp_adc/adc_continuous.h"
 #include "freertos/idf_additions.h"
 #include "hal/adc_types.h"
@@ -64,4 +66,4 @@ void handle_data(adc_digi_output_data_t * data, uint16_t verbose);
 void print_channel_data(uint16_t channel);
 
 void convolve_all_and_update();
-
+#endif

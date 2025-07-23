@@ -1,22 +1,34 @@
 #ifndef ARM_H
 #define ARM_H
+#include "low_level/potentiometermotor.h"
+#include "low_level/servodriver.h"
+#include "low_level/stepperdriver.h"
 #include <Arduino.h>
+
+
+struct ArmAngles {
+  float asimuthTheta;
+  float shoulderTheta;
+  float elbowTheta;
+};
 
 // TODO: Finish arm header file
 class Arm {
 public:
-  Arm(void);
-
-  void begin();
-
-  void update(void);
+  Arm(PotentiometerMotor *m_shoulderMotor, Servo *m_elbowServo,
+      StepperMotor *m_asimuthStepper);
 
   void setArmPosition(float radius, float height, float theta);
 
 private:
+  ArmAngles calculateInverseKinematics(float radius, float height, float theta);
 
-  float targetRadius, targetHeight, targetTheta;
-  float currentRadius, currentHeight, currentTheta;
+      float targetRadius,
+      targetHeight, targetTheta;
+
+  PotentiometerMotor *shoulderMotor;
+  Servo *elbowServo;
+  StepperMotor *asimuthStepper;
 };
 
 #endif

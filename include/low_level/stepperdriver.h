@@ -33,11 +33,12 @@ private:
   int8_t direction;
   uint32_t stepsPerRevolution;
   volatile int32_t steps = 0;
-  volatile int32_t stepsRemaining;
+  volatile int32_t stepsRemaining = 0;
   volatile bool pauseTimer = false;
+  bool timerIsRunning = false;
   int32_t totalSteps;
   uint8_t stepPin, directionBit;
-  float maxAngularVelocity = 5, maxAngularAcceleration = 1000;
+  float maxAngularVelocity = 300, maxAngularAcceleration = 50000;
   float currentAngularVelocity;
 
   uint32_t accelStepNum, deccelStepNum;

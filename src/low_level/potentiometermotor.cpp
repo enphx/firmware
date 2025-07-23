@@ -35,11 +35,12 @@ void PotentiometerMotor::update(void) {
   timeLastUpdated += deltaT;
   previousError = error;
   uint16_t potentiometerReading = get_convolved_value(adcChannel);
-  currentAngle = potentiometerReading / VOLTS_PER_DEGREE_INT_POT;
-  error = targetAngle - currentAngle;
-  cumulativeError += error * deltaT;
 
-  float maxCumulativeError = 20;
+  currentAngle = (3450 - potentiometerReading) * DEGREES_PER_TICK_SHOULDER;
+  error = targetAngle - currentAngle;
+  cumulativeError += error * deltaT * 0.000001;
+
+  float maxCumulativeError = 3;
   cumulativeError = cumulativeError > maxCumulativeError ? maxCumulativeError
                                                          : cumulativeError;
   cumulativeError = cumulativeError < -maxCumulativeError ? -maxCumulativeError
@@ -76,6 +77,6 @@ void PotentiometerMotor::setPWM(float dutyCycle, uint8_t m_direction) {
 float PotentiometerMotor::calculatePID(void) {
   float P = Kp * error;
   float I = Ki * cumulativeError;
-  float D = Kd * (error - previousError) / (deltaT);
+  float D = Kd * 1000.0f * (error - previousError) / (deltaT);
   return P + I + D;
 }

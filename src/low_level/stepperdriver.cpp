@@ -3,6 +3,8 @@
 #include "esp32/rom/ets_sys.h"
 #include <math.h>
 
+static const char *TAG = "STEPPER";
+
 StepperMotor::StepperMotor(ShiftRegister *m_shiftRegister, uint8_t m_stepPin,
                            uint8_t m_directionBit,
                            uint32_t m_stepsPerRevolution)
@@ -18,24 +20,28 @@ void StepperMotor::init() {
   timerAttachInterruptArg(timer, &StepperMotor::stepperTimerHandler, this);
 
   timerAlarm(timer, alarmCallRate, true, 0);
-  timerStop(timer);
+  timerStart(timer);
+  timerIsRunning = true;
 }
 
 void StepperMotor::setAngle(float angle) {
 
-  if (angle < 0) {
+  portENTER_CRITICAL(&timerMux);
+
+  timerStop(timer);
+  timerIsRunning = false;
+
+  if (angle < steps * 360.0 / stepsPerRevolution) {
     direction = BACKWARDS;
     angle = angle > -135 ? angle : -135.0f;
-    shiftregister->setBit(directionBit, 0);
+    shiftregister->setBit(0, directionBit);
   } else if (angle > 0) {
     direction = FORWARDS;
     angle = angle < 135 ? angle : 135.0f;
-    shiftregister->setBit(directionBit, 1);
+    shiftregister->setBit(1, directionBit);
   } else {
     return;
   }
-
-  timerStart(timer);
 
   int32_t targetPosition = angle / 360 * stepsPerRevolution;
 
@@ -53,17 +59,20 @@ void StepperMotor::setAngle(float angle) {
     accelStepNum = totalSteps / 3;
     deccelStepNum = totalSteps / 3;
   }
+
+  if (!timerIsRunning) {
+    timerStart(timer);
+    timerIsRunning = true;
+  }
+  portEXIT_CRITICAL(&timerMux);
 }
 
 void StepperMotor::update() {
   if (pauseTimer) {
     timerStop(timer);
+    timerIsRunning = false;
     currentAngularVelocity = 0;
     pauseTimer = false;
-  }
-
-  if (stepsRemaining > 0) {
-    timerAlarm(timer, alarmCallRate, true, 0);
   }
 }
 
@@ -88,8 +97,8 @@ void IRAM_ATTR StepperMotor::handleStep(void) {
 
   if (totalSteps - stepsRemaining <= accelStepNum) {
 
-    if (currentAngularVelocity < 0.1) {
-      angularVelocity = 0.1;
+    if (currentAngularVelocity < 20) {
+      angularVelocity = 20;
     } else {
 
       float deltaAngularVelocity =
@@ -116,6 +125,9 @@ void IRAM_ATTR StepperMotor::handleStep(void) {
   currentAngularVelocity = angularVelocity;
 
   alarmCallRate = 1e6 * (2.0 * PI) / (angularVelocity * stepsPerRevolution);
+
+  alarmCallRate = alarmCallRate > 100 ? alarmCallRate : 100;
+  timerAlarm(timer, alarmCallRate, true, 0);
   stepsRemaining -= 1;
   steps += direction;
 
