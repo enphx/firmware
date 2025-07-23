@@ -1,0 +1,7 @@
+test stepperMotor
+test shoulderMotor
+test elbow
+test claw
+test I2C buses
+
+upgrade h bridge hack to be more failsafe by swapping limit switches to be closed when disconnected
