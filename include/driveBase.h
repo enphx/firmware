@@ -18,6 +18,10 @@ public:
 
   void followLine(bool m_lineFollow);
 
+  inline int getTapeFollowingError() {
+    return tapeFollowingSensor->getError();
+  }
+
 private:
   float calculateCorrection();
   void findTape();

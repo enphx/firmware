@@ -1,3 +1,4 @@
+#include "driveBase.h"
 #include "low_level/core0.h"
 #include "low_level/io.h"
 #include "robot.h"
@@ -16,26 +17,33 @@ void statusTask(void *arg) {
   }
 }
 
+
+#define TICK_AVG_COUNT 10
+
 void robotTask(void *arg) {
-  ESP_LOGI(TAG, "started robot task");
   robot.setArmPosition(15, 8, 0);
 
-  for(int i = 0; i < 1000; i++) {
+  robot.delay(500);
+
+  robot.setBaseSpeed(2);
+  robot.setTapeFollowing(true);
+
+  uint32_t ticks = 0;
+  uint64_t t0 = micros();
+
+  while (1) {
+
+    if (ticks >= TICK_AVG_COUNT) {
+      uint64_t t = micros();
+      // ESP_LOGI(TAG, "loop time, avgd. %u vals, (μs): %f", TICK_AVG_COUNT, (float)(t - t0)/TICK_AVG_COUNT);
+      t0 = micros();
+      ticks = 0;
+    }
+
+    ticks++;
+    
     robot.update();
-    vTaskDelay(1);
-  }
-  vTaskDelay(1);
-  for (;;) {
-    for (int i = 0; i < 70; i++) {
-      robot.setArmPosition(15 - 0.1 * i, 8, 0);
-      robot.update();
-      vTaskDelay(1);
-    }
-    for (int i = 0; i < 70; i++) {
-      robot.setArmPosition(8 + 0.1 * i, 8, 0);
-      robot.update();
-      vTaskDelay(1);
-    }
+    vTaskDelay(5);
   }
 }
 
