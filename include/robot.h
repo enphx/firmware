@@ -1,6 +1,7 @@
 #ifndef ROBOT_H
 #define ROBOT_H
 
+#include <Arduino.h>
 #include "low_level/shiftregister.h"
 #include "low_level/encodermotor.h"
 #include "low_level/tapefollowingsensor.h"
@@ -18,7 +19,26 @@ public:
 
   void setArmPosition(float height, float radius, float theta);
 
+  int getTapeFollowingError();
+
+  void setBaseSpeed(float speed);
+
+  void setTapeFollowing(bool tapeFollow);
+
+  void setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd);
+
   void update();
+
+  inline void delay(uint32_t ticks_millis) {
+    uint32_t t0 = millis();
+    for (uint32_t i = 0; i < ticks_millis; i++) {
+      if (millis() - t0 >= ticks_millis) {
+        return;
+      }
+      update();
+      vTaskDelay(5);
+    }
+  }
 
 private:
   EncoderMotor leftMotor, rightMotor;

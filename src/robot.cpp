@@ -4,13 +4,19 @@
 #include "low_level/io.h"
 #include <Arduino.h>
 
+static const char* TAG = "ROBOT";
+
+#define SPEED_P 2
+#define SPEED_I 0
+#define SPEED_D 0
+
 Robot::Robot()
     : shiftRegister(),
 
       leftMotor(&shiftRegister, true, PIN_M1_ENC2, PIN_M1_ENC1, PIN_M1_PWM,
-                BIT_M1_DIR, 44 * 21, 2, 0.05, 1, 'L'),
+                BIT_M1_DIR, 44 * 21, SPEED_P, SPEED_I, SPEED_D, 'L'),
       rightMotor(&shiftRegister, false, PIN_M2_ENC2, PIN_M2_ENC1, PIN_M2_PWM,
-                 BIT_M2_DIR, 44 * 21, 2, 0.05, 1, 'R'),
+                 BIT_M2_DIR, 44 * 21, SPEED_P, SPEED_I, SPEED_D, 'R'),
 
       shoulderMotor(&shiftRegister, false, PIN_M3_PWM, ADC_CH_SHOULDER_POT,
                     BIT_M3_DIR, 0.03, 0, 0, 'S'),
@@ -28,7 +34,7 @@ Robot::Robot()
 {
   low_levelAssignMotors(&leftMotor, &rightMotor, &shoulderMotor, &asimuthStepper, &elbowServo);
   low_levelAssignLowestLevelObjects(&shiftRegister);
-  driveBase.setLineFollowingPID(5.0, 0, 2.0);
+  driveBase.setLineFollowingPID(0.3, 0, 0);
   driveBase.followLine(true);
 }
 
@@ -42,5 +48,25 @@ void Robot::init() {
 }
 
 void Robot::update() {
+  driveBase.update();
   low_level_update();
 }
+
+
+
+  int Robot::getTapeFollowingError() {
+    return driveBase.getTapeFollowingError();
+  }
+  
+  void Robot::setBaseSpeed(float speed) {
+    driveBase.setBaseSpeed(speed);
+  }
+
+  void Robot::setTapeFollowing(bool tapeFollow) {
+    driveBase.followLine(tapeFollow);
+  }
+
+  void Robot::setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd) {
+    driveBase.setLineFollowingPID(m_Kp, m_Ki, m_Kd);
+  }
+

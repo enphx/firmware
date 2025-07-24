@@ -52,7 +52,7 @@ void ShiftRegister::setBits(uint16_t bits, uint16_t bitmask) {
 
 void ShiftRegister::writeCurrentValue() {
   // TIME TO BANG THE BITS!!!
-  print_16_bit_number(currentValue);
+  // print_16_bit_number(currentValue);
   gpio_set_level((gpio_num_t )PIN_SHIFT_REG_STRB, 0);
   gpio_set_level((gpio_num_t)PIN_SHIFT_REG_CLK, 0);
   gpio_set_level((gpio_num_t)PIN_SHIFT_REG_CLK, 1);
