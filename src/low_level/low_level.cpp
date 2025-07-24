@@ -40,7 +40,7 @@ void low_level_init() {
   leftMotor->init();
   rightMotor->init();
   shoulderMotor->init();
-  // asimuthStepper->init();
+  asimuthStepper->init();
   elbowServo->init();
 }
 
@@ -61,5 +61,4 @@ void low_level_update() {
   rightMotor->update();
   leftMotor->update();
   shoulderMotor->update();
-  // asimuthStepper->update();
 }

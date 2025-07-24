@@ -22,7 +22,7 @@ Robot::Robot()
                     BIT_M3_DIR, 0.03, 0, 0, 'S'),
 
       asimuthStepper(&shiftRegister, PIN_TTBL_STEPPER_PULSE, BIT_TTBL_DIR,
-                     600 * 16),
+                     600 * 8),
 
       elbowServo(PIN_ELBOW_SERVO_PWM, ELBOW_MIN_PWM, ELBOW_MAX_PWM),
 

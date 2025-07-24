@@ -12,7 +12,8 @@ StepperMotor::StepperMotor(ShiftRegister *m_shiftRegister, uint8_t m_stepPin,
   stepPin = m_stepPin;
   directionBit = m_directionBit;
   stepsPerRevolution = m_stepsPerRevolution;
-  alarmCallRate = 1e6 / stepsPerRevolution * TURNTABLE_ROTATIONS_PER_SECOND;
+  alarmCallPeriod = (int)(1e6 / (float)(stepsPerRevolution) /
+                          TURNTABLE_ROTATIONS_PER_SECOND * 0.5);
 
   timer_config = {
       .clk_src = GPTIMER_CLK_SRC_DEFAULT,
@@ -21,7 +22,7 @@ StepperMotor::StepperMotor(ShiftRegister *m_shiftRegister, uint8_t m_stepPin,
   };
 
   alarm_config = {
-      .alarm_count = alarmCallRate,
+      .alarm_count = alarmCallPeriod,
       .flags =
           {
               .auto_reload_on_alarm = true,
@@ -43,12 +44,19 @@ void StepperMotor::init() {
   ESP_ERROR_CHECK(gptimer_enable(gptimer));
   ESP_ERROR_CHECK(gptimer_start(gptimer));
   timerIsRunning = true;
+
+  stepState = false;
 }
 
 void StepperMotor::setAngle(float angle) {
 
   if (timerIsRunning) {
-   ESP_ERROR_CHECK(gptimer_stop(gptimer));
+    ESP_ERROR_CHECK(gptimer_stop(gptimer));
+
+    if (stepState == true) {
+      delayMicroseconds(8);
+      this->handleStepLow();
+    }
     timerIsRunning = false;
   }
 
@@ -71,7 +79,7 @@ void StepperMotor::setAngle(float angle) {
   totalSteps = abs(targetPosition - steps);
   stepsRemaining = totalSteps;
 
-  if(!timerIsRunning) {
+  if (!timerIsRunning) {
     ESP_ERROR_CHECK(gptimer_start(gptimer));
     timerIsRunning = true;
   }
@@ -82,17 +90,28 @@ bool IRAM_ATTR StepperMotor::stepperTimerHandler(
     void *user_ctx) {
 
   StepperMotor *stepperMotor = static_cast<StepperMotor *>(user_ctx);
-  if (stepperMotor) {
-    stepperMotor->handleStep();
+
+  if (!stepperMotor) {
+    return false;
   }
+
+  if (!stepperMotor->stepState) {
+    stepperMotor->handleStepHigh();
+    return false;
+  }
+  stepperMotor->handleStepLow();
   return false;
 }
 
-void IRAM_ATTR StepperMotor::handleStep(void) {
+void IRAM_ATTR StepperMotor::handleStepHigh(void) {
 
   gpio_set_level((gpio_num_t)stepPin, HIGH);
-  ets_delay_us(10);
+  stepState = true;
+}
+
+void IRAM_ATTR StepperMotor::handleStepLow(void) {
   gpio_set_level((gpio_num_t)stepPin, LOW);
+  stepState = false;
 
   stepsRemaining -= 1;
   steps += direction;
@@ -100,7 +119,6 @@ void IRAM_ATTR StepperMotor::handleStep(void) {
   if (stepsRemaining == 0) {
     gptimer_stop(gptimer);
     timerIsRunning = false;
-    return;
   }
 }
 

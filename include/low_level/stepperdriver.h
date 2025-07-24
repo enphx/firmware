@@ -22,15 +22,20 @@ public:
   bool moving(void);
 
 private:
-  void handleStep(void);
+  void handleStepHigh(void);
 
-  static bool stepperTimerHandler(gptimer_handle_t timer, const gptimer_alarm_event_data_t *edata, void *user_ctx);
+  void handleStepLow(void);
+
+  static bool stepperTimerHandler(gptimer_handle_t timer,
+                                  const gptimer_alarm_event_data_t *edata,
+                                  void *user_ctx);
 
   gptimer_handle_t gptimer = NULL;
   gptimer_config_t timer_config;
   gptimer_alarm_config_t alarm_config;
 
   volatile bool timerIsRunning = false;
+  volatile bool stepState;
 
   ShiftRegister *const shiftregister;
   int8_t direction;
@@ -40,7 +45,7 @@ private:
   int32_t totalSteps;
   uint8_t stepPin, directionBit;
   float angularVelocity;
-  uint32_t alarmCallRate = 0;
+  uint32_t alarmCallPeriod = 0;
 };
 
 #endif
