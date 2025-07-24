@@ -1,3 +1,4 @@
+#include "Wire.h"
 #include "core0.h"
 #include "esp_log.h"
 #include "include/low_level.h"
@@ -55,6 +56,7 @@ void low_levelAssignLowestLevelObjects(ShiftRegister *m_shiftRegister) {
 void low_level_init() {
   ESP_LOGI(TAG, "init...");
   core0_init();
+  Wire.begin(PIN_I2C_SDA, PIN_I2C_SCL);
   shiftReg->init();
   motorL->init();
   motorR->init();

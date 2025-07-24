@@ -3,12 +3,8 @@
 
 #include <Arduino.h>
 #include "low_level/servodriver.h"
-
-struct MagnetometerReadings {
-  float x;
-  float y;
-  float z;
-};
+#include "include/low_level/magnetometer.h"
+#include "include/low_level/rangefinder.h"
 
 class Claw {
 public:
@@ -22,10 +18,12 @@ public:
 
   float getRangeFinderValue(void);
 
-  MagnetometerReadings getMagnotometerValues(void);
+  magVector getMagnotometerValues(void);
 
 private:
   Servo leftServo, rightServo;
+  Magnetometer magnetometer;
+  RangeFinder rangeFinder;
 };
 
 #endif

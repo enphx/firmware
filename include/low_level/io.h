@@ -52,4 +52,6 @@
 #define BIT_SWITCH_MUX_C  8
 #define BIT_IR_MUX        9
 
-
+#define I2C_CLAW_MAG_ADDR 0x1E
+#define I2C_CHASSIS_MAG_ADDR 0x1C
+#define I2C_RANGEFINDER_ADDR 0x29
