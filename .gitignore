@@ -3,3 +3,4 @@
 compile_commands.json
 .sconsign.dblite
 CMakeLists.txt
+src/main.cpp
