@@ -5,7 +5,7 @@
 #include "low_level/encodermotor.h"
 #include "low_level/tapefollowingsensor.h"
 #include "low_level/potentiometermotor.h"
-#include "low_level/stepperdriver.h""
+#include "low_level/stepperdriver.h"
 #include "driveBase.h"
 #include "low_level/io.h"
 #include "arm.h"
@@ -22,9 +22,12 @@ private:
   EncoderMotor leftMotor, rightMotor;
   PotentiometerMotor shoulderMotor;
   StepperMotor asimuthStepper;
+  Servo elbowServo;
   TapeFollowingSensor tapeFollowingSensor;
   DriveBase driveBase;
   ShiftRegister shiftRegister;
+  Arm arm;
+  Claw claw;
 };
 
 #endif
