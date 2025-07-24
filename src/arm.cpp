@@ -1,6 +1,8 @@
 #include "arm.h"
 #include "low_level/fastfunctions.h"
 
+static const char *TAG = "ARM";
+
 Arm::Arm(PotentiometerMotor *m_shoulderMotor, Servo *m_elbowServo,
          StepperMotor *m_asimuthStepper) {
   shoulderMotor = m_shoulderMotor;
@@ -11,13 +13,17 @@ Arm::Arm(PotentiometerMotor *m_shoulderMotor, Servo *m_elbowServo,
 void Arm::setArmPosition(float radius, float height, float theta) {
 
   ArmAngles angles = calculateInverseKinematics(radius, height, theta);
+  // HACK:
+  // asimuthStepper->setAngle(angles.asimuthTheta);
 
-  asimuthStepper->setAngle(angles.asimuthTheta);
-  shoulderMotor->setAngle(angles.shoulderTheta);
-  elbowServo->setAngle(angles.elbowTheta);
+  ESP_LOGI(TAG, "shoulderAngle: %f", angles.shoulderTheta);
+  ESP_LOGI(TAG, "elbowAngle: %f", angles.elbowTheta);
+  shoulderMotor->setAngle(angles.shoulderTheta * 180.0 / PI);
+  elbowServo->setAngle(angles.elbowTheta * 180.0 / PI+10);
 }
 
-ArmAngles Arm::calculateInverseKinematics(float radius, float height, float theta) {
+ArmAngles Arm::calculateInverseKinematics(float radius, float height,
+                                          float theta) {
   ArmAngles angles;
   float adjacantElbow = radius * radius + (height - 7) * (height - 7) - 128;
   float hypotenusEblow = 128;
@@ -25,10 +31,10 @@ ArmAngles Arm::calculateInverseKinematics(float radius, float height, float thet
 
   float oppositeShoulder = height - 7;
   float adjacantShoulder = radius;
-  angles.shoulderTheta = atan_spl(oppositeShoulder / adjacantShoulder) + 0.5 * angles.elbowTheta;
+  angles.shoulderTheta =
+      atan_spl(oppositeShoulder / adjacantShoulder) + 0.5 * angles.elbowTheta;
 
   angles.asimuthTheta = theta;
-
 
   return angles;
 }

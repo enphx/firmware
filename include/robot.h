@@ -16,6 +16,8 @@ public:
   Robot();
   void init(void);
 
+  void setArmPosition(float height, float radius, float theta);
+
   void update();
 
 private:

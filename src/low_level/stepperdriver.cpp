@@ -125,7 +125,7 @@ void IRAM_ATTR StepperMotor::handleStep(void) {
 
   alarmCallRate = 1e6 * (2.0 * PI) / (angularVelocity * stepsPerRevolution);
 
-  alarmCallRate = alarmCallRate > 100 ? alarmCallRate : 100;
+  alarmCallRate = alarmCallRate > 1000 ? alarmCallRate : 100;
   timerAlarm(timer, alarmCallRate, true, 0);
   stepsRemaining -= 1;
   steps += direction;
