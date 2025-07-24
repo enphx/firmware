@@ -1,7 +1,6 @@
 #include "low_level/stepperdriver.h"
 #include "driver/gpio.h"
 #include "esp32/rom/ets_sys.h"
-#include <math.h>
 
 static const char *TAG = "STEPPER";
 
