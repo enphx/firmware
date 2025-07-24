@@ -1,5 +1,6 @@
 #ifndef STEPPER_DRIVER_H
 #define STEPPER_DRIVER_H
+#include "driver/gptimer.h"
 #include "low_level/shiftregister.h"
 #include <Arduino.h>
 
@@ -12,7 +13,7 @@ public:
 
   void calibrate(void);
 
-  void update(void);
+  void setSpeed(float m_angularVelocity);
 
   void init(void);
 
@@ -21,29 +22,25 @@ public:
   bool moving(void);
 
 private:
+  void handleStep(void);
 
-  void  handleStep(void);
+  static bool stepperTimerHandler(gptimer_handle_t timer, const gptimer_alarm_event_data_t *edata, void *user_ctx);
 
-  static void  stepperTimerHandler(void *arg);
+  gptimer_handle_t gptimer = NULL;
+  gptimer_config_t timer_config;
+  gptimer_alarm_config_t alarm_config;
 
-  hw_timer_t *timer = nullptr;
-  portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
+  volatile bool timerIsRunning = false;
 
-  ShiftRegister* const shiftregister;
+  ShiftRegister *const shiftregister;
   int8_t direction;
   uint32_t stepsPerRevolution;
   volatile int32_t steps = 0;
   volatile int32_t stepsRemaining = 0;
-  volatile bool pauseTimer = false;
-  bool timerIsRunning = false;
   int32_t totalSteps;
   uint8_t stepPin, directionBit;
-  float maxAngularVelocity = 300, maxAngularAcceleration = 50000;
-  float currentAngularVelocity;
-
-  uint32_t accelStepNum, deccelStepNum;
-
-  uint32_t alarmCallRate = 1000;
+  float angularVelocity;
+  uint32_t alarmCallRate = 0;
 };
 
 #endif

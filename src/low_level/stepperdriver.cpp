@@ -1,4 +1,5 @@
 #include "low_level/stepperdriver.h"
+#include "constants.h"
 #include "driver/gpio.h"
 #include "esp32/rom/ets_sys.h"
 
@@ -11,24 +12,45 @@ StepperMotor::StepperMotor(ShiftRegister *m_shiftRegister, uint8_t m_stepPin,
   stepPin = m_stepPin;
   directionBit = m_directionBit;
   stepsPerRevolution = m_stepsPerRevolution;
+  alarmCallRate = 1e6 / stepsPerRevolution * TURNTABLE_ROTATIONS_PER_SECOND;
+
+  timer_config = {
+      .clk_src = GPTIMER_CLK_SRC_DEFAULT,
+      .direction = GPTIMER_COUNT_UP,
+      .resolution_hz = 1 * 1000 * 1000,
+  };
+
+  alarm_config = {
+      .alarm_count = alarmCallRate,
+      .flags =
+          {
+              .auto_reload_on_alarm = true,
+          },
+  };
+
+  ESP_ERROR_CHECK(gptimer_new_timer(&timer_config, &gptimer));
 }
 
 void StepperMotor::init() {
   pinMode(stepPin, OUTPUT);
-  timer = timerBegin(10000);
-  timerAttachInterruptArg(timer, &StepperMotor::stepperTimerHandler, this);
+  ESP_ERROR_CHECK(gptimer_set_alarm_action(gptimer, &alarm_config));
 
-  timerAlarm(timer, alarmCallRate, true, 0);
-  timerStart(timer);
+  gptimer_event_callbacks_t cbs = {
+      .on_alarm = stepperTimerHandler,
+  };
+
+  ESP_ERROR_CHECK(gptimer_register_event_callbacks(gptimer, &cbs, this));
+  ESP_ERROR_CHECK(gptimer_enable(gptimer));
+  ESP_ERROR_CHECK(gptimer_start(gptimer));
   timerIsRunning = true;
 }
 
 void StepperMotor::setAngle(float angle) {
 
-  portENTER_CRITICAL(&timerMux);
-
-  timerStop(timer);
-  timerIsRunning = false;
+  if (timerIsRunning) {
+   ESP_ERROR_CHECK(gptimer_stop(gptimer));
+    timerIsRunning = false;
+  }
 
   if (angle < steps * 360.0 / stepsPerRevolution) {
     direction = BACKWARDS;
@@ -39,6 +61,8 @@ void StepperMotor::setAngle(float angle) {
     angle = angle < 135 ? angle : 135.0f;
     shiftregister->setBit(1, directionBit);
   } else {
+    totalSteps = 0;
+    stepsRemaining = 0;
     return;
   }
 
@@ -47,94 +71,37 @@ void StepperMotor::setAngle(float angle) {
   totalSteps = abs(targetPosition - steps);
   stepsRemaining = totalSteps;
 
-  accelStepNum = (maxAngularVelocity * maxAngularVelocity -
-                  currentAngularVelocity * currentAngularVelocity) /
-                 (2.0f * maxAngularAcceleration);
-
-  deccelStepNum = (maxAngularVelocity * maxAngularVelocity) /
-                  (2.0f * maxAngularAcceleration);
-
-  if (accelStepNum + deccelStepNum > totalSteps) {
-    accelStepNum = totalSteps / 3;
-    deccelStepNum = totalSteps / 3;
-  }
-
-  if (!timerIsRunning) {
-    timerStart(timer);
+  if(!timerIsRunning) {
+    ESP_ERROR_CHECK(gptimer_start(gptimer));
     timerIsRunning = true;
   }
-  portEXIT_CRITICAL(&timerMux);
 }
 
-void StepperMotor::update() {
-  if (pauseTimer) {
-    timerStop(timer);
-    timerIsRunning = false;
-    currentAngularVelocity = 0;
-    pauseTimer = false;
-  }
-}
+bool IRAM_ATTR StepperMotor::stepperTimerHandler(
+    gptimer_handle_t timer, const gptimer_alarm_event_data_t *edata,
+    void *user_ctx) {
 
-void IRAM_ATTR StepperMotor::stepperTimerHandler(void *arg) {
-  StepperMotor *stepperMotor = static_cast<StepperMotor *>(arg);
+  StepperMotor *stepperMotor = static_cast<StepperMotor *>(user_ctx);
   if (stepperMotor) {
     stepperMotor->handleStep();
   }
+  return false;
 }
 
 void IRAM_ATTR StepperMotor::handleStep(void) {
 
-  portENTER_CRITICAL_ISR(&timerMux);
-
-  if (stepsRemaining == 0) {
-    pauseTimer = true;
-    portEXIT_CRITICAL_ISR(&timerMux);
-    return;
-  }
-
-  float angularVelocity;
-
-  if (totalSteps - stepsRemaining <= accelStepNum) {
-
-    if (currentAngularVelocity < 20) {
-      angularVelocity = 20;
-    } else {
-
-      float deltaAngularVelocity =
-          (maxAngularAcceleration * 2.0 * PI) /
-          (currentAngularVelocity * stepsPerRevolution);
-
-      angularVelocity = currentAngularVelocity + deltaAngularVelocity;
-    }
-
-  } else if (stepsRemaining <= deccelStepNum) {
-
-    float deltaAngularVelocity = -(maxAngularAcceleration * 2.0 * PI) /
-                                 (currentAngularVelocity * stepsPerRevolution);
-
-    angularVelocity = currentAngularVelocity + deltaAngularVelocity;
-
-  } else {
-    angularVelocity = currentAngularVelocity;
-  }
-
-  angularVelocity = maxAngularVelocity > angularVelocity ? angularVelocity
-                                                         : maxAngularVelocity;
-
-  currentAngularVelocity = angularVelocity;
-
-  alarmCallRate = 1e6 * (2.0 * PI) / (angularVelocity * stepsPerRevolution);
-
-  alarmCallRate = alarmCallRate > 100 ? alarmCallRate : 100;
-  timerAlarm(timer, alarmCallRate, true, 0);
-  stepsRemaining -= 1;
-  steps += direction;
-
-  portEXIT_CRITICAL_ISR(&timerMux);
-
   gpio_set_level((gpio_num_t)stepPin, HIGH);
   ets_delay_us(10);
   gpio_set_level((gpio_num_t)stepPin, LOW);
+
+  stepsRemaining -= 1;
+  steps += direction;
+
+  if (stepsRemaining == 0) {
+    gptimer_stop(gptimer);
+    timerIsRunning = false;
+    return;
+  }
 }
 
 bool StepperMotor::moving() { return stepsRemaining > 0; }
