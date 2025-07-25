@@ -34,7 +34,7 @@ public:
     asimuthStepper.setSpeed(speed);
   }
 
-  void setArmPosition(float height, float radius, float theta);
+  void setArmPosition(float height, float radius, float theta, bool relative);
 
   int getTapeFollowingError();
 
@@ -90,11 +90,7 @@ private:
   Arm arm;
   Claw claw;
 
-<<<<<<< HEAD
   float radius, height, theta;
-=======
-  
->>>>>>> origin
 };
 
 #endif
