@@ -4,7 +4,7 @@
 #include "low_level/io.h"
 #include <Arduino.h>
 
-static const char* TAG = "ROBOT";
+static const char *TAG = "ROBOT";
 
 #define SPEED_P 2
 #define SPEED_I 0
@@ -32,13 +32,25 @@ Robot::Robot()
       arm(&shoulderMotor, &elbowServo, &asimuthStepper)
 
 {
-  low_levelAssignMotors(&leftMotor, &rightMotor, &shoulderMotor, &asimuthStepper, &elbowServo);
+  low_levelAssignMotors(&leftMotor, &rightMotor, &shoulderMotor,
+                        &asimuthStepper, &elbowServo);
   low_levelAssignLowestLevelObjects(&shiftRegister);
   driveBase.setLineFollowingPID(0.3, 0, 0);
   driveBase.followLine(true);
 }
 
-void Robot::setArmPosition(float height, float radius, float theta) {
+void Robot::setArmPosition(float m_height, float m_radius, float m_theta,
+                           bool relative) {
+
+  if (relative) {
+    height += m_height;
+    radius += m_radius;
+    theta += m_theta;
+  } else {
+    height = m_height;
+    radius = m_radius;
+    theta = m_theta;
+  }
   arm.setArmPosition(radius, height, theta);
 }
 
@@ -52,21 +64,14 @@ void Robot::update() {
   low_level_update();
 }
 
+int Robot::getTapeFollowingError() { return driveBase.getTapeFollowingError(); }
 
+void Robot::setBaseSpeed(float speed) { driveBase.setBaseSpeed(speed); }
 
-  int Robot::getTapeFollowingError() {
-    return driveBase.getTapeFollowingError();
-  }
-  
-  void Robot::setBaseSpeed(float speed) {
-    driveBase.setBaseSpeed(speed);
-  }
+void Robot::setTapeFollowing(bool tapeFollow) {
+  driveBase.followLine(tapeFollow);
+}
 
-  void Robot::setTapeFollowing(bool tapeFollow) {
-    driveBase.followLine(tapeFollow);
-  }
-
-  void Robot::setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd) {
-    driveBase.setLineFollowingPID(m_Kp, m_Ki, m_Kd);
-  }
-
+void Robot::setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd) {
+  driveBase.setLineFollowingPID(m_Kp, m_Ki, m_Kd);
+}

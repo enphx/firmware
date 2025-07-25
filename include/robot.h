@@ -1,27 +1,40 @@
 #ifndef ROBOT_H
 #define ROBOT_H
 
-#include <Arduino.h>
-#include "low_level/shiftregister.h"
-#include "low_level/encodermotor.h"
-#include "low_level/tapefollowingsensor.h"
-#include "low_level/potentiometermotor.h"
-#include "low_level/stepperdriver.h"
-#include "driveBase.h"
-#include "low_level/io.h"
 #include "arm.h"
 #include "claw.h"
+#include "driveBase.h"
+#include "low_level/encodermotor.h"
+#include "low_level/io.h"
+#include "low_level/potentiometermotor.h"
+#include "low_level/shiftregister.h"
+#include "low_level/stepperdriver.h"
+#include "low_level/tapefollowingsensor.h"
+#include "constants.h"
+#include <Arduino.h>
 
 class Robot {
 public:
   Robot();
   void init(void);
 
-  void setArmPosition(float height, float radius, float theta);
+  void setArmPosition(float m_height, float m_radius, float m_theta, bool relative);
+
+  void putArmInDrivePosition(void) {arm.setArmPosition(ARM_DRIVE_RADIUS, ARM_DRIVE_HEIGHT, ARM_DRIVE_THETA);}
 
   int getTapeFollowingError();
 
   void setBaseSpeed(float speed);
+
+  void scanForPet(float height, float theta1, float theta2);
+
+  inline void GrabPet(void) {claw.close();}
+
+  inline void releasePet(void) {claw.open();}
+
+  inline int16_t getDistanceFromObject(void) {return claw.getRangeFinderValue();}
+
+  inline magVector getClawMagnetometerReadings(void) {return claw.getMagnotometerValues();}
 
   void setTapeFollowing(bool tapeFollow);
 
@@ -50,6 +63,8 @@ private:
   ShiftRegister shiftRegister;
   Arm arm;
   Claw claw;
+
+  float radius, height, theta;
 };
 
 #endif
