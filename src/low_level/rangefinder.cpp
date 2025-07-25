@@ -28,6 +28,6 @@ void RangeFinder::init() {
   ESP_LOGI(TAG, "Started ranging successfully!!");
 }
 
-float RangeFinder::getDistance() {
+int16_t RangeFinder::getDistance() {
   return vl53.distance();
 }

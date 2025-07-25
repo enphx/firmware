@@ -10,7 +10,7 @@ public:
   RangeFinder(uint8_t i2c_addr);
   void init();
 
-  float getDistance();
+  int16_t getDistance();
 
 private:
   const uint8_t addr;

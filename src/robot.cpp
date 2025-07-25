@@ -66,7 +66,10 @@ void Robot::update() {
 
 int Robot::getTapeFollowingError() { return driveBase.getTapeFollowingError(); }
 
-void Robot::setBaseSpeed(float speed) { driveBase.setBaseSpeed(speed); }
+
+void Robot::setBaseSpeed(float speed) {
+  driveBase.setBaseSpeed(speed);
+}
 
 void Robot::setTapeFollowing(bool tapeFollow) {
   driveBase.followLine(tapeFollow);

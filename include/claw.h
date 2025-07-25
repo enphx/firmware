@@ -16,7 +16,7 @@ public:
   
   void close(void);
 
-  float getRangeFinderValue(void);
+  int16_t getRangeFinderValue(void);
 
   magVector getMagnotometerValues(void);
 

@@ -13,14 +13,28 @@
 #include "constants.h"
 #include <Arduino.h>
 
+
+
+struct lidarPoint {
+  float distance;
+  float angle;
+};
+
 class Robot {
 public:
   Robot();
   void init(void);
 
-  void setArmPosition(float m_height, float m_radius, float m_theta, bool relative);
-
   void putArmInDrivePosition(void) {arm.setArmPosition(ARM_DRIVE_RADIUS, ARM_DRIVE_HEIGHT, ARM_DRIVE_THETA);}
+  void calibrateStepper() {
+    asimuthStepper.calibrate();
+  }
+
+  void setStepperSpeed(float speed) {
+    asimuthStepper.setSpeed(speed);
+  }
+
+  void setArmPosition(float height, float radius, float theta);
 
   int getTapeFollowingError();
 
@@ -39,6 +53,18 @@ public:
   void setTapeFollowing(bool tapeFollow);
 
   void setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd);
+
+  bool stepperIsMoving() {
+    return asimuthStepper.moving();
+  }
+
+  float getArmTheta() {
+    return arm.getTheta();
+  }
+
+  int16_t getClawDistance() {
+    return claw.getRangeFinderValue();
+  }
 
   void update();
 
@@ -64,7 +90,11 @@ private:
   Arm arm;
   Claw claw;
 
+<<<<<<< HEAD
   float radius, height, theta;
+=======
+  
+>>>>>>> origin
 };
 
 #endif

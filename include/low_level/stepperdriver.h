@@ -13,11 +13,15 @@ public:
 
   void calibrate(void);
 
-  void setSpeed(float m_angularVelocity);
-
   void init(void);
 
   void setAngle(float angle);
+
+  void setSpeed(float speed);
+
+  float getAngleRelative();
+
+  float getAngleAbsolute();
 
   bool moving(void);
 

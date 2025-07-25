@@ -1,5 +1,6 @@
 #include "arm.h"
 #include "low_level/fastfunctions.h"
+#include "low_level/stepperdriver.h"
 
 static const char *TAG = "ARM";
 
@@ -36,4 +37,8 @@ ArmAngles Arm::calculateInverseKinematics(float radius, float height,
   angles.asimuthTheta = theta;
 
   return angles;
+}
+
+float Arm::getTheta() {
+  return asimuthStepper->getAngleAbsolute();
 }
