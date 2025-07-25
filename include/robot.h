@@ -12,10 +12,25 @@
 #include "arm.h"
 #include "claw.h"
 
+
+
+struct lidarPoint {
+  float distance;
+  float angle;
+};
+
 class Robot {
 public:
   Robot();
   void init(void);
+
+  void calibrateStepper() {
+    asimuthStepper.calibrate();
+  }
+
+  void setStepperSpeed(float speed) {
+    asimuthStepper.setSpeed(speed);
+  }
 
   void setArmPosition(float height, float radius, float theta);
 
@@ -26,6 +41,18 @@ public:
   void setTapeFollowing(bool tapeFollow);
 
   void setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd);
+
+  bool stepperIsMoving() {
+    return asimuthStepper.moving();
+  }
+
+  float getArmTheta() {
+    return arm.getTheta();
+  }
+
+  int16_t getClawDistance() {
+    return claw.getRangeFinderValue();
+  }
 
   void update();
 
@@ -50,6 +77,8 @@ private:
   ShiftRegister shiftRegister;
   Arm arm;
   Claw claw;
+
+  
 };
 
 #endif

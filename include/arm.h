@@ -20,6 +20,8 @@ public:
 
   void setArmPosition(float radius, float height, float theta);
 
+  float getTheta();
+
 private:
   ArmAngles calculateInverseKinematics(float radius, float height, float theta);
 

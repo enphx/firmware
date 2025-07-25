@@ -33,7 +33,7 @@ void Claw::close(void) {
   rightServo.setAngle(RIGHT_CLAW_CLOSED);
 }
 
-float Claw::getRangeFinderValue() {
+int16_t Claw::getRangeFinderValue() {
   return rangeFinder.getDistance();
 }
 

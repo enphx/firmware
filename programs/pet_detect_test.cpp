@@ -4,6 +4,8 @@
 #include "robot.h"
 #include <Arduino.h>
 
+// NOTE: pet detection was being run with a kernel of [-1, 0, 1].
+
 static const char *TAG = "main";
 
 Robot robot;
@@ -17,7 +19,7 @@ void statusTask(void *arg) {
   }
 }
 
-#define SCAN_HEIGHT 4
+#define SCAN_HEIGHT 7
 #define SCAN_RADIUS 7
 #define TEST_ANGLE 90
 
@@ -32,7 +34,7 @@ void robotTask(void *arg) {
      ESP_LOGI(TAG, "moving to 90 deg 2");
      robot.setArmPosition(12, 10, TEST_ANGLE);
      robot.delay(2000);
-     robot.setArmPosition(SCAN_HEIGHT, SCAN_RADIUS, TEST_ANGLE);
+     robot.setArmPosition(SCAN_HEIGHT + 2, SCAN_RADIUS, TEST_ANGLE);
      robot.delay(2000);
      robot.setArmPosition(SCAN_HEIGHT, SCAN_RADIUS, 110);
 
@@ -43,8 +45,7 @@ void robotTask(void *arg) {
 
      int16_t prev_val = 0;
 
-     float angle1 = 90;
-     float angle2 = 90;
+     PetDetectOutput output1, output2 = {0, 0, 0, 0};
 
      int threshold = 140;
 
@@ -54,21 +55,21 @@ void robotTask(void *arg) {
        if (val != prev_val) {
          PetDetectOutput output = pet_detect_push(robot.getArmTheta(), val);
          if (output.convolved >= 140) {
-           angle1 = output.angle;
+           output1 = output;
          } else if (output.convolved <= -140) {
-           angle2 = output.angle;
+           output2 = output;
          }
          prev_val = val;
        }
        vTaskDelay(5);
      }
 
-     ESP_LOGI(TAG, "angle1: %f, angle2: %f", angle1, angle2);
+     ESP_LOGI(TAG, "angle1: %f, angle2: %f", output1.angle, output2.angle);
 
      pet_detect_print();
      pet_detect_reset();
      // robot.delay(2000);
-     robot.setArmPosition(SCAN_HEIGHT + 3, SCAN_RADIUS, (angle1 + angle2)/2 + 5);
+     robot.setArmPosition(SCAN_HEIGHT + 3, SCAN_RADIUS, (output1.angle + output2.angle)/2 + 5);
      robot.delay(5000);
      // pet_detect_push(robot.getArmTheta(), robot.getClawDistance());
      // vTaskDelay(5);

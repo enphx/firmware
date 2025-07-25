@@ -54,19 +54,18 @@ void Robot::update() {
 
 
 
-  int Robot::getTapeFollowingError() {
-    return driveBase.getTapeFollowingError();
-  }
-  
-  void Robot::setBaseSpeed(float speed) {
-    driveBase.setBaseSpeed(speed);
-  }
+int Robot::getTapeFollowingError() {
+  return driveBase.getTapeFollowingError();
+}
 
-  void Robot::setTapeFollowing(bool tapeFollow) {
-    driveBase.followLine(tapeFollow);
-  }
+void Robot::setBaseSpeed(float speed) {
+  driveBase.setBaseSpeed(speed);
+}
 
-  void Robot::setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd) {
-    driveBase.setLineFollowingPID(m_Kp, m_Ki, m_Kd);
-  }
+void Robot::setTapeFollowing(bool tapeFollow) {
+  driveBase.followLine(tapeFollow);
+}
 
+void Robot::setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd) {
+  driveBase.setLineFollowingPID(m_Kp, m_Ki, m_Kd);
+}
