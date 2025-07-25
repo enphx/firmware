@@ -8,7 +8,7 @@
 #define LEFT_CLAW_CLOSED 110
 #define RIGHT_CLAW_OPEN 180
 #define RIGHT_CLAW_CLOSED 85
-#define CLAW_MIN_PWM 2
+#define CLAW_MIN_PWM 2.6
 #define CLAW_MAX_PWM 12.7
 #define ELBOW_MIN_PWM 2.5
 #define ELBOW_MAX_PWM 12.5

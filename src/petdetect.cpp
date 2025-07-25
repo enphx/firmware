@@ -17,10 +17,9 @@ static bool first_value = true;
 static uint32_t ind = 0;
 
 
-#define KERN_SIZE 3
+#define KERN_SIZE 2
 int32_t kern1[KERN_SIZE] = {
   -1,
-  0,
   1,
 };
 

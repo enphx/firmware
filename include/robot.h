@@ -42,7 +42,7 @@ public:
 
   void scanForPet(float height, float theta1, float theta2);
 
-  inline void GrabPet(void) {claw.close();}
+  inline void grabPet(void) {claw.close();}
 
   inline void releasePet(void) {claw.open();}
 
