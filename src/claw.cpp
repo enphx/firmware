@@ -17,7 +17,8 @@ Claw::Claw(uint8_t m_leftServoPin, uint8_t m_rightServoPin)
 
 void Claw::init(void) {
   ESP_LOGI(TAG, "init...");
-  magnetometer.init();
+  // HACK: 
+  // magnetometer.init();
   rangeFinder.init();
   leftServo.init();
   rightServo.init();

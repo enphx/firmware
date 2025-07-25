@@ -87,7 +87,7 @@ void StepperMotor::setAngle(float angle) {
     direction = BACKWARDS;
     angle = angle > -TTBL_MAX_ANGLE ? angle : -TTBL_MAX_ANGLE;
     shiftregister->setBit(0, directionBit);
-  } else if (angle > 0) {
+  } else if (angle > getAngleRelative()) {
     direction = FORWARDS;
     angle = angle < TTBL_MAX_ANGLE ? angle : TTBL_MAX_ANGLE;
     shiftregister->setBit(1, directionBit);
@@ -159,7 +159,7 @@ float StepperMotor::getAngleRelative() {
 }
 
 float StepperMotor::getAngleAbsolute() {
-  return (float)(get_convolved_value(ADC_CH_TURNTABLE_POT) - 1855) * DEGREES_PER_POT_TICK_TTBL;
+  return (float)((int32_t)(get_convolved_value(ADC_CH_TURNTABLE_POT)) - 1855) * DEGREES_PER_POT_TICK_TTBL;
   // return (float)get_convolved_value(ADC_CH_TURNTABLE_POT);
 }
 

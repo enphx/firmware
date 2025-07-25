@@ -35,7 +35,7 @@ Robot::Robot()
   low_levelAssignMotors(&leftMotor, &rightMotor, &shoulderMotor,
                         &asimuthStepper, &elbowServo);
   low_levelAssignLowestLevelObjects(&shiftRegister);
-  driveBase.setLineFollowingPID(0.3, 0, 0);
+  driveBase.setLineFollowingPID(0.2, 0, 0);
   driveBase.followLine(true);
 }
 
@@ -59,8 +59,24 @@ void Robot::init() {
   claw.init();
 }
 
+void Robot::findTape(bool clockwise) {
+  updateHighLevel = false;
+  
+  if (clockwise) {
+    leftMotor.setSpeed(-0.5);
+    rightMotor.setSpeed(0.5);
+  } else {
+    leftMotor.setSpeed(0.5);
+    rightMotor.setSpeed(-0.5);
+  }
+
+
+}
+
 void Robot::update() {
+  if (updateHighLevel == true) {
   driveBase.update();
+  }
   low_level_update();
 }
 

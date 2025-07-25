@@ -40,6 +40,8 @@ public:
 
   void setBaseSpeed(float speed);
 
+  void findTape(bool clockwise);
+
   void scanForPet(float height, float theta1, float theta2);
 
   inline void grabPet(void) {claw.close();}
@@ -69,8 +71,8 @@ public:
   void update();
 
   inline void delay(uint32_t ticks_millis) {
-    uint32_t t0 = millis();
-    for (uint32_t i = 0; i < ticks_millis; i++) {
+    int32_t t0 = millis();
+    for (int32_t i = 0; i < ticks_millis; i++) {
       if (millis() - t0 >= ticks_millis) {
         return;
       }
@@ -89,6 +91,8 @@ private:
   ShiftRegister shiftRegister;
   Arm arm;
   Claw claw;
+
+  bool updateHighLevel = true;
 
   float radius, height, theta;
 };
