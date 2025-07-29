@@ -25,12 +25,12 @@ void TapeFollowingSensor::update(void) {
     Distance = tapeState::OutOfBounds;
   } else if (reflectanceReadingLeft > UPPER_REFLECTANCE_READING_THRESHOLD) {
 
-    rightError = 2 * lastDifferenceReadingRight - reflectanceReadingLeft;
+    rightError = 3 * lastDifferenceReadingRight - 2 * reflectanceReadingLeft;
     Distance = tapeState::Inversion;
     Side = tapeState::Left;
   } else if (reflectanceReadingRight > UPPER_REFLECTANCE_READING_THRESHOLD) {
 
-    leftError = 2 * lastDifferenceReadingLeft - reflectanceReadingLeft;
+    leftError = 3 * lastDifferenceReadingLeft - 2 * reflectanceReadingLeft;
     Distance = tapeState::Inversion;
     Side = tapeState::Right;
   } else {

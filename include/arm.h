@@ -12,13 +12,14 @@ struct ArmAngles {
   float elbowTheta;
 };
 
-// TODO: Finish arm header file
 class Arm {
 public:
   Arm(PotentiometerMotor *m_shoulderMotor, Servo *m_elbowServo,
       StepperMotor *m_asimuthStepper);
 
   void setArmPosition(float radius, float height, float theta);
+
+  void setArmAngles(float asimuthTheta ,float shoulderTheta, float elbowTheta);
 
   float getTheta();
 

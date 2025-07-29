@@ -3,6 +3,7 @@
 
 #include "arm.h"
 #include "claw.h"
+#include "constants.h"
 #include "driveBase.h"
 #include "low_level/encodermotor.h"
 #include "low_level/io.h"
@@ -10,10 +11,7 @@
 #include "low_level/shiftregister.h"
 #include "low_level/stepperdriver.h"
 #include "low_level/tapefollowingsensor.h"
-#include "constants.h"
 #include <Arduino.h>
-
-
 
 struct lidarPoint {
   float distance;
@@ -25,14 +23,9 @@ public:
   Robot();
   void init(void);
 
-  void putArmInDrivePosition(void) {arm.setArmPosition(ARM_DRIVE_RADIUS, ARM_DRIVE_HEIGHT, ARM_DRIVE_THETA);}
-  void calibrateStepper() {
-    asimuthStepper.calibrate();
-  }
+  void calibrateStepper() { asimuthStepper.calibrate(); }
 
-  void setStepperSpeed(float speed) {
-    asimuthStepper.setSpeed(speed);
-  }
+  void setStepperSpeed(float speed) { asimuthStepper.setSpeed(speed); }
 
   void setArmPosition(float height, float radius, float theta, bool relative);
 
@@ -44,42 +37,27 @@ public:
 
   void scanForPet(float height, float theta1, float theta2);
 
-  inline void grabPet(void) {claw.close();}
+  inline void grabPet(void) { claw.close(); }
 
-  inline void releasePet(void) {claw.open();}
+  inline void releasePet(void) { claw.open(); }
 
-  inline int16_t getDistanceFromObject(void) {return claw.getRangeFinderValue();}
-
-  inline magVector getClawMagnetometerReadings(void) {return claw.getMagnotometerValues();}
+  inline magVector getClawMagnetometerReadings(void) {
+    return claw.getMagnotometerValues();
+  }
 
   void setTapeFollowing(bool tapeFollow);
 
   void setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd);
 
-  bool stepperIsMoving() {
-    return asimuthStepper.moving();
-  }
+  bool stepperIsMoving() { return asimuthStepper.moving(); }
 
-  float getArmTheta() {
-    return arm.getTheta();
-  }
+  float getArmTheta() { return arm.getTheta(); }
 
-  int16_t getClawDistance() {
-    return claw.getRangeFinderValue();
-  }
+  int16_t getClawDistance() { return claw.getRangeFinderValue(); }
 
   void update();
 
-  inline void delay(uint32_t ticks_millis) {
-    int32_t t0 = millis();
-    for (int32_t i = 0; i < ticks_millis; i++) {
-      if (millis() - t0 >= ticks_millis) {
-        return;
-      }
-      update();
-      vTaskDelay(5);
-    }
-  }
+  void delay(uint32_t ticks_millis);
 
 private:
   EncoderMotor leftMotor, rightMotor;

@@ -22,13 +22,10 @@ void DriveBase::update(void) {
   tapeFollowingSensor->update();
   deltaT = micros() - timeLastUpdated;
   timeLastUpdated += deltaT;
-  if (!lineFollow) {
-    leftMotor->setSpeed(baseSpeed);
-    rightMotor->setSpeed(baseSpeed);
-  }
   previousError = error;
 
-  if (lineFollow && tapeFollowingSensor->getTapeState() == tapeState::OutOfBounds) {
+  if (lineFollow &&
+      tapeFollowingSensor->getTapeState() == tapeState::OutOfBounds) {
     findTape();
     return;
   }
@@ -43,14 +40,15 @@ void DriveBase::update(void) {
     float correction = calculateCorrection();
     leftMotor->setSpeed(baseSpeed + correction);
     rightMotor->setSpeed(baseSpeed - correction);
+  } else {
+    leftMotor->setSpeed(baseSpeed);
+    rightMotor->setSpeed(baseSpeed);
   }
 
   previousTapeState = tapeFollowingSensor->getTapeState();
   previousSide = tapeFollowingSensor->getSide();
 }
-void DriveBase::setBaseSpeed(float speed) {
-  baseSpeed = speed;
-}
+void DriveBase::setBaseSpeed(float speed) { baseSpeed = speed; }
 
 float DriveBase::calculateCorrection(void) {
   float proportionalTerm = Kp * 0.001f * error;
@@ -67,4 +65,3 @@ void DriveBase::findTape(void) {
   rightMotor->setSpeed(baseSpeed);
   leftMotor->setSpeed(0.2 * baseSpeed);
 }
-

@@ -22,6 +22,13 @@ void Arm::setArmPosition(float radius, float height, float theta) {
   elbowServo->setAngle(angles.elbowTheta * 180.0 / PI+10);
 }
 
+void Arm::setArmAngles(float asimuthTheta, float shoulderTheta, float elbowTheta) {
+  asimuthStepper->setAngle(asimuthTheta);
+  shoulderMotor->setAngle(shoulderTheta);
+  elbowServo->setAngle(elbowTheta);
+}
+
+
 ArmAngles Arm::calculateInverseKinematics(float radius, float height,
                                           float theta) {
   ArmAngles angles;

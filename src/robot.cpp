@@ -59,9 +59,20 @@ void Robot::init() {
   claw.init();
 }
 
+void Robot::delay(uint32_t milliseconds) {
+  int32_t t0 = millis();
+  for (int32_t i = 0; i < milliseconds; i++) {
+    if (millis() - t0 >= milliseconds) {
+      return;
+    }
+    update();
+    vTaskDelay(pdMS_TO_TICKS(5));
+  }
+}
+
 void Robot::findTape(bool clockwise) {
   updateHighLevel = false;
-  
+
   if (clockwise) {
     leftMotor.setSpeed(-0.5);
     rightMotor.setSpeed(0.5);
@@ -69,23 +80,16 @@ void Robot::findTape(bool clockwise) {
     leftMotor.setSpeed(0.5);
     rightMotor.setSpeed(-0.5);
   }
-
-
 }
 
 void Robot::update() {
-  if (updateHighLevel == true) {
   driveBase.update();
-  }
   low_level_update();
 }
 
 int Robot::getTapeFollowingError() { return driveBase.getTapeFollowingError(); }
 
-
-void Robot::setBaseSpeed(float speed) {
-  driveBase.setBaseSpeed(speed);
-}
+void Robot::setBaseSpeed(float speed) { driveBase.setBaseSpeed(speed); }
 
 void Robot::setTapeFollowing(bool tapeFollow) {
   driveBase.followLine(tapeFollow);

@@ -2,7 +2,6 @@
 #include "constants.h"
 #include "driver/gpio.h"
 #include "driver/gptimer.h"
-#include "esp32/rom/ets_sys.h"
 #include "low_level/core0.h"
 #include "low_level/io.h"
 
@@ -107,7 +106,7 @@ void StepperMotor::setAngle(float angle) {
     return;
   }
 
-  ESP_LOGI(TAG, "angle: %f, steps: %i, targetPosition: %i, totalSteps: %i, stepsRemaining: %i", angle, steps, targetPosition, totalSteps, stepsRemaining);
+  // ESP_LOGI(TAG, "angle: %f, steps: %i, targetPosition: %i, totalSteps: %i, stepsRemaining: %i", angle, steps, targetPosition, totalSteps, stepsRemaining);
 
   if (!timerIsRunning) {
     ESP_ERROR_CHECK(gptimer_start(gptimer));
