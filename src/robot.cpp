@@ -3,6 +3,10 @@
 #include "low_level.h"
 #include "low_level/io.h"
 #include <Arduino.h>
+#include <cstdio>
+#include <cstring>
+
+#include "include/serial/serial_comms.h"
 
 static const char *TAG = "ROBOT";
 
@@ -50,13 +54,13 @@ void Robot::armFollowTrajectory(const Trajectory *trajectory, int len) {
 void Robot::setPidThing(float m_Kp, float m_Ki, float m_Kd, float m_maxCumulativeError, PIDObject m_pidObject) {
   
     switch (m_pidObject) {
-    case ARM:
+    case PIDObject::SHOULDER:
       shoulderMotor.setPID(m_Kp, m_Ki, m_Kd, m_maxCumulativeError);
     break;
-    case DRIVEBASE:
+    case PIDObject::DRIVEBASE:
       driveBase.setLineFollowingPID(m_Kp, m_Ki, m_Kd);
     break;
-    case ENCODER_MOTOR:
+    case PIDObject::ENCODER_MOTOR:
       leftMotor.setPID(m_Kp, m_Ki, m_Kd, m_maxCumulativeError);
       rightMotor.setPID(m_Kp, m_Ki, m_Kd, m_maxCumulativeError);
     break;
@@ -110,7 +114,93 @@ void Robot::findTape(bool clockwise) {
 void Robot::update() {
   driveBase.update();
   low_level_update();
+
+  #ifdef SERIAL_OUTPUT
+  processSerial();
+  #endif
 }
+
+#ifdef SERIAL_OUTPUT
+
+static PIDObject currentTarget = PIDObject::SHOULDER;
+
+void Robot::receive_and_process_serial_messages() {
+  
+  int len = receive_incoming_message(serial_message, MAX_SERIAL_INPUT_SIZE);
+
+  if (len > 0) {
+    write_to_serial(serial_message, len);
+    if (serial_message[0] == PID && serial_message[1] == SET) {
+      // Update PID message; read floats and whatnot, and then update the according.
+      float kp = bits_to_f32(&serial_message[3]);
+      float ki = bits_to_f32(&serial_message[7]);
+      float kd = bits_to_f32(&serial_message[11]);
+      float max_ce = bits_to_f32(&serial_message[15]);
+
+      // char buf[256];
+      // int len1 = snprintf(buf, 256, " kp: %f, ki: %f, kd: %f, max_ce: %f ",kp, ki, kd, max_ce);
+      // write_to_serial((uint8_t *)buf, len1);
+
+      switch (serial_message[2]) {
+        case ENCODER_MOTOR:
+          currentTarget = PIDObject::ENCODER_MOTOR;
+          leftMotor.setPID(kp, ki, kd, max_ce);
+          rightMotor.setPID(kp, ki, kd, max_ce);
+          break;
+        case DRIVE_BASE:
+          currentTarget = PIDObject::DRIVEBASE;
+          driveBase.setLineFollowingPID(kp, ki, kd, max_ce);
+          break;
+        case SHOULDER:
+          currentTarget = PIDObject::SHOULDER;
+          shoulderMotor.setPID(kp, ki, kd, max_ce);
+          break;
+      }
+    }
+  }
+}
+
+void copy_4(uint8_t * target, void * source, uint32_t * index) {
+  *index = *index + 4;
+  memcpy(target, source, 4);
+}
+
+void copy_1(uint8_t * target, uint8_t source, uint32_t * index) {
+  *index = *index + 1;
+  target[0] = source;
+}
+
+void Robot::send_serial_messages() {
+  float err;
+  float setpoint;
+  float p_out;
+  float i_out;
+  float d_out;
+
+  switch (serial_message[2]) {
+    case ENCODER_MOTOR:
+      leftMotor.getPID(&err, &setpoint, &p_out, &i_out, &d_out);
+      break;
+    case DRIVE_BASE:
+      break;
+    case SHOULDER:
+      break;
+  }
+  
+  uint8_t message_to_send[256];
+  uint32_t i = 0;
+
+  copy_1(message_to_send, MSG_START, &i);
+  copy_1(message_to_send, PID, &i);
+  copy_4
+}
+
+void Robot::processSerial() {
+  receive_and_process_serial_messages();
+  send_serial_messages();
+}
+
+#endif
 
 int Robot::getTapeFollowingError() { return driveBase.getTapeFollowingError(); }
 

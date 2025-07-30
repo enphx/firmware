@@ -65,9 +65,3 @@ void PotentiometerMotor::setPWM(float dutyCycle, uint8_t m_direction) {
   ledcWrite(pwmPin, (uint32_t)(dutyCycle * 4095));
 }
 
-float PotentiometerMotor::calculatePID(void) {
-  float P = Kp * error;
-  float I = Ki * cumulativeError;
-  float D = Kd * 1000.0f * (error - previousError) / (deltaT);
-  return P + I + D;
-}

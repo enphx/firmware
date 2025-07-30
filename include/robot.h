@@ -19,10 +19,10 @@ struct lidarPoint {
   float angle;
 };
 
-enum PIDObject {
+enum class PIDObject {
   ENCODER_MOTOR,
   DRIVEBASE,
-  ARM,
+  SHOULDER,
 };
 
 class Robot {
@@ -68,6 +68,8 @@ public:
 
   void update();
 
+  void processSerial();
+
   void delay(uint32_t ticks_millis);
 
 private:
@@ -84,6 +86,13 @@ private:
   bool updateHighLevel = true;
 
   float radius, height, theta;
+
+
+  const static uint MAX_SERIAL_INPUT_SIZE = 128;
+  uint8_t serial_message[MAX_SERIAL_INPUT_SIZE];
+
+  void receive_and_process_serial_messages();
+  void send_serial_messages();
 };
 
 #endif

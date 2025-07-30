@@ -24,7 +24,7 @@ public:
 
   void update(void);
 
-  void setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd);
+  void setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd, float m_cumulativeErrorMax);
 
   void setBaseSpeed(float speed);
 

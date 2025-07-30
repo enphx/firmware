@@ -84,7 +84,6 @@ int32_t EncoderMotor::update(void) {
   } else {
     setPWM(-power, 0);
   }
-  previousError = error;
 
   return deltaTicks;
 }
@@ -120,3 +119,10 @@ void EncoderMotor::setPWM(float dutyCycle, uint8_t m_direction) {
   ledcWrite(pwmPin, (uint32_t)(dutyCycle * 4095));
 }
 
+void EncoderMotor::getPID(float *err, float *setpoint, float *p_out, float *i_out, float *d_out) {
+  *err = velocityPID.getError();
+  *setpoint = velocityPID.getTargetValue();
+  *p_out = velocityPID.getP();
+  *i_out = velocityPID.getI();
+  *d_out = velocityPID.getD();
+}

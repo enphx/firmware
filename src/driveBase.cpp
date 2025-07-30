@@ -15,8 +15,8 @@ DriveBase::DriveBase(EncoderMotor *m_leftMotor, EncoderMotor *m_rightMotor,
   tapeFollowingPID.setTargetValue(0);
 }
 
-void DriveBase::setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd) {
-  tapeFollowingPID.updateConstants(m_Kp, m_Ki, m_Kd);
+void DriveBase::setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd, float m_cumulativeErrorMax) {
+  tapeFollowingPID.updateConstants(m_Kp, m_Ki, m_Kd, m_cumulativeErrorMax);
 }
 
 void DriveBase::followLine(bool m_lineFollow) { lineFollow = m_lineFollow; }

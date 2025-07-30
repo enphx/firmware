@@ -15,4 +15,9 @@
 #define ARM_DRIVE_HEIGHT 7.75
 #define ARM_DRIVE_THETA 0
 #define TTBL_MAX_ANGLE 100.0
+
+
+// Comment this out for no serial output...
+#define SERIAL_OUTPUT
+
 #endif

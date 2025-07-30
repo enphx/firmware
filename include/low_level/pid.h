@@ -14,6 +14,7 @@ public:
   float update(float m_currentValue);
   inline void setTargetValue(float m_target) { targetValue = m_target; }
   inline float getError(void) { return error; }
+  inline float getTargetValue() {return targetValue; }
   inline float getP(void) { return P; }
   inline float getI(void) { return I; }
   inline float getD(void) { return D; }
