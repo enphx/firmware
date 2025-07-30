@@ -28,7 +28,7 @@ Robot::Robot()
 
       tapeFollowingSensor(),
       driveBase(&leftMotor, &rightMotor, &tapeFollowingSensor),
-      claw(PIN_SHOULDER_DC_PWM, PIN_M3_ENC1),
+      claw(PIN_SHOULDER_DC_PWM),
       arm(&shoulderMotor, &elbowServo, &asimuthStepper)
 
 {
@@ -37,6 +37,14 @@ Robot::Robot()
   low_levelAssignLowestLevelObjects(&shiftRegister);
   driveBase.setLineFollowingPID(0.2, 0, 0);
   driveBase.followLine(true);
+}
+
+void Robot::armFollowTrajectory(const Trajectory *trajectory, int len) {
+  for(int i = 0; i < len; i++){
+    const Trajectory& step = trajectory[i];
+    arm.setArmAngles(step.asimuthTheta, step.shoulderTheta, step.elbowTheta);
+    delay(step.deltaT);
+  }
 }
 
 void Robot::setArmPosition(float m_height, float m_radius, float m_theta,

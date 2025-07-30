@@ -11,6 +11,7 @@
 #include "low_level/shiftregister.h"
 #include "low_level/stepperdriver.h"
 #include "low_level/tapefollowingsensor.h"
+#include "trajectories.h"
 #include <Arduino.h>
 
 struct lidarPoint {
@@ -24,6 +25,8 @@ public:
   void init(void);
 
   void calibrateStepper() { asimuthStepper.calibrate(); }
+
+  void armFollowTrajectory(const Trajectory *trajectory, int len);
 
   void setStepperSpeed(float speed) { asimuthStepper.setSpeed(speed); }
 
