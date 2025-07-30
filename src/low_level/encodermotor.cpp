@@ -79,13 +79,17 @@ void IRAM_ATTR EncoderMotor::handleEncoder() {
 //   
 // }
 
-void EncoderMotor::update(void) {
+
+
+int32_t EncoderMotor::update(void) {
   uint64_t t = micros();
   deltaT = (uint32_t)(t - timeLastUpdated);
   currentTickCount = tickCount;
   timeLastUpdated = t;
 
-  currentSpeed = (float)(currentTickCount - previousTickCount) / ((float)deltaT) *
+  int32_t deltaTicks = currentTickCount - previousTickCount;
+
+  currentSpeed = (float)(deltaTicks) / ((float)deltaT) *
                  ticksPerRev * PI * WHEEL_DIAMETER;
   previousTickCount = currentTickCount;
 
@@ -106,6 +110,8 @@ void EncoderMotor::update(void) {
     setPWM(-power, 0);
   }
   previousError = error;
+
+  return deltaTicks;
 }
 
 float EncoderMotor::getCurrentSpeed(void) { return currentSpeed; }

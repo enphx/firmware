@@ -20,7 +20,9 @@ public:
 
   void init();
   
-  void update(void);
+
+  // Returns change in ticks for odometry tracking :D
+  int32_t update(void);
 
   uint8_t getDirection(void);
 

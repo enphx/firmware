@@ -3,5 +3,7 @@
 
 float atan_spl(float x);
 float acos_spl(float x);
+float fast_sin(float x);
+float fast_cos(float x);
 
 #endif

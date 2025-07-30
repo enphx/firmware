@@ -1,7 +1,11 @@
 #include "low_level/fastfunctions.h"
 #include "low_level/cubicspline.h"
+#include <cmath>
 
 #define ATAN_KNOTS 10
+
+#define PI 3.141592653589793238462643383279
+
 
 float atan_knots[ATAN_KNOTS] = {
   0., 0.3, 0.9, 1.2, 1.5, 2.3, 3., 5., 8., 14.
@@ -56,9 +60,24 @@ float acos_coeffs[4][ACOS_KNOTS - 1] = {
   }
 };
 
+
+#define SIN_KNOTS 3
+
+float sin_knots[SIN_KNOTS] = {
+  0.0, 0.7853981633974483, 1.5707963267948966
+};
+
+float sin_cooeffs[4][SIN_KNOTS - 1] = {
+  {-0.1551478172758809, -0.0663318154478009},
+  {-0.0050683974900504, -0.3706268297208494},
+  {1., 0.704929658551372},
+  {0., 0.7071067811865475},
+};
+
+
 CubicSpline<ATAN_KNOTS> cs_atan = CubicSpline<ATAN_KNOTS>(atan_knots, atan_coeffs);
 CubicSpline<ACOS_KNOTS> cs_acos = CubicSpline<ACOS_KNOTS>(acos_knots, acos_coeffs);
-
+CubicSpline<SIN_KNOTS> cs_sin = CubicSpline<SIN_KNOTS>(sin_knots, sin_cooeffs);
 
 float atan_spl(float x) {
   int sign = 1;
@@ -72,4 +91,21 @@ float atan_spl(float x) {
 
 float acos_spl(float x) {
   return cs_acos.eval(x);
+}
+
+float fast_sin(float x) {
+  float mod_2_pi = fmod(x, 2 * PI);
+  float mod_pi = fmod(x, PI);
+
+  mod_2_pi = mod_2_pi < 0 ? mod_2_pi + 2 * PI : mod_2_pi;
+  mod_pi = mod_pi < 0 ? mod_pi + PI : mod_pi;
+
+
+  x = mod_pi < PI/2 ? mod_pi : PI - mod_pi;
+
+  return cs_sin.eval(x) * (mod_2_pi < PI ? 1 : -1);
+}
+
+float fast_cos(float x) {
+  return fast_sin(x + PI/2);
 }

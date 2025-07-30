@@ -5,6 +5,17 @@
 #include "low_level/encodermotor.h"
 #include <Arduino.h>
 
+#define TICKS_PER_REVOLUTION 524
+// In meters:
+#define WHEEL_RADIUS 0.037
+#define PI 3.141592653589793238462643383279
+
+struct RobotPosition {
+  float x;
+  float y;
+  float theta;
+};
+
 class DriveBase {
 public:
   DriveBase(EncoderMotor *m_leftMotor, EncoderMotor *m_rightMotor,
@@ -22,6 +33,30 @@ public:
     return tapeFollowingSensor->getError();
   }
 
+  // Odometry tech
+
+  inline void setOdometry(float m_x, float m_y, float m_theta) {
+    x = m_x;
+    y = m_y;
+    theta = m_theta;
+  }
+
+  inline void setOdometry(RobotPosition pos) {
+    x = pos.x;
+    y = pos.y;
+    theta = pos.theta;
+  }
+  
+  inline void resetOdometry() {
+    setOdometry(0, 0, 0);
+  }
+
+  inline RobotPosition getPosition() {
+    return {x, y, theta};
+  }
+
+
+
 private:
   float calculateCorrection();
   void findTape();
@@ -35,6 +70,14 @@ private:
   uint64_t timeLastUpdated;
   uint32_t deltaT;
   bool lineFollow = true;
+
+  // Odometry tech
+  float x = 0;
+  float y = 0;
+
+  float theta = 0;
+
+  constexpr static float DISTANCE_PER_TICK = (WHEEL_RADIUS * 2 * PI / TICKS_PER_REVOLUTION);
 };
 
 #endif

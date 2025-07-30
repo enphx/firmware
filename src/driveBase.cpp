@@ -1,6 +1,10 @@
 #include "driveBase.h"
+#include "low_level/fastfunctions.h"
 
 static const char *TAG = "DRIVEBASE";
+
+// Distance between wheels in meters.
+#define DRIVE_BASE_LENGTH 0.26
 
 // TODO: Write DriveBase Control
 DriveBase::DriveBase(EncoderMotor *m_leftMotor, EncoderMotor *m_rightMotor,
@@ -19,6 +23,30 @@ void DriveBase::setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd) {
 void DriveBase::followLine(bool m_lineFollow) { lineFollow = m_lineFollow; }
 
 void DriveBase::update(void) {
+  // Update Odometry first thing.
+  
+  // DOUBLE CHECK WITH YUVRAJ THAT RUNNING UPDATE BEFORE IS CHILL!
+  int32_t deltaTicksL = leftMotor->update();
+  int32_t deltaTicksR = rightMotor->update();
+  float distL = DISTANCE_PER_TICK * deltaTicksL;
+  float distR = DISTANCE_PER_TICK * deltaTicksR;
+
+  if (deltaTicksL == deltaTicksR) {
+    x += distL * fast_cos(theta);
+    y += distL * fast_sin(theta);
+  } else {
+    float deltaTheta = (distR - distL / DRIVE_BASE_LENGTH);
+    float turnRadius = (distR + distL) / (2 * deltaTheta);
+    float arcLength = (distR + distL)/2;
+
+    x += arcLength * fast_cos(theta + deltaTheta/2);
+    y += arcLength * fast_sin(theta + deltaTheta/2);
+    theta += deltaTheta;
+  }
+  
+
+  // Update tape following shenanigans.
+  
   tapeFollowingSensor->update();
   deltaT = micros() - timeLastUpdated;
   timeLastUpdated += deltaT;
