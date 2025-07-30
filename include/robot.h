@@ -19,10 +19,18 @@ struct lidarPoint {
   float angle;
 };
 
+enum PIDObject {
+  ENCODER_MOTOR,
+  DRIVEBASE,
+  ARM,
+};
+
 class Robot {
 public:
   Robot();
   void init(void);
+
+  void setPidThing(float m_Kp, float m_Ki, float m_Kd, float m_maxCumulativeError, PIDObject m_pidObject);
 
   void calibrateStepper() { asimuthStepper.calibrate(); }
 

@@ -120,10 +120,3 @@ void EncoderMotor::setPWM(float dutyCycle, uint8_t m_direction) {
   ledcWrite(pwmPin, (uint32_t)(dutyCycle * 4095));
 }
 
-float EncoderMotor::calculatePID(void) {
-  if (targetSpeed == 0) {
-    return kP * error + kD * (error - previousError) / (deltaT);
-  }
-  return kP * error + kD * (error - previousError) / (deltaT) +
-         kI * cumulativeError;
-}

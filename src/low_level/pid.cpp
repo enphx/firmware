@@ -8,7 +8,8 @@ PID::PID(float m_Kp, float m_Ki, float m_Kd, float m_cumulativeErrorMax) {
   timeLastUpdated = micros();
 }
 
-void PID::updateConstants(float m_Kp, float m_Ki, float m_Kd, float m_cumulativeErrorMax) {
+void PID::updateConstants(float m_Kp, float m_Ki, float m_Kd,
+                          float m_cumulativeErrorMax) {
   Kp = m_Kp;
   Ki = m_Ki;
   Kd = m_Kd;

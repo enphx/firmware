@@ -27,7 +27,7 @@ Robot::Robot()
       elbowServo(PIN_ELBOW_SERVO_PWM, ELBOW_MIN_PWM, ELBOW_MAX_PWM),
 
       tapeFollowingSensor(),
-      driveBase(&leftMotor, &rightMotor, &tapeFollowingSensor),
+      driveBase(&leftMotor, &rightMotor, &tapeFollowingSensor, 0.2, 0, 0),
       claw(PIN_SHOULDER_DC_PWM),
       arm(&shoulderMotor, &elbowServo, &asimuthStepper)
 
@@ -44,6 +44,23 @@ void Robot::armFollowTrajectory(const Trajectory *trajectory, int len) {
     const Trajectory& step = trajectory[i];
     arm.setArmAngles(step.asimuthTheta, step.shoulderTheta, step.elbowTheta);
     delay(step.deltaT);
+  }
+}
+
+void Robot::setPidThing(float m_Kp, float m_Ki, float m_Kd, float m_maxCumulativeError, PIDObject m_pidObject) {
+  
+    switch (m_pidObject) {
+    case ARM:
+      shoulderMotor.setPID(m_Kp, m_Ki, m_Kd, m_maxCumulativeError);
+    break;
+    case DRIVEBASE:
+      driveBase.setLineFollowingPID(m_Kp, m_Ki, m_Kd);
+    break;
+    case ENCODER_MOTOR:
+      leftMotor.setPID(m_Kp, m_Ki, m_Kd, m_maxCumulativeError);
+      rightMotor.setPID(m_Kp, m_Ki, m_Kd, m_maxCumulativeError);
+    break;
+
   }
 }
 

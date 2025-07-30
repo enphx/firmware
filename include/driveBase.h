@@ -3,6 +3,7 @@
 
 #include "low_level/tapefollowingsensor.h"
 #include "low_level/encodermotor.h"
+#include "low_level/pid.h"
 #include <Arduino.h>
 
 #define TICKS_PER_REVOLUTION 524
@@ -19,7 +20,7 @@ struct RobotPosition {
 class DriveBase {
 public:
   DriveBase(EncoderMotor *m_leftMotor, EncoderMotor *m_rightMotor,
-            TapeFollowingSensor *m_tapeFollowingSensor);
+            TapeFollowingSensor *m_tapeFollowingSensor, float m_Kp, float m_Ki, float m_Kd);
 
   void update(void);
 
@@ -32,8 +33,6 @@ public:
   inline int getTapeFollowingError() {
     return tapeFollowingSensor->getError();
   }
-
-  // Odometry tech
 
   inline void setOdometry(float m_x, float m_y, float m_theta) {
     x = m_x;
@@ -63,6 +62,8 @@ private:
   EncoderMotor *leftMotor, *rightMotor;
   TapeFollowingSensor *tapeFollowingSensor;
 
+  PID tapeFollowingPID;
+
   float Kp = 0.0f, Kd = 0.0f, Ki = 0.0f;
   int error = 0, previousError;
   tapeState previousTapeState, previousSide;
@@ -71,7 +72,6 @@ private:
   uint32_t deltaT;
   bool lineFollow = true;
 
-  // Odometry tech
   float x = 0;
   float y = 0;
 

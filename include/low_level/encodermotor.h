@@ -26,11 +26,9 @@ public:
 
   long getTickCount(void);
 
-private:
   void setPID(float m_kP, float m_kI, float m_kD, float m_maxCumulativeError);
-
+private:
   void setPWM(float dutycycle, uint8_t m_direction);
-  float calculatePID(void);
   static void genericEncoderHandler(void *arg);
   void handleEncoder();
 
@@ -43,7 +41,6 @@ private:
 
   PID velocityPID;
 
-  float kP = 0, kD = 0, kI = 0;
   float targetSpeed = 0, currentSpeed = 0;
   volatile uint8_t previousState = 0;
   volatile int32_t tickCount = 0;
@@ -52,9 +49,6 @@ private:
   uint32_t deltaT;
   uint8_t direction = 0;
   int32_t currentTickCount = 0;
-  float previousError = 0;
-  float error = 0;
-  float cumulativeError = 0;
   int backwards = 1;
 };
 

@@ -10,8 +10,8 @@ PotentiometerMotor::PotentiometerMotor(ShiftRegister *m_shiftRegister,
                                        const float m_Kp, const float m_Ki,
                                        const float m_Kd, const char m_ID)
     : shiftRegister(m_shiftRegister), pwmPin(m_pwmPin),
-      adcChannel(m_adcChannel), directionBit(m_directionBit), Kp(m_Kp),
-      Ki(m_Ki), Kd(m_Kd), ID(m_ID) {
+      adcChannel(m_adcChannel), directionBit(m_directionBit),
+      positionPID(m_Kp, m_Ki, m_Kd, 3), ID(m_ID) {
 
   if (m_backwards) {
     backwards = -1;
@@ -19,7 +19,9 @@ PotentiometerMotor::PotentiometerMotor(ShiftRegister *m_shiftRegister,
     backwards = 1;
   }
 }
-
+void PotentiometerMotor::setPID(float m_kP, float m_kI, float m_kD, float m_maxCumulativeError = 3) {
+  positionPID.updateConstants(m_kP, m_kI, m_kD, m_maxCumulativeError);
+}
 void PotentiometerMotor::init(void) {
   pinMode(pwmPin, OUTPUT);
 
@@ -28,25 +30,11 @@ void PotentiometerMotor::init(void) {
 }
 
 void PotentiometerMotor::update(void) {
-  deltaT = micros() - timeLastUpdated;
-  if (deltaT == 0) {
-    return;
-  }
-  timeLastUpdated += deltaT;
-  previousError = error;
   uint16_t potentiometerReading = get_convolved_value(adcChannel);
 
   currentAngle = (3450 - potentiometerReading) * DEGREES_PER_TICK_SHOULDER;
-  error = targetAngle - currentAngle;
-  cumulativeError += error * deltaT * 0.000001;
 
-  float maxCumulativeError = 3;
-  cumulativeError = cumulativeError > maxCumulativeError ? maxCumulativeError
-                                                         : cumulativeError;
-  cumulativeError = cumulativeError < -maxCumulativeError ? -maxCumulativeError
-                                                          : cumulativeError;
-
-  float power = calculatePID() * backwards;
+  float power = positionPID.update(currentAngle);
 
   if (power >= 0) {
     setPWM(power, 1);
@@ -57,7 +45,10 @@ void PotentiometerMotor::update(void) {
 
 void PotentiometerMotor::calibrate(void) {}
 
-void PotentiometerMotor::setAngle(float angle) { targetAngle = angle; }
+void PotentiometerMotor::setAngle(float angle) { targetAngle = angle; 
+  positionPID.setTargetValue(targetAngle);
+}
+
 
 float PotentiometerMotor::getAngle(void) { return currentAngle; }
 

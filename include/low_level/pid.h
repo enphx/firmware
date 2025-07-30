@@ -6,11 +6,11 @@
 class PID {
 public:
   /**
-   *  @param set cumulativeErrorMax to -1 for no clamp
+   *  @param dont give input for cumulativeErrorMax for it to be uncapped
    */
   PID(float m_Kp, float m_Ki, float m_Kd, float m_cumulativeErrorMax = -1);
   void updateConstants(float m_Kp, float m_Ki, float m_Kd,
-                       float m_cumulativeErrorMax);
+                       float m_cumulativeErrorMax = -1);
   float update(float m_currentValue);
   inline void setTargetValue(float m_target) { targetValue = m_target; }
   inline float getError(void) { return error; }
