@@ -9,29 +9,23 @@ static const char* TAG = "CLAW";
 
 Adafruit_LIS3MDL claw_magnetometer;
 
-Claw::Claw(uint8_t m_leftServoPin, uint8_t m_rightServoPin)
-    : leftServo(m_leftServoPin, CLAW_MIN_PWM, CLAW_MAX_PWM),
-      rightServo(m_rightServoPin, CLAW_MIN_PWM, CLAW_MAX_PWM),
+Claw::Claw(uint8_t m_servoPin) :
+      servo(m_servoPin, CLAW_MIN_PWM, CLAW_MAX_PWM),
       magnetometer(I2C_CLAW_MAG_ADDR),
       rangeFinder(I2C_RANGEFINDER_ADDR) {}
 
 void Claw::init(void) {
   ESP_LOGI(TAG, "init...");
-  // HACK: 
-  // magnetometer.init();
   rangeFinder.init();
-  leftServo.init();
-  rightServo.init();
+  servo.init();
 }
 
 void Claw::open(void) {
-  leftServo.setAngle(LEFT_CLAW_OPEN);
-  rightServo.setAngle(RIGHT_CLAW_OPEN);
+  servo.setAngle(CLAW_OPEN);
 }
 
 void Claw::close(void) {
-  leftServo.setAngle(LEFT_CLAW_CLOSED);
-  rightServo.setAngle(RIGHT_CLAW_CLOSED);
+  servo.setAngle(CLAW_CLOSED);
 }
 
 int16_t Claw::getRangeFinderValue() {

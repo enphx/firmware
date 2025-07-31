@@ -28,7 +28,7 @@ Robot::Robot()
 
       tapeFollowingSensor(),
       driveBase(&leftMotor, &rightMotor, &tapeFollowingSensor),
-      claw(PIN_SHOULDER_DC_PWM, PIN_M3_ENC1),
+      claw(PIN_SHOULDER_DC_PWM),
       arm(&shoulderMotor, &elbowServo, &asimuthStepper)
 
 {
