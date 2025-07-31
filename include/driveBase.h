@@ -65,6 +65,12 @@ public:
   inline float getOdoY() {return y;}
   inline float getOdoTheta() {return theta;}
 
+  inline void resetDistanceTravelled(void) {distanceTravelled = 0;}
+
+  inline float getDistanceTravelled(void) {
+    return distanceTravelled;
+  }
+
 
 private:
   float calculateCorrection();
@@ -86,6 +92,8 @@ private:
   // Odometry tech
   float x = 0;
   float y = 0;
+
+  float distanceTravelled = 0.0f;
 
   float theta = 0;
 

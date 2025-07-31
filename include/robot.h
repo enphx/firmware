@@ -56,6 +56,11 @@ public:
     return claw.getMagnotometerValues();
   }
 
+  inline void resetDistanceTravelled(void) {driveBase.resetDistanceTravelled();}
+
+  inline float getDistanceTravelled(void) {return driveBase.getDistanceTravelled(); }
+
+
   void setTapeFollowing(bool tapeFollow);
 
   void setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd);
