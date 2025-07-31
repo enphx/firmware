@@ -27,7 +27,10 @@ public:
   long getTickCount(void);
 
   void setPID(float m_kP, float m_kI, float m_kD, float m_maxCumulativeError);
-  void getPID(float *err, float *setpoint, float *p_out, float *i_out, float *d_out);
+
+  inline void getPID(float *err, float *setpoint, float *p_out, float *i_out, float *d_out) {
+    velocityPID.getPIDVals(err, setpoint, p_out, i_out, d_out);
+  }
 
 private:
   void setPWM(float dutycycle, uint8_t m_direction);

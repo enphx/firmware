@@ -5,7 +5,7 @@
 
 void setup_serial_uart();
 // int read_from_serial(uint8_t * data, uint32_t size);
-int write_to_serial(uint8_t * data, uint32_t size);
+int write_to_serial(const void * data, uint32_t size);
 
 int write_b_to_serial(uint8_t b);
 int write_f_to_serial(float f);

@@ -1,5 +1,6 @@
 #include "robot.h"
 #include "constants.h"
+#include "esp_private/crosscore_int.h"
 #include "low_level.h"
 #include "low_level/io.h"
 #include <Arduino.h>
@@ -39,7 +40,7 @@ Robot::Robot()
   low_levelAssignMotors(&leftMotor, &rightMotor, &shoulderMotor,
                         &asimuthStepper, &elbowServo);
   low_levelAssignLowestLevelObjects(&shiftRegister);
-  driveBase.setLineFollowingPID(0.2, 0, 0);
+  driveBase.setLineFollowingPID(0.2, 0, 0, -1);
   driveBase.followLine(true);
 }
 
@@ -58,7 +59,7 @@ void Robot::setPidThing(float m_Kp, float m_Ki, float m_Kd, float m_maxCumulativ
       shoulderMotor.setPID(m_Kp, m_Ki, m_Kd, m_maxCumulativeError);
     break;
     case PIDObject::DRIVEBASE:
-      driveBase.setLineFollowingPID(m_Kp, m_Ki, m_Kd);
+      driveBase.setLineFollowingPID(m_Kp, m_Ki, m_Kd, m_maxCumulativeError);
     break;
     case PIDObject::ENCODER_MOTOR:
       leftMotor.setPID(m_Kp, m_Ki, m_Kd, m_maxCumulativeError);
@@ -111,31 +112,27 @@ void Robot::findTape(bool clockwise) {
   }
 }
 
-void Robot::update() {
-  driveBase.update();
-  low_level_update();
-
-  #ifdef SERIAL_OUTPUT
-  processSerial();
-  #endif
-}
-
 #ifdef SERIAL_OUTPUT
 
 static PIDObject currentTarget = PIDObject::SHOULDER;
 
-void Robot::receive_and_process_serial_messages() {
+bool Robot::receive_and_process_serial_messages() {
+  // delay(10);
   
   int len = receive_incoming_message(serial_message, MAX_SERIAL_INPUT_SIZE);
 
   if (len > 0) {
-    write_to_serial(serial_message, len);
-    if (serial_message[0] == PID && serial_message[1] == SET) {
+    if (len == 23 && serial_message[0] == PID && serial_message[1] == SET) {
       // Update PID message; read floats and whatnot, and then update the according.
-      float kp = bits_to_f32(&serial_message[3]);
-      float ki = bits_to_f32(&serial_message[7]);
-      float kd = bits_to_f32(&serial_message[11]);
-      float max_ce = bits_to_f32(&serial_message[15]);
+      write_to_serial((uint8_t *)"WRITING PID VALS!", 17);
+
+      float set_point = bits_to_f32(&serial_message[3]);
+      float kp = bits_to_f32(&serial_message[7]);
+      float ki = bits_to_f32(&serial_message[11]);
+      float kd = bits_to_f32(&serial_message[15]);
+      float max_ce = bits_to_f32(&serial_message[19]);
+
+
 
       // char buf[256];
       // int len1 = snprintf(buf, 256, " kp: %f, ki: %f, kd: %f, max_ce: %f ",kp, ki, kd, max_ce);
@@ -143,20 +140,46 @@ void Robot::receive_and_process_serial_messages() {
 
       switch (serial_message[2]) {
         case ENCODER_MOTOR:
+          write_to_serial((uint8_t*)"ENCODERMOTOR", 11);
           currentTarget = PIDObject::ENCODER_MOTOR;
           leftMotor.setPID(kp, ki, kd, max_ce);
+          leftMotor.setSpeed(set_point);
           rightMotor.setPID(kp, ki, kd, max_ce);
           break;
         case DRIVE_BASE:
+          write_to_serial((uint8_t*)"DRVBASE", 7);
           currentTarget = PIDObject::DRIVEBASE;
           driveBase.setLineFollowingPID(kp, ki, kd, max_ce);
           break;
         case SHOULDER:
+          write_to_serial((uint8_t*)"SHLDR", 5);
           currentTarget = PIDObject::SHOULDER;
           shoulderMotor.setPID(kp, ki, kd, max_ce);
           break;
       }
+    } else if (len == 10 && serial_message[0] == DRIVE_BASE && serial_message[1] == SET) {
+      float base_speed = bits_to_f32(&serial_message[2]);
+      bool tape_following = (serial_message[6] != 0);
+
+      // if (tape_following) {
+      //   write_to_serial((uint8_t*)&"TRUE",4);
+      // } else {
+      //   write_to_serial((uint8_t*)&"FALSE",5);
+      // }
+
+      driveBase.setBaseSpeed(base_speed);
+      driveBase.followLine(tape_following);
+    } else if (len == 6 && serial_message[0] == TTBL && serial_message[1] == SET) {
+      float stepper_angle = bits_to_f32(&serial_message[2]);
+
+      setArmPosition(0, 0, stepper_angle, true);
     }
+
+    // processed a message.
+    return true;
+  } else {
+    // no messages processed.
+    return false;
   }
 }
 
@@ -170,6 +193,12 @@ void copy_1(uint8_t * target, uint8_t source, uint32_t * index) {
   target[0] = source;
 }
 
+void copy_f(uint8_t * target, float f, uint32_t * index) {
+  copy_1(target, FLOAT_AHEAD, index);
+  copy_4(&target[1], &f, index);
+}
+
+
 void Robot::send_serial_messages() {
   float err;
   float setpoint;
@@ -182,25 +211,77 @@ void Robot::send_serial_messages() {
       leftMotor.getPID(&err, &setpoint, &p_out, &i_out, &d_out);
       break;
     case DRIVE_BASE:
+      driveBase.getPID(&err, &setpoint, &p_out, &i_out, &d_out);
       break;
     case SHOULDER:
+      shoulderMotor.getPID(&err, &setpoint, &p_out, &i_out, &d_out);
       break;
   }
   
   uint8_t message_to_send[256];
   uint32_t i = 0;
 
-  copy_1(message_to_send, MSG_START, &i);
-  copy_1(message_to_send, PID, &i);
-  copy_4
+  float odo_x;
+  float odo_y;
+  float odo_theta;
+  driveBase.getOdometry(&odo_x, &odo_y, &odo_theta);
+
+  write_b_to_serial(MSG_START);
+  write_b_to_serial(PID);
+  write_f_to_serial(err);
+  write_f_to_serial(setpoint);
+  write_f_to_serial(p_out);
+  write_f_to_serial(i_out);
+  write_f_to_serial(d_out);
+
+  write_b_to_serial(ODOMETRY);
+  write_f_to_serial(odo_x);
+  write_f_to_serial(odo_y);
+  write_f_to_serial(odo_theta);
+  write_b_to_serial(MSG_END);
+
+  // Start message
+  copy_1(&message_to_send[i], MSG_START, &i);
+
+  // Send pid values
+  copy_1(&message_to_send[i], PID, &i);
+  copy_f(&message_to_send[i], err, &i);
+  copy_f(&message_to_send[i], setpoint, &i);
+  copy_f(&message_to_send[i], p_out, &i);
+  copy_f(&message_to_send[i], i_out, &i);
+  copy_f(&message_to_send[i], d_out, &i);
+
+  // Send Odometry
+  copy_1(&message_to_send[i], ODOMETRY, &i);
+  copy_f(&message_to_send[i], odo_x, &i);
+  copy_f(&message_to_send[i], odo_y, &i);
+  copy_f(&message_to_send[i], odo_theta, &i);
+
+  copy_1(&message_to_send[i], MSG_END, &i);
+
+  write_to_serial(message_to_send, i);
+
 }
 
-void Robot::processSerial() {
-  receive_and_process_serial_messages();
-  send_serial_messages();
-}
 
 #endif
+
+
+
+static uint32_t prev_serial_update = 0;
+
+void Robot::update() {
+  driveBase.update();
+  low_level_update();
+
+  #ifdef SERIAL_OUTPUT
+  if (millis() - prev_serial_update >= 20) {
+    while (receive_and_process_serial_messages()) ;
+    send_serial_messages();
+    prev_serial_update = millis();
+  }
+  #endif
+}
 
 int Robot::getTapeFollowingError() { return driveBase.getTapeFollowingError(); }
 
@@ -210,6 +291,6 @@ void Robot::setTapeFollowing(bool tapeFollow) {
   driveBase.followLine(tapeFollow);
 }
 
-void Robot::setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd) {
-  driveBase.setLineFollowingPID(m_Kp, m_Ki, m_Kd);
+void Robot::setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd, float m_clamp) {
+  driveBase.setLineFollowingPID(m_Kp, m_Ki, m_Kd, m_clamp);
 }
