@@ -8,9 +8,9 @@
 
 static const char *TAG = "ROBOT";
 
-#define SPEED_P 2
-#define SPEED_I 0
-#define SPEED_D 0
+#define SPEED_P 2.0
+#define SPEED_I 0.0002
+#define SPEED_D 0.002
 
 Robot::Robot()
     : shiftRegister(),
@@ -21,7 +21,7 @@ Robot::Robot()
                  BIT_M2_DIR, 44 * 21, SPEED_P, SPEED_I, SPEED_D, 'R'),
 
       shoulderMotor(&shiftRegister, false, PIN_M3_PWM, ADC_CH_SHOULDER_POT,
-                    BIT_M3_DIR, 0.03, 0, 0, 'S'),
+                    BIT_M3_DIR, 0.07, 0, 0, 'S'),
 
       asimuthStepper(&shiftRegister, PIN_TTBL_STEPPER_PULSE, BIT_TTBL_DIR,
                      600 * 8),
@@ -37,7 +37,7 @@ Robot::Robot()
   low_levelAssignMotors(&leftMotor, &rightMotor, &shoulderMotor,
                         &asimuthStepper, &elbowServo);
   low_levelAssignLowestLevelObjects(&shiftRegister);
-  driveBase.setLineFollowingPID(0.2, 0, 0);
+  driveBase.setLineFollowingPID(0.07, 0, 0.001);
   driveBase.followLine(true);
 }
 
@@ -59,6 +59,12 @@ void Robot::setArmPosition(float m_height, float m_radius, float m_theta,
 void Robot::init() {
   low_level_init();
   claw.init();
+
+  #ifdef SERIAL_OUTPUT
+  setup_serial_uart();
+  vTaskDelay(10);
+  #endif
+
 }
 
 void Robot::delay(uint32_t milliseconds) {
@@ -130,6 +136,7 @@ bool Robot::receive_and_process_serial_messages() {
           // write_to_serial((uint8_t*)"SHLDR", 5);
           currentTarget = PIDObject::SHOULDER;
           shoulderMotor.setPID(kp, ki, kd);
+          shoulderMotor.setMaxCE(max_ce);
           break;
       }
     } else if (len == 10 && serial_message[0] == DRIVE_BASE && serial_message[1] == SET) {
@@ -148,6 +155,11 @@ bool Robot::receive_and_process_serial_messages() {
       float stepper_angle = bits_to_f32(&serial_message[2]);
 
       setArmPosition(0, 0, stepper_angle, true);
+    } else if (len == 10 && serial_message[0] == ARM && serial_message[1] == SET) {
+      float r = bits_to_f32(&serial_message[2]);
+      float h = bits_to_f32(&serial_message[6]);
+
+      setArmPosition(h, r, getArmTheta(), false);
     }
 
     // processed a message.
@@ -183,11 +195,11 @@ void Robot::send_serial_messages() {
 
   switch (currentTarget) {
     case PIDObject::ENCODER_MOTOR:
-      err = leftMotor.getError();
-      setpoint = leftMotor.getSetPoint();
-      p_out = leftMotor.getP();
-      i_out = leftMotor.getI();
-      d_out = leftMotor.getD();
+      err = rightMotor.getError();
+      setpoint = rightMotor.getSetPoint();
+      p_out = rightMotor.getP();
+      i_out = rightMotor.getI();
+      d_out = rightMotor.getD();
       // leftMotor.getPID(&err, &setpoint, &p_out, &i_out, &d_out);
       break;
     case PIDObject::DRIVEBASE:
@@ -259,14 +271,22 @@ void Robot::send_serial_messages() {
 }
 
 
+
+uint32_t last_serial_message_time = 0;
+
 #endif
-
-
-
 
 void Robot::update() {
   driveBase.update();
   low_level_update();
+
+  #ifdef SERIAL_OUTPUT
+  while (receive_and_process_serial_messages()) ;
+  if (millis() - last_serial_message_time >= 50) {
+    send_serial_messages();
+    last_serial_message_time = millis();
+  }
+  #endif
 }
 
 int Robot::getTapeFollowingError() { return driveBase.getTapeFollowingError(); }

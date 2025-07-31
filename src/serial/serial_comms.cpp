@@ -1,3 +1,7 @@
+#include "include/constants.h"
+
+#ifdef SERIAL_OUTPUT
+
 #include "include/serial/serial_comms.h"
 #include "driver/uart.h"
 #include <stdio.h>
@@ -71,7 +75,7 @@ int receive_incoming_message(uint8_t * message, uint32_t max_size) {
 
   buf_index += new_vals;
 
-  if (new_vals <= 0) {
+  if (new_vals < 0) {
     return 0;
   }
 
@@ -108,3 +112,5 @@ int receive_incoming_message(uint8_t * message, uint32_t max_size) {
 
   return msg_size;
 }
+
+#endif

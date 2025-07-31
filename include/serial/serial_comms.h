@@ -1,3 +1,6 @@
+#include "include/constants.h"
+
+#ifdef SERIAL_OUTPUT
 
 #include <cstdint>
 #include <cstring>
@@ -22,3 +25,5 @@ inline float bits_to_f32(uint8_t *bits) {
 // Written message is null terminated and stripped of
 // MSG_START and MSG_END.
 int receive_incoming_message(uint8_t * message, uint32_t max_size);
+
+#endif

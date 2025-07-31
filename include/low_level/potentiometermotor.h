@@ -33,6 +33,8 @@ public:
   inline float getI() {return I;}
   inline float getD() {return D;}
 
+  inline void setMaxCE(float max_ce) {maxCE = max_ce;}
+
 private:
   float calculatePID(void);
   void setPWM(float dutyCycle, uint8_t m_direction);
@@ -51,6 +53,7 @@ private:
   uint32_t deltaT;
   uint8_t direction = 0;
   float Kp, Ki, Kd;
+  float maxCE = 0;
   float P, I, D = 0.0;
 };
 
