@@ -70,6 +70,8 @@ int32_t EncoderMotor::update(void) {
 
   int32_t deltaTicks = currentTickCount - previousTickCount;
 
+  previousTickCount = currentTickCount;
+
   currentSpeed =
       (float)(deltaTicks) / ((float)deltaT) * ticksPerRev * PI * WHEEL_DIAMETER;
 
@@ -80,9 +82,9 @@ int32_t EncoderMotor::update(void) {
   // currentSpeed, kP, kI, kD);
 
   if (power >= 0) {
-    setPWM(power, 1);
+    setPWM(power, 0);
   } else {
-    setPWM(-power, 0);
+    setPWM(-power, 1);
   }
 
   return deltaTicks;

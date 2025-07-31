@@ -22,7 +22,7 @@ float PID::update(float m_currentValue) {
   currentValue = m_currentValue;
   previousError = error;
   error = targetValue - currentValue;
-  cumulativeError += error * deltaT * 0.000001f;
+  cumulativeError += error * deltaT * 0.1;
 
   if (cumulativeErrorMax != -1) {
 

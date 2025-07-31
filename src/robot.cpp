@@ -96,7 +96,7 @@ void Robot::delay(uint32_t milliseconds) {
       return;
     }
     update();
-    vTaskDelay(pdMS_TO_TICKS(5));
+    vTaskDelay(5);
   }
 }
 
@@ -124,7 +124,7 @@ bool Robot::receive_and_process_serial_messages() {
   if (len > 0) {
     if (len == 23 && serial_message[0] == PID && serial_message[1] == SET) {
       // Update PID message; read floats and whatnot, and then update the according.
-      write_to_serial((uint8_t *)"WRITING PID VALS!", 17);
+      // write_to_serial((uint8_t *)"WRITING PID VALS!", 17);
 
       float set_point = bits_to_f32(&serial_message[3]);
       float kp = bits_to_f32(&serial_message[7]);
@@ -140,19 +140,20 @@ bool Robot::receive_and_process_serial_messages() {
 
       switch (serial_message[2]) {
         case ENCODER_MOTOR:
-          write_to_serial((uint8_t*)"ENCODERMOTOR", 11);
+          // write_to_serial((uint8_t*)"ENCODERMOTOR", 11);
           currentTarget = PIDObject::ENCODER_MOTOR;
           leftMotor.setPID(kp, ki, kd, max_ce);
           leftMotor.setSpeed(set_point);
           rightMotor.setPID(kp, ki, kd, max_ce);
+          rightMotor.setSpeed(set_point);
           break;
         case DRIVE_BASE:
-          write_to_serial((uint8_t*)"DRVBASE", 7);
+          // write_to_serial((uint8_t*)"DRVBASE", 7);
           currentTarget = PIDObject::DRIVEBASE;
           driveBase.setLineFollowingPID(kp, ki, kd, max_ce);
           break;
         case SHOULDER:
-          write_to_serial((uint8_t*)"SHLDR", 5);
+          // write_to_serial((uint8_t*)"SHLDR", 5);
           currentTarget = PIDObject::SHOULDER;
           shoulderMotor.setPID(kp, ki, kd, max_ce);
           break;
@@ -183,17 +184,17 @@ bool Robot::receive_and_process_serial_messages() {
   }
 }
 
-void copy_4(uint8_t * target, void * source, uint32_t * index) {
+inline void copy_4(uint8_t * target, void * source, uint32_t * index) {
   *index = *index + 4;
   memcpy(target, source, 4);
 }
 
-void copy_1(uint8_t * target, uint8_t source, uint32_t * index) {
+inline void copy_1(uint8_t * target, uint8_t source, uint32_t * index) {
   *index = *index + 1;
   target[0] = source;
 }
 
-void copy_f(uint8_t * target, float f, uint32_t * index) {
+inline void copy_f(uint8_t * target, float f, uint32_t * index) {
   copy_1(target, FLOAT_AHEAD, index);
   copy_4(&target[1], &f, index);
 }
@@ -206,14 +207,14 @@ void Robot::send_serial_messages() {
   float i_out;
   float d_out;
 
-  switch (serial_message[2]) {
-    case ENCODER_MOTOR:
+  switch (currentTarget) {
+    case PIDObject::ENCODER_MOTOR:
       leftMotor.getPID(&err, &setpoint, &p_out, &i_out, &d_out);
       break;
-    case DRIVE_BASE:
+    case PIDObject::DRIVEBASE:
       driveBase.getPID(&err, &setpoint, &p_out, &i_out, &d_out);
       break;
-    case SHOULDER:
+    case PIDObject::SHOULDER:
       shoulderMotor.getPID(&err, &setpoint, &p_out, &i_out, &d_out);
       break;
   }
@@ -258,7 +259,8 @@ void Robot::send_serial_messages() {
   copy_f(&message_to_send[i], odo_theta, &i);
 
   copy_1(&message_to_send[i], LIDAR, &i);
-  copy_f(&message_to_send[i], (float)claw.getRangeFinderValue(), &i);
+  // copy_f(&message_to_send[i], (float)claw.getRangeFinderValue(), &i);
+  copy_f(&message_to_send[i], lastLidarValue, &i);
 
   copy_1(&message_to_send[i], MSG_END, &i);
 
@@ -274,15 +276,21 @@ void Robot::send_serial_messages() {
 static uint32_t prev_serial_update = 0;
 
 void Robot::update() {
+
+  if (millis() - lastLidarUpdateTime >= 20) {
+    lastLidarValue = claw.getRangeFinderValue();
+  }
+  
   driveBase.update();
   low_level_update();
 
   #ifdef SERIAL_OUTPUT
-  if (millis() - prev_serial_update >= 20) {
-    while (receive_and_process_serial_messages()) ;
+  if (millis() - prev_serial_update >= 1500) {
     send_serial_messages();
+    while (receive_and_process_serial_messages()) ;
     prev_serial_update = millis();
   }
+    // receive_and_process_serial_messages();
   #endif
 }
 

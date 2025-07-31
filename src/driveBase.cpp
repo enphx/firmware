@@ -54,8 +54,8 @@ void DriveBase::update(void) {
   float correction = tapeFollowingPID.update(-error);
 
   if (lineFollow) {
-    leftMotor->setSpeed(baseSpeed + correction);
-    rightMotor->setSpeed(baseSpeed - correction);
+    leftMotor->setSpeed(baseSpeed + correction * baseSpeed);
+    rightMotor->setSpeed(baseSpeed - correction * baseSpeed);
   } else {
     leftMotor->setSpeed(baseSpeed);
     rightMotor->setSpeed(baseSpeed);

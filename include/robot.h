@@ -93,6 +93,9 @@ private:
 
   bool receive_and_process_serial_messages();
   void send_serial_messages();
+
+  float lastLidarValue = 0;
+  uint32_t lastLidarUpdateTime = 0;
 };
 
 #endif
