@@ -1,6 +1,9 @@
 #include "include/serial/serial_comms.h"
 #include "driver/uart.h"
+#include <stdio.h>
 #include <Arduino.h>
+#include <cstdio>
+#include <cstring>
 
 const uart_port_t uart_num = UART_NUM_1;
 #define PIN_TX 1
@@ -22,7 +25,7 @@ int read_from_serial(uint8_t * data, uint32_t size) {
   return uart_read_bytes(uart_num, data, size, 0);
 }
 
-int write_to_serial(uint8_t * data, uint32_t size) {
+int write_to_serial(const void * data, uint32_t size) {
   return uart_write_bytes(uart_num, data, size);
 }
 
@@ -50,31 +53,58 @@ int write_i_to_serial(int32_t i) {
 }
 
 void setup_serial_uart() {
-  ESP_ERROR_CHECK(uart_driver_install(uart_num, 1024, 1024, 0, NULL, 0));
+  ESP_ERROR_CHECK(uart_driver_install(uart_num, 2048, 2048, 0, NULL, 0));
   ESP_ERROR_CHECK(uart_param_config(uart_num, &uart_config));
   ESP_ERROR_CHECK(uart_set_pin(uart_num, PIN_TX, PIN_RX, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE));
 }
 
+#define BUF_SIZE 1024
+static uint8_t serial_buffer[BUF_SIZE] = {0};
+static uint32_t buf_index = 0;
 
 int receive_incoming_message(uint8_t * message, uint32_t max_size) {
-  // write_to_serial(data, 256);
-
-  // Overwrite the message if it gets too long.
-  if (i >= 250 || data[0] != MSG_START) {
-    i = 0;
+  if (buf_index >= BUF_SIZE) {
+    buf_index = 0;
   }
 
-  int last = read_from_serial(&(data[i]), 256 - i);
-  if (i + last - 2 > max_size) {
-    i = 0;
+  int new_vals = read_from_serial(&serial_buffer[buf_index], BUF_SIZE - buf_index);
+
+  buf_index += new_vals;
+
+  if (new_vals <= 0) {
     return 0;
   }
-  if (data[i + last - 1] == MSG_END) {
-    memcpy(message, &(data[1]), i + last - 2);
-    i = 0;
-    return (i + last - 2);
+
+
+  int start_i;
+  int end_i;
+
+  for (start_i = 0; serial_buffer[start_i] != MSG_START && start_i < buf_index; start_i++) ;
+
+  if (start_i >= buf_index) {
+    buf_index = 0;
+    return 0;
+  }
+
+
+  for (end_i = start_i; serial_buffer[end_i] != MSG_END && end_i < buf_index; end_i++) ;
+
+  if (end_i >= buf_index) {
+    return 0;
+  }
+
+
+  int msg_size = end_i - start_i - 1;
+  msg_size = msg_size < max_size ? msg_size : max_size;
+
+  memcpy(message, &serial_buffer[start_i + 1], msg_size);
+
+  if (end_i + 1 < buf_index) {
+    memmove(serial_buffer, &serial_buffer[end_i + 1], buf_index - end_i - 1);
+    buf_index = buf_index - end_i - 1;
   } else {
-    i += last;
-    return 0;
+    buf_index = 0;
   }
+
+  return msg_size;
 }

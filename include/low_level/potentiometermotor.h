@@ -23,6 +23,11 @@ public:
   float getAngle(void);
   void setPID(float m_Kp, float m_Ki, float m_Kd, float m_maxCumulativeError);
 
+  inline void getPID(float *err, float *setpoint, float *p_out, float *i_out, float *d_out) {
+    positionPID.getPIDVals(err, setpoint, p_out, i_out, d_out);
+  }
+
+
 private:
   void setPWM(float dutyCycle, uint8_t m_direction);
 

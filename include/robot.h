@@ -58,7 +58,7 @@ public:
 
   void setTapeFollowing(bool tapeFollow);
 
-  void setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd);
+  void setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd, float m_clamp = -1);
 
   bool stepperIsMoving() { return asimuthStepper.moving(); }
 
@@ -88,10 +88,10 @@ private:
   float radius, height, theta;
 
 
-  const static uint MAX_SERIAL_INPUT_SIZE = 128;
+  const static uint MAX_SERIAL_INPUT_SIZE = 256;
   uint8_t serial_message[MAX_SERIAL_INPUT_SIZE];
 
-  void receive_and_process_serial_messages();
+  bool receive_and_process_serial_messages();
   void send_serial_messages();
 };
 

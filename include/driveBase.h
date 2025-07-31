@@ -34,10 +34,20 @@ public:
     return tapeFollowingSensor->getError();
   }
 
+  inline void getPID(float *err, float *setpoint, float *p_out, float *i_out, float *d_out) {
+    tapeFollowingPID.getPIDVals(err, setpoint, p_out, i_out, d_out);
+  }
+
   inline void setOdometry(float m_x, float m_y, float m_theta) {
     x = m_x;
     y = m_y;
     theta = m_theta;
+  }
+
+  inline void getOdometry(float *m_x, float *m_y, float *m_theta) {
+    *m_x = x;
+    *m_y = y;
+    *m_theta = theta;
   }
 
   inline void setOdometry(RobotPosition pos) {

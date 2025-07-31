@@ -19,6 +19,15 @@ public:
   inline float getI(void) { return I; }
   inline float getD(void) { return D; }
 
+
+  inline void getPIDVals(float *err, float *setpoint, float *p_out, float *i_out, float *d_out) {
+    *err = getError();
+    *setpoint = getTargetValue();
+    *p_out = getP();
+    *i_out = getI();
+    *d_out = getD();
+  }
+
 private:
   float currentValue, targetValue;
   float cumulativeError, previousError, error;
