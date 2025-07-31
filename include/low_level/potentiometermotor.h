@@ -1,7 +1,6 @@
 #ifndef POTENTIOMETER_MOTOR_H
 #define POTENTIOMETER_MOTOR_H
 #include "low_level/core0/adc.h"
-#include "low_level/pid.h"
 #include "low_level/shiftregister.h"
 #include <Arduino.h>
 
@@ -21,21 +20,14 @@ public:
   void setAngle(float angle);
 
   float getAngle(void);
-  void setPID(float m_Kp, float m_Ki, float m_Kd, float m_maxCumulativeError);
-
-  inline void getPID(float *err, float *setpoint, float *p_out, float *i_out, float *d_out) {
-    positionPID.getPIDVals(err, setpoint, p_out, i_out, d_out);
-  }
-
 
 private:
+  float calculatePID(void);
   void setPWM(float dutyCycle, uint8_t m_direction);
 
   const char ID;
 
   const uint8_t pwmPin, directionBit, adcChannel;
-
-  PID positionPID;
 
   uint16_t minPotentiometerReading, maxPotentiometerReading;
 

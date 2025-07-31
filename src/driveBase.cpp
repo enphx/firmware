@@ -3,26 +3,29 @@
 
 static const char *TAG = "DRIVEBASE";
 
+// Distance between wheels in meters.
 #define DRIVE_BASE_LENGTH 0.26
 
+// TODO: Write DriveBase Control
 DriveBase::DriveBase(EncoderMotor *m_leftMotor, EncoderMotor *m_rightMotor,
-                     TapeFollowingSensor *m_tapeFollowingSensor, float m_Kp,
-                     float m_Ki, float m_Kd)
-    : tapeFollowingPID(m_Kp, m_Ki, m_Kd) {
+                     TapeFollowingSensor *m_tapeFollowingSensor) {
   leftMotor = m_leftMotor;
   rightMotor = m_rightMotor;
   tapeFollowingSensor = m_tapeFollowingSensor;
-  tapeFollowingPID.setTargetValue(0);
 }
 
-void DriveBase::setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd, float m_cumulativeErrorMax) {
-  tapeFollowingPID.updateConstants(m_Kp, m_Ki, m_Kd, m_cumulativeErrorMax);
+void DriveBase::setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd) {
+  Kp = m_Kp;
+  Ki = m_Ki;
+  Kd = m_Kd;
 }
 
 void DriveBase::followLine(bool m_lineFollow) { lineFollow = m_lineFollow; }
 
 void DriveBase::update(void) {
-
+  // Update Odometry first thing.
+  
+  // DOUBLE CHECK WITH YUVRAJ THAT RUNNING UPDATE BEFORE IS CHILL!
   int32_t deltaTicksL = leftMotor->update();
   int32_t deltaTicksR = rightMotor->update();
   float distL = DISTANCE_PER_TICK * deltaTicksL;
@@ -34,14 +37,20 @@ void DriveBase::update(void) {
   } else {
     float deltaTheta = (distR - distL / DRIVE_BASE_LENGTH);
     float turnRadius = (distR + distL) / (2 * deltaTheta);
-    float arcLength = (distR + distL) / 2;
+    float arcLength = (distR + distL)/2;
 
-    x += arcLength * fast_cos(theta + deltaTheta / 2);
-    y += arcLength * fast_sin(theta + deltaTheta / 2);
+    x += arcLength * fast_cos(theta + deltaTheta/2);
+    y += arcLength * fast_sin(theta + deltaTheta/2);
     theta += deltaTheta;
   }
+  
 
+  // Update tape following shenanigans.
+  
   tapeFollowingSensor->update();
+  deltaT = micros() - timeLastUpdated;
+  timeLastUpdated += deltaT;
+  previousError = error;
 
   if (lineFollow &&
       tapeFollowingSensor->getTapeState() == tapeState::OutOfBounds) {
@@ -51,11 +60,14 @@ void DriveBase::update(void) {
 
   error = tapeFollowingSensor->getError();
 
-  float correction = tapeFollowingPID.update(-error);
+  if (previousTapeState == tapeState::OutOfBounds) {
+    previousError = error;
+  }
 
   if (lineFollow) {
-    leftMotor->setSpeed(baseSpeed + correction * baseSpeed);
-    rightMotor->setSpeed(baseSpeed - correction * baseSpeed);
+    float correction = calculateCorrection();
+    leftMotor->setSpeed(baseSpeed + correction);
+    rightMotor->setSpeed(baseSpeed - correction);
   } else {
     leftMotor->setSpeed(baseSpeed);
     rightMotor->setSpeed(baseSpeed);
@@ -65,6 +77,12 @@ void DriveBase::update(void) {
   previousSide = tapeFollowingSensor->getSide();
 }
 void DriveBase::setBaseSpeed(float speed) { baseSpeed = speed; }
+
+float DriveBase::calculateCorrection(void) {
+  float proportionalTerm = Kp * 0.001f * error;
+  float derrivativeTerm = Kd * 0.001f * (error - previousError) / float(deltaT);
+  return (proportionalTerm + derrivativeTerm) * baseSpeed;
+}
 
 void DriveBase::findTape(void) {
   if (tapeFollowingSensor->getSide() == tapeState::Left) {

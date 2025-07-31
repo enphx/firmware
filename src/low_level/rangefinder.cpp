@@ -1,9 +1,10 @@
 #include "include/low_level/rangefinder.h"
 #include "include/low_level/io.h"
 
-static const char *TAG = "RANGEFINDER";
 
-RangeFinder::RangeFinder(uint8_t i2c_addr) : addr(i2c_addr) {}
+static const char* TAG = "RANGEFINDER";
+
+RangeFinder::RangeFinder(uint8_t i2c_addr) : addr(i2c_addr)  {}
 
 void RangeFinder::init() {
   if (!vl53.begin(I2C_RANGEFINDER_ADDR)) {
@@ -14,9 +15,6 @@ void RangeFinder::init() {
   } else {
     ESP_LOGI(TAG, "Rangefinder found successfully at address %u", addr);
   }
-  vl53.VL53L1X_SetDistanceMode(1);
-  vl53.VL53L1X_SetTimingBudgetInMs(20);
-  vl53.VL53L1X_SetInterMeasurementInMs(25);
 
   if (!vl53.startRanging()) {
     while (1) {
@@ -25,7 +23,11 @@ void RangeFinder::init() {
     }
   }
 
+  vl53.setTimingBudget(50);
+
   ESP_LOGI(TAG, "Started ranging successfully!!");
 }
 
-int16_t RangeFinder::getDistance() { return vl53.distance(); }
+int16_t RangeFinder::getDistance() {
+  return vl53.distance();
+}

@@ -3,7 +3,6 @@
 #include "core0.h"
 #include "esp_log.h"
 #include "include/low_level/io.h"
-#include "include/serial/serial_comms.h"
 #include <Arduino.h>
 
 static const char *TAG = "LOW LEVEL";
@@ -60,7 +59,7 @@ void print_adc_vals() {
 
 void low_level_update() {
   // Now calling motor updates from drivebase...
-  rightMotor->update();
-  leftMotor->update();
+  // rightMotor->update();
+  // leftMotor->update();
   shoulderMotor->update();
 }

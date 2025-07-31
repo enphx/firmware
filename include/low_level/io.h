@@ -25,7 +25,7 @@
 #define PIN_ELBOW_SERVO_PWM       5
 #define PIN_M1_PWM                10
 #define PIN_M2_PWM                9
-#define PIN_M3_PWM                PIN_M3_ENC1
+#define PIN_M3_PWM                3
 #define PIN_M4_PWM                1
 #define PIN_IR_BEAC_L             35
 #define PIN_IR_BEAC_R             34

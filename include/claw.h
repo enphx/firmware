@@ -8,7 +8,7 @@
 
 class Claw {
 public:
-  Claw(uint8_t m_servoPin);
+  Claw(uint8_t m_leftServiPin, uint8_t m_rightServoPin);
   
   void init(void);
   
@@ -21,7 +21,7 @@ public:
   magVector getMagnotometerValues(void);
 
 private:
-  Servo servo;
+  Servo leftServo, rightServo;
   Magnetometer magnetometer;
   RangeFinder rangeFinder;
 };
