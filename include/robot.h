@@ -11,6 +11,7 @@
 #include "low_level/shiftregister.h"
 #include "low_level/stepperdriver.h"
 #include "low_level/tapefollowingsensor.h"
+#include "trajectories.h"
 #include <Arduino.h>
 
 struct lidarPoint {
@@ -34,6 +35,10 @@ public:
   void setStepperSpeed(float speed) { asimuthStepper.setSpeed(speed); }
 
   void setArmPosition(float height, float radius, float theta, bool relative);
+
+  void setArmAngles(float asimuthTheta, float shoulderTheta, float elbowTheta);
+
+  void armFollowTrajectory(const Trajectory *trajectory, int numberOfPoints);
 
   int getTapeFollowingError();
 
@@ -81,8 +86,6 @@ private:
   float radius, height, theta;
 
   void processSerial();
-
-  
 
   const static uint MAX_SERIAL_INPUT_SIZE = 256;
   uint8_t serial_message[MAX_SERIAL_INPUT_SIZE];

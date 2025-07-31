@@ -18,6 +18,6 @@
 
 
 // Comment this out for no serial output...
-#define SERIAL_OUTPUT
+// #define SERIAL_OUTPUT
 
 #endif
