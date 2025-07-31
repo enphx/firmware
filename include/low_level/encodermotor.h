@@ -34,8 +34,15 @@ public:
 
   long getTickCount(void);
 
+  void setPID(float m_kP, float m_kI, float m_kD, float max_cum_error = -1);
+
+  inline float getError() {return error;}
+  inline float getSetPoint() {return targetSpeed;}
+  inline float getP() {return P;}
+  inline float getI() {return I;}
+  inline float getD() {return D;}
+
 private:
-  void setPID(float m_kP, float m_kI, float m_kD);
 
   void setPWM(float dutycycle, uint8_t m_direction);
   float calculatePID(void); 
@@ -61,7 +68,12 @@ private:
   float previousError = 0;
   float error = 0;
   float cumulativeError = 0;
+  float maxCumError = 10 * 0.05;
   int backwards = 1;
+
+  float P;
+  float I;
+  float D;
 
 };
 

@@ -79,9 +79,9 @@ void DriveBase::update(void) {
 void DriveBase::setBaseSpeed(float speed) { baseSpeed = speed; }
 
 float DriveBase::calculateCorrection(void) {
-  float proportionalTerm = Kp * 0.001f * error;
-  float derrivativeTerm = Kd * 0.001f * (error - previousError) / float(deltaT);
-  return (proportionalTerm + derrivativeTerm) * baseSpeed;
+  float P = Kp * 0.001f * error;
+  float D = Kd * 0.001f * (error - previousError) / float(deltaT);
+  return (P + D) * baseSpeed;
 }
 
 void DriveBase::findTape(void) {

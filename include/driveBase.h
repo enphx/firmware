@@ -55,6 +55,15 @@ public:
     return {x, y, theta};
   }
 
+  inline float getError() {return error;}
+  inline float getSetPoint() {return 0.0;}
+  inline float getP() {return P;}
+  inline float getI() {return I;}
+  inline float getD() {return D;}
+
+  inline float getOdoX() {return x;}
+  inline float getOdoY() {return y;}
+  inline float getOdoTheta() {return theta;}
 
 
 private:
@@ -65,6 +74,9 @@ private:
 
   float Kp = 0.0f, Kd = 0.0f, Ki = 0.0f;
   int error = 0, previousError;
+
+  float P, I, D = 0.0;
+  
   tapeState previousTapeState, previousSide;
   float baseSpeed;
   uint64_t timeLastUpdated;

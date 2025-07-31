@@ -96,7 +96,6 @@ int32_t EncoderMotor::update(void) {
   error = currentSpeed - targetSpeed;
   cumulativeError += error * deltaT;
 
-  float maxCumError = 100 * 0.05;
   cumulativeError = cumulativeError > maxCumError ? maxCumError : cumulativeError;
   cumulativeError = cumulativeError < -maxCumError ? -maxCumError : cumulativeError;
 
@@ -116,10 +115,14 @@ int32_t EncoderMotor::update(void) {
 
 float EncoderMotor::getCurrentSpeed(void) { return currentSpeed; }
 
-void EncoderMotor::setPID(float m_kP, float m_kI, float m_kD) {
+void EncoderMotor::setPID(float m_kP, float m_kI, float m_kD, float max_cum_error) {
   kP = m_kP;
   kI = m_kI;
   kD = m_kD;
+
+  if (max_cum_error >= 0.0) {
+    maxCumError = max_cum_error;
+  }
 }
 
 uint8_t EncoderMotor::getDirection() { return direction; }
@@ -147,9 +150,12 @@ void EncoderMotor::setPWM(float dutyCycle, uint8_t m_direction) {
 }
 
 float EncoderMotor::calculatePID(void) {
+  P = kP * error;
+  I = kI * cumulativeError;
+  D = kD * (error - previousError)/ (deltaT);
+
   if (targetSpeed == 0) {
-    return kP * error + kD * (error - previousError) / (deltaT);
+    return P + D;
   }
-  return kP * error + kD * (error - previousError) / (deltaT) +
-         kI * cumulativeError;
+  return P + I + D;
 }

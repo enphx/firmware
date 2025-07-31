@@ -21,6 +21,18 @@ public:
 
   float getAngle(void);
 
+  inline void setPID(float m_Kp, float m_Ki, float m_Kd) {
+    Kp = m_Kp;
+    Ki = m_Kp;
+    Kd = m_Kp;
+  }
+
+  inline float getError() {return error;}
+  inline float getSetPoint() {return targetAngle;}
+  inline float getP() {return P;}
+  inline float getI() {return I;}
+  inline float getD() {return D;}
+
 private:
   float calculatePID(void);
   void setPWM(float dutyCycle, uint8_t m_direction);
@@ -39,6 +51,7 @@ private:
   uint32_t deltaT;
   uint8_t direction = 0;
   float Kp, Ki, Kd;
+  float P, I, D = 0.0;
 };
 
 #endif
