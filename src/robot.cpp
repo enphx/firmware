@@ -56,11 +56,13 @@ void Robot::setArmPosition(float m_height, float m_radius, float m_theta,
   arm.setArmPosition(radius, height, theta);
 }
 
-void Robot::setArmAngles(float asimuthTheta, float shoulderTheta, float elbowTheta) {
-  arm.setArmAngles(asimuthTheta,  shoulderTheta, elbowTheta);
+void Robot::setArmAngles(float asimuthTheta, float shoulderTheta,
+                         float elbowTheta) {
+  arm.setArmAngles(asimuthTheta, shoulderTheta, elbowTheta);
 }
 
-void Robot::armFollowTrajectory(const Trajectory *trajectory, int numberOfPoints) {
+void Robot::armFollowTrajectory(const Trajectory *trajectory,
+                                int numberOfPoints) {
   for (int i = 0; i < numberOfPoints; i++) {
     const Trajectory &point = trajectory[i];
     setArmAngles(point.asimuthTheta, point.shoulderTheta, point.elbowTheta);
@@ -68,7 +70,14 @@ void Robot::armFollowTrajectory(const Trajectory *trajectory, int numberOfPoints
   }
 }
 
-void Robot::init() {
+void armMoveSmooth(float m_height, float m_radius, int32_t numberOfSteps, int32_t milliseconds) {
+  float deltaHeight = 
+  for (int i = 0; i < numberOfSteps; i++) {
+    setArmPosition()
+  }
+}
+
+    void Robot::init() {
   low_level_init();
   claw.init();
 
@@ -217,9 +226,7 @@ void Robot::send_serial_messages() {
   float odo_y = driveBase.getOdoY();
   float odo_theta = driveBase.getOdoTheta();
 
-
   copy_1(&message_to_send[i], MSG_START, &i);
-
 
   copy_1(&message_to_send[i], PID, &i);
   copy_f(&message_to_send[i], err, &i);

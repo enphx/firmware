@@ -1,6 +1,8 @@
 #ifndef TRAJECTORIES_H
 #define TRAJECTORIES_H
 
+#include "arm.h"
+
 struct Trajectory {
   float asimuthTheta;
   float shoulderTheta;
@@ -15,6 +17,10 @@ inline const Trajectory scanOutisdeDoor[] = {
     {-60.0f, 43.4f, 132.1f, 100.0f}, {-60.0f, 33.5f, 131.9f, 100.0f},
 
 };
+
+const ArmPscanOutisdeDoorFinalPosition
+
+const ArmPscanOutisdeDoorFinalPosition = 
 
 inline const int scanOutisdeDoorLength = 8;
 

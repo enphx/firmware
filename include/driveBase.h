@@ -10,7 +10,7 @@
 #define WHEEL_RADIUS 0.038
 #define PI 3.141592653589793238462643383279
 
-struct RobotPosition {
+struct DriveBasePosition {
   float x;
   float y;
   float theta;
@@ -41,7 +41,7 @@ public:
     theta = m_theta;
   }
 
-  inline void setOdometry(RobotPosition pos) {
+  inline void setOdometry(DriveBasePosition pos) {
     x = pos.x;
     y = pos.y;
     theta = pos.theta;
@@ -51,7 +51,7 @@ public:
     setOdometry(0, 0, 0);
   }
 
-  inline RobotPosition getPosition() {
+  inline DriveBasePosition getPosition() {
     return {x, y, theta};
   }
 

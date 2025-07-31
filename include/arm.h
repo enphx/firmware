@@ -5,11 +5,16 @@
 #include "low_level/stepperdriver.h"
 #include <Arduino.h>
 
-
 struct ArmAngles {
   float asimuthTheta;
   float shoulderTheta;
   float elbowTheta;
+};
+
+struct ArmPosition {
+  float height;
+  float radius;
+  float theta;
 };
 
 class Arm {
@@ -19,15 +24,18 @@ public:
 
   void setArmPosition(float radius, float height, float theta);
 
-  void setArmAngles(float asimuthTheta ,float shoulderTheta, float elbowTheta);
+  void setArmAngles(float asimuthTheta, float shoulderTheta, float elbowTheta);
 
   float getTheta();
+
+  inline ArmPosition getPosition(void) {
+    return {targetHeight, targetRadius, targetTheta};
+  }
 
 private:
   ArmAngles calculateInverseKinematics(float radius, float height, float theta);
 
-      float targetRadius,
-      targetHeight, targetTheta;
+  float targetRadius, targetHeight, targetTheta;
 
   PotentiometerMotor *shoulderMotor;
   Servo *elbowServo;

@@ -19,6 +19,11 @@ struct lidarPoint {
   float angle;
 };
 
+struct RobotPosition {
+  DriveBasePosition driveBasePosition;
+  ArmPosition armPosition;
+};
+
 enum class PIDObject {
   ENCODER_MOTOR,
   DRIVEBASE,
@@ -39,6 +44,10 @@ public:
   void setArmAngles(float asimuthTheta, float shoulderTheta, float elbowTheta);
 
   void armFollowTrajectory(const Trajectory *trajectory, int numberOfPoints);
+  /**
+   * This function does not change the theta axis
+   */
+  void armMoveSmooth(float height, float radius, int32_t numberOfSteps, int32_t milliseconds);
 
   int getTapeFollowingError();
 
@@ -56,10 +65,15 @@ public:
     return claw.getMagnotometerValues();
   }
 
-  inline void resetDistanceTravelled(void) {driveBase.resetDistanceTravelled();}
+  inline void resetDistanceTravelled(void) {
+    driveBase.resetDistanceTravelled();
+  }
 
-  inline float getDistanceTravelled(void) {return driveBase.getDistanceTravelled(); }
+  inline float getDistanceTravelled(void) {
+    return driveBase.getDistanceTravelled();
+  }
 
+  inline RobotPosition getPosition(void) {return {driveBase.getPosition() , arm.getPosition()};}
 
   void setTapeFollowing(bool tapeFollow);
 
