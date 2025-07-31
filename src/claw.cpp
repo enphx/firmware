@@ -16,7 +16,7 @@ Claw::Claw(uint8_t m_servoPin) :
 
 void Claw::init(void) {
   ESP_LOGI(TAG, "init...");
-  // rangeFinder.init();
+  rangeFinder.init();
   servo.init();
 }
 

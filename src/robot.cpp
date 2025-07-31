@@ -226,19 +226,19 @@ void Robot::send_serial_messages() {
   float odo_theta;
   driveBase.getOdometry(&odo_x, &odo_y, &odo_theta);
 
-  write_b_to_serial(MSG_START);
-  write_b_to_serial(PID);
-  write_f_to_serial(err);
-  write_f_to_serial(setpoint);
-  write_f_to_serial(p_out);
-  write_f_to_serial(i_out);
-  write_f_to_serial(d_out);
+  // write_b_to_serial(MSG_START);
+  // write_b_to_serial(PID);
+  // write_f_to_serial(err);
+  // write_f_to_serial(setpoint);
+  // write_f_to_serial(p_out);
+  // write_f_to_serial(i_out);
+  // write_f_to_serial(d_out);
 
-  write_b_to_serial(ODOMETRY);
-  write_f_to_serial(odo_x);
-  write_f_to_serial(odo_y);
-  write_f_to_serial(odo_theta);
-  write_b_to_serial(MSG_END);
+  // write_b_to_serial(ODOMETRY);
+  // write_f_to_serial(odo_x);
+  // write_f_to_serial(odo_y);
+  // write_f_to_serial(odo_theta);
+  // write_b_to_serial(MSG_END);
 
   // Start message
   copy_1(&message_to_send[i], MSG_START, &i);
@@ -256,6 +256,9 @@ void Robot::send_serial_messages() {
   copy_f(&message_to_send[i], odo_x, &i);
   copy_f(&message_to_send[i], odo_y, &i);
   copy_f(&message_to_send[i], odo_theta, &i);
+
+  copy_1(&message_to_send[i], LIDAR, &i);
+  copy_f(&message_to_send[i], (float)claw.getRangeFinderValue(), &i);
 
   copy_1(&message_to_send[i], MSG_END, &i);
 
