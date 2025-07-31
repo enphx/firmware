@@ -5,9 +5,9 @@
 #include "low_level/encodermotor.h"
 #include <Arduino.h>
 
-#define TICKS_PER_REVOLUTION 524
+#define TICKS_PER_REVOLUTION (11 * 524)
 // In meters:
-#define WHEEL_RADIUS 0.037
+#define WHEEL_RADIUS 0.038
 #define PI 3.141592653589793238462643383279
 
 struct RobotPosition {

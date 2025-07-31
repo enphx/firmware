@@ -56,10 +56,21 @@ int write_i_to_serial(int32_t i) {
     return uart_write_bytes(uart_num, (uint8_t *) &i, 4);
 }
 
+int uart_vprintf(const char *fmt, va_list args) {
+    char buf[256];
+    int len = vsnprintf(buf, sizeof(buf), fmt, args);
+    if (len > 0) {
+        uart_write_bytes(UART_NUM_0, buf, len);
+    }
+    return len;
+}
+
 void setup_serial_uart() {
   ESP_ERROR_CHECK(uart_driver_install(uart_num, 2048, 2048, 0, NULL, 0));
   ESP_ERROR_CHECK(uart_param_config(uart_num, &uart_config));
   ESP_ERROR_CHECK(uart_set_pin(uart_num, PIN_TX, PIN_RX, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE));
+
+  esp_log_set_vprintf(uart_vprintf);
 }
 
 #define BUF_SIZE 1024

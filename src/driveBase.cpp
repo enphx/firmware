@@ -1,5 +1,6 @@
 #include "driveBase.h"
 #include "low_level/fastfunctions.h"
+#include "include/serial/serial_comms.h"
 
 static const char *TAG = "DRIVEBASE";
 
@@ -28,15 +29,18 @@ void DriveBase::update(void) {
   // DOUBLE CHECK WITH YUVRAJ THAT RUNNING UPDATE BEFORE IS CHILL!
   int32_t deltaTicksL = leftMotor->update();
   int32_t deltaTicksR = rightMotor->update();
-  float distL = DISTANCE_PER_TICK * deltaTicksL;
+  float distL = -DISTANCE_PER_TICK * deltaTicksL;
   float distR = DISTANCE_PER_TICK * deltaTicksR;
+  float deltaTheta = 0;
+
+  // ESP_LOGI(TAG, "distR: %f, distL: %f", distR, distL);
 
   if (deltaTicksL == deltaTicksR) {
     x += distL * fast_cos(theta);
     y += distL * fast_sin(theta);
   } else {
-    float deltaTheta = (distR - distL / DRIVE_BASE_LENGTH);
-    float turnRadius = (distR + distL) / (2 * deltaTheta);
+    deltaTheta = ((distR - distL) / DRIVE_BASE_LENGTH);
+    // float turnRadius = (distR + distL) / (2 * deltaTheta);
     float arcLength = (distR + distL)/2;
 
     x += arcLength * fast_cos(theta + deltaTheta/2);
