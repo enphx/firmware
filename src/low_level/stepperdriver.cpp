@@ -80,8 +80,6 @@ void StepperMotor::setAngle(float angle) {
     timerIsRunning = false;
   }
 
-  calibrate();
-
   if (angle < getAngleRelative()) {
     direction = BACKWARDS;
     angle = angle > -TTBL_MAX_ANGLE ? angle : -TTBL_MAX_ANGLE;

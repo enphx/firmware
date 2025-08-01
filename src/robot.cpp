@@ -76,8 +76,8 @@ void Robot::armMoveSmooth(float m_height, float m_radius, int32_t numberOfSteps,
   float deltaHeight = (m_height - height) / numberOfSteps;
   float deltaRadius = (m_radius - radius) / numberOfSteps;
   int32_t deltaT = milliseconds / numberOfSteps;
-  for (int i = 0; i < numberOfSteps; i++) {
-    setArmPosition(i * deltaHeight, i * deltaRadius, 0, true);
+  for (int i = 1; i <= numberOfSteps; i++) {
+    setArmPosition(deltaHeight, deltaRadius, 0, true);
     this->delay(deltaT);
   }
 }
