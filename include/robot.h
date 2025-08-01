@@ -87,6 +87,10 @@ public:
 
   int16_t getClawDistance() { return claw.getRangeFinderValue(); }
 
+  inline ScannerPoint getLastScannerPoint() {return lastScannerPoint;}
+
+  inline ScannerPoint getLastLastScannerPoint() {return lastLastScannerPoint;}
+
   void update();
 
   void delay(uint32_t ticks_millis);
@@ -116,6 +120,7 @@ private:
 
   float lastLidarValue = 0;
   ScannerPoint lastScannerPoint;
+  ScannerPoint lastLastScannerPoint;
   uint32_t lastLidarUpdateTime = 0;
   void send_scanner_message();
 

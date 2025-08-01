@@ -173,6 +173,7 @@ bool Robot::receive_and_process_serial_messages() {
       arm.setArmPosition(radius, height, theta);
     } else if (len == 2 && serial_message[0] == CLAW && serial_message[1] == SET) {
       claw.toggle();
+      arm.calibrate();
     }
 
     return true;
@@ -257,6 +258,7 @@ void Robot::update_scanner() {
     distance = MAX_DISTANCE_VALUE;
   }
     ScannerPoint output = scanner.push(distance, getPosition());
+    lastLastScannerPoint = lastScannerPoint;
     lastScannerPoint = output;
 
     ESP_LOGI(TAG, "LIDAR: %i", output.distance);
