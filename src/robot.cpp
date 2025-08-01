@@ -291,7 +291,7 @@ void Robot::send_scanner_message() {
 void Robot::update() {
   driveBase.update();
   low_level_update();
-  update_scanner();
+  // update_scanner();
 
 #ifdef SERIAL_OUTPUT
   while (receive_and_process_serial_messages())
