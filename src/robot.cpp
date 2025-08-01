@@ -10,7 +10,7 @@
 static const char *TAG = "ROBOT";
 
 #define SPEED_P 2.0
-#define SPEED_I 0.0002
+#define SPEED_I 0.00002
 #define SPEED_D 0.002
 
 Robot::Robot()
