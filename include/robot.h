@@ -58,6 +58,10 @@ public:
 
   void scanForPet(float height, float theta1, float theta2);
 
+  inline void calibrateArm(void) {
+    arm.calibrate();
+  }
+
   inline void grabPet(void) { claw.close(); }
 
   inline void releasePet(void) { claw.open(); }
