@@ -171,6 +171,8 @@ bool Robot::receive_and_process_serial_messages() {
       radius = r;
       height = h;
       arm.setArmPosition(radius, height, theta);
+    } else if (len == 2 && serial_message[0] == CLAW && serial_message[1] == SET) {
+      claw.toggle();
     }
 
     return true;

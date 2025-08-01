@@ -11,6 +11,8 @@ public:
   Claw(uint8_t m_servoPin);
   
   void init(void);
+
+  void toggle();
   
   void open(void);
   
@@ -28,6 +30,8 @@ private:
   Servo servo;
   Magnetometer magnetometer;
   RangeFinder rangeFinder;
+
+  bool clawState = false;
 };
 
 #endif

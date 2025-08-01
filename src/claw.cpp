@@ -20,11 +20,21 @@ void Claw::init(void) {
   servo.init();
 }
 
+void Claw::toggle() {
+  if (clawState) {
+    open();
+  } else {
+    close();
+  }
+}
+
 void Claw::open(void) {
+  clawState = false;
   servo.setAngle(CLAW_OPEN);
 }
 
 void Claw::close(void) {
+  clawState = true;
   servo.setAngle(CLAW_CLOSED);
 }
 
