@@ -68,7 +68,7 @@ private:
   float previousError = 0;
   float error = 0;
   float cumulativeError = 0;
-  float maxCumError = 3000.0;
+  float maxCumError = 30000.0;
   int backwards = 1;
 
   float P;
