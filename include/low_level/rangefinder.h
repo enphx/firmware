@@ -5,12 +5,18 @@
 
 #include "Adafruit_VL53L1X.h"
 
+#define MAX_DISTANCE_VALUE 1500
+
 class RangeFinder{
 public:
   RangeFinder(uint8_t i2c_addr);
   void init();
 
   int16_t getDistance();
+
+  inline bool getDataReady() {
+    return vl53.dataReady();
+  }
 
 private:
   const uint8_t addr;

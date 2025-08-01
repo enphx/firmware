@@ -11,17 +11,14 @@
 #include "low_level/shiftregister.h"
 #include "low_level/stepperdriver.h"
 #include "low_level/tapefollowingsensor.h"
+#include "include/scanner.h"
 #include "trajectories.h"
+#include "robotposition.h"
 #include <Arduino.h>
 
 struct lidarPoint {
   float distance;
   float angle;
-};
-
-struct RobotPosition {
-  DriveBasePosition driveBasePosition;
-  ArmPosition armPosition;
 };
 
 enum class PIDObject {
@@ -118,7 +115,13 @@ private:
   void send_serial_messages();
 
   float lastLidarValue = 0;
+  ScannerPoint lastScannerPoint;
   uint32_t lastLidarUpdateTime = 0;
+  void send_scanner_message();
+
+  Scanner scanner;
+  int16_t prev_distance = -1;
+  void update_scanner();
 };
 
 #endif

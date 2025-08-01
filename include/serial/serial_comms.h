@@ -21,6 +21,23 @@ inline float bits_to_f32(uint8_t *bits) {
   return f;
 }
 
+
+
+inline void copy_4(uint8_t *target, void *source, uint32_t *index) {
+  *index = *index + 4;
+  memcpy(target, source, 4);
+}
+
+inline void copy_1(uint8_t *target, uint8_t source, uint32_t *index) {
+  *index = *index + 1;
+  target[0] = source;
+}
+
+inline void copy_f(uint8_t *target, float f, uint32_t *index) {
+  copy_1(target, FLOAT_AHEAD, index);
+  copy_4(&target[1], &f, index);
+}
+
 // returns length of message.
 // Written message is null terminated and stripped of
 // MSG_START and MSG_END.

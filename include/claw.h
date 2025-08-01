@@ -11,6 +11,8 @@ public:
   Claw(uint8_t m_servoPin);
   
   void init(void);
+
+  void toggle();
   
   void open(void);
   
@@ -18,12 +20,18 @@ public:
 
   int16_t getRangeFinderValue(void);
 
+  inline bool getRangeFinderDataReady() {
+    return rangeFinder.getDataReady();
+  }
+
   magVector getMagnotometerValues(void);
 
 private:
   Servo servo;
   Magnetometer magnetometer;
   RangeFinder rangeFinder;
+
+  bool clawState = false;
 };
 
 #endif
