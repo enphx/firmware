@@ -4,7 +4,7 @@
 
 #define ATAN_KNOTS 10
 
-#define PI 3.141592653589793238462643383279
+#define LONG_PI 3.141592653589793238462643383279
 
 
 float atan_knots[ATAN_KNOTS] = {
@@ -94,18 +94,18 @@ float acos_spl(float x) {
 }
 
 float fast_sin(float x) {
-  float mod_2_pi = fmod(x, 2 * PI);
-  float mod_pi = fmod(x, PI);
+  float mod_2_pi = fmod(x, 2 * LONG_PI);
+  float mod_pi = fmod(x, LONG_PI);
 
-  mod_2_pi = mod_2_pi < 0 ? mod_2_pi + 2 * PI : mod_2_pi;
-  mod_pi = mod_pi < 0 ? mod_pi + PI : mod_pi;
+  mod_2_pi = mod_2_pi < 0 ? mod_2_pi + 2 * LONG_PI : mod_2_pi;
+  mod_pi = mod_pi < 0 ? mod_pi + LONG_PI : mod_pi;
 
 
-  x = mod_pi < PI/2 ? mod_pi : PI - mod_pi;
+  x = mod_pi < LONG_PI/2 ? mod_pi : LONG_PI - mod_pi;
 
-  return cs_sin.eval(x) * (mod_2_pi < PI ? 1 : -1);
+  return cs_sin.eval(x) * (mod_2_pi < LONG_PI ? 1 : -1);
 }
 
 float fast_cos(float x) {
-  return fast_sin(x + PI/2);
+  return fast_sin(x + LONG_PI/2);
 }

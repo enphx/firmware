@@ -5,7 +5,7 @@
 
 #include "Adafruit_VL53L1X.h"
 
-#define MAX_DISTANCE_VALUE 4500
+#define MAX_DISTANCE_VALUE 1500
 
 class RangeFinder{
 public:

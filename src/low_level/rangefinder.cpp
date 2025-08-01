@@ -18,7 +18,7 @@ void RangeFinder::init() {
 
   vl53.VL53L1X_SetTimingBudgetInMs(20);
 
-  vl53.VL53L1X_SetInterMeasurementInMs(200);
+  vl53.VL53L1X_SetInterMeasurementInMs(30);
   if (!vl53.startRanging()) {
     while (1) {
       ESP_LOGE(TAG, "Couldn't start ranging...");

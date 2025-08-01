@@ -5,6 +5,7 @@
 #include <Arduino.h>
 
 #include "include/serial/serial_comms.h"
+#include "low_level/rangefinder.h"
 
 static const char *TAG = "ROBOT";
 
@@ -251,18 +252,14 @@ void Robot::update_scanner() {
   int16_t distance = claw.getRangeFinderValue();
 
   if (distance < 0) {
-    return;
+    distance = MAX_DISTANCE_VALUE;
   }
-
-  if (distance != prev_distance) {
     ScannerPoint output = scanner.push(distance, getPosition());
     lastScannerPoint = output;
 
-    send_scanner_message();
+    ESP_LOGI(TAG, "LIDAR: %i", output.distance);
 
-    #ifdef SERIAL_OUTPUT
-    #endif
-  }
+    send_scanner_message();
 }
 
 
