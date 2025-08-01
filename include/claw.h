@@ -18,6 +18,10 @@ public:
 
   int16_t getRangeFinderValue(void);
 
+  inline bool getRangeFinderDataReady() {
+    return rangeFinder.getDataReady();
+  }
+
   magVector getMagnotometerValues(void);
 
 private:

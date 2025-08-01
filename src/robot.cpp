@@ -167,28 +167,15 @@ bool Robot::receive_and_process_serial_messages() {
       float r = bits_to_f32(&serial_message[2]);
       float h = bits_to_f32(&serial_message[6]);
 
-      setArmPosition(h, r, getArmTheta(), false);
+      radius = r;
+      height = h;
+      arm.setArmPosition(radius, height, theta);
     }
 
     return true;
   } else {
     return false;
   }
-}
-
-inline void copy_4(uint8_t *target, void *source, uint32_t *index) {
-  *index = *index + 4;
-  memcpy(target, source, 4);
-}
-
-inline void copy_1(uint8_t *target, uint8_t source, uint32_t *index) {
-  *index = *index + 1;
-  target[0] = source;
-}
-
-inline void copy_f(uint8_t *target, float f, uint32_t *index) {
-  copy_1(target, FLOAT_AHEAD, index);
-  copy_4(&target[1], &f, index);
 }
 
 void Robot::send_serial_messages() {
@@ -244,9 +231,9 @@ void Robot::send_serial_messages() {
   copy_f(&message_to_send[i], odo_y, &i);
   copy_f(&message_to_send[i], odo_theta, &i);
 
-  copy_1(&message_to_send[i], LIDAR, &i);
+  // copy_1(&message_to_send[i], LIDAR, &i);
 
-  copy_f(&message_to_send[i], lastLidarValue, &i);
+  // copy_f(&message_to_send[i], lastLidarValue, &i);
 
   copy_1(&message_to_send[i], MSG_END, &i);
 
@@ -257,9 +244,50 @@ uint32_t last_serial_message_time = 0;
 
 #endif
 
+void Robot::update_scanner() {
+  if (!claw.getRangeFinderDataReady()) {
+    return;
+  }
+  int16_t distance = claw.getRangeFinderValue();
+
+  if (distance < 0) {
+    return;
+  }
+
+  if (distance != prev_distance) {
+    ScannerPoint output = scanner.push(distance, getPosition());
+    lastScannerPoint = output;
+
+    send_scanner_message();
+
+    #ifdef SERIAL_OUTPUT
+    #endif
+  }
+}
+
+
+void Robot::send_scanner_message() {
+  #ifdef SERIAL_OUTPUT
+  uint8_t message_to_send[256];
+  uint32_t i = 0;
+
+  copy_1(&message_to_send[i], MSG_START, &i);
+  copy_1(&message_to_send[i], LIDAR, &i);
+  
+  copy_f(&message_to_send[i], lastScannerPoint.distance, &i);
+  copy_f(&message_to_send[i], lastScannerPoint.convolved, &i);
+
+  copy_1(&message_to_send[i], MSG_END, &i);
+
+  write_to_serial(message_to_send, i);
+  #endif
+}
+
+
 void Robot::update() {
   driveBase.update();
   low_level_update();
+  update_scanner();
 
 #ifdef SERIAL_OUTPUT
   while (receive_and_process_serial_messages())
