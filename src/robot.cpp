@@ -65,19 +65,23 @@ void Robot::armFollowTrajectory(const Trajectory *trajectory,
                                 int numberOfPoints) {
   for (int i = 0; i < numberOfPoints; i++) {
     const Trajectory &point = trajectory[i];
-    setArmAngles(point.asimuthTheta, point.shoulderTheta, point.elbowTheta);
-    delay(point.deltaT);
+    setArmPosition(point.height, point.radius, point.theta, false);
+    this->delay(point.deltaT);
   }
 }
 
-void armMoveSmooth(float m_height, float m_radius, int32_t numberOfSteps, int32_t milliseconds) {
-  float deltaHeight = 
+void Robot::armMoveSmooth(float m_height, float m_radius, int32_t numberOfSteps,
+                   int32_t milliseconds) {
+  float deltaHeight = (m_height - height) / numberOfSteps;
+  float deltaRadius = (m_radius - radius) / numberOfSteps;
+  int32_t deltaT = milliseconds / numberOfSteps;
   for (int i = 0; i < numberOfSteps; i++) {
-    setArmPosition()
+    setArmPosition(i * deltaHeight, i * deltaRadius, 0, true);
+    this->delay(deltaT);
   }
 }
 
-    void Robot::init() {
+void Robot::init() {
   low_level_init();
   claw.init();
 

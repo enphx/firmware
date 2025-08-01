@@ -44,10 +44,11 @@ public:
   void setArmAngles(float asimuthTheta, float shoulderTheta, float elbowTheta);
 
   void armFollowTrajectory(const Trajectory *trajectory, int numberOfPoints);
+
   /**
    * This function does not change the theta axis
    */
-  void armMoveSmooth(float height, float radius, int32_t numberOfSteps, int32_t milliseconds);
+  void armMoveSmooth(float m_height, float m_radius, int32_t numberOfSteps, int32_t milliseconds);
 
   int getTapeFollowingError();
 
