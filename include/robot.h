@@ -36,7 +36,7 @@ public:
 
   void setStepperSpeed(float speed) { asimuthStepper.setSpeed(speed); }
 
-  void setArmPosition(float height, float radius, float theta, bool relative);
+  void setArmPosition(float height, float radius, float theta, bool relative, bool calibrate = true);
 
   void setArmAngles(float asimuthTheta, float shoulderTheta, float elbowTheta);
 

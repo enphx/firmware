@@ -43,8 +43,11 @@ Robot::Robot()
 }
 
 void Robot::setArmPosition(float m_height, float m_radius, float m_theta,
-                           bool relative) {
+                           bool relative, bool calibrate) {
 
+  if (calibrate) {
+    arm.calibrate();
+  }
   if (relative) {
     height += m_height;
     radius += m_radius;
