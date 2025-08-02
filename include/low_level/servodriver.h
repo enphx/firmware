@@ -9,6 +9,8 @@ public:
   void init(void);
 
   void setAngle(float angle);
+
+  void flaccid(void);
 private:
   uint16_t pwmPin;
   float minDutyCycle, maxDutyCycle;

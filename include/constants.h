@@ -4,7 +4,7 @@
 #define WHEEL_DIAMETER 0.07
 #define DEGREES_PER_TICK_SHOULDER 0.0569948186528
 #define DEGREES_PER_POT_TICK_TTBL 0.0594059405941
-#define CLAW_OPEN 180
+#define CLAW_OPEN 150
 #define CLAW_CLOSED 80 
 #define CLAW_MIN_PWM 2.5
 #define CLAW_MAX_PWM 12.5
@@ -15,9 +15,10 @@
 #define ARM_DRIVE_HEIGHT 7.75
 #define ARM_DRIVE_THETA 0
 #define TTBL_MAX_ANGLE 100.0
+#define LIDAR_RE
 
 
 // Comment this out for no serial output...
-// #define SERIAL_OUTPUT
+#define SERIAL_OUTPUT
 
 #endif

@@ -18,6 +18,10 @@ public:
   
   void close(void);
 
+  inline void flaccid(void) {
+    servo.flaccid();
+  }
+
   int16_t getRangeFinderValue(void);
 
   inline bool getRangeFinderDataReady() {

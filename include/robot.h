@@ -5,15 +5,15 @@
 #include "claw.h"
 #include "constants.h"
 #include "driveBase.h"
+#include "include/scanner.h"
 #include "low_level/encodermotor.h"
 #include "low_level/io.h"
 #include "low_level/potentiometermotor.h"
 #include "low_level/shiftregister.h"
 #include "low_level/stepperdriver.h"
 #include "low_level/tapefollowingsensor.h"
-#include "include/scanner.h"
-#include "trajectories.h"
 #include "robotposition.h"
+#include "trajectories.h"
 #include <Arduino.h>
 
 struct lidarPoint {
@@ -36,7 +36,8 @@ public:
 
   void setStepperSpeed(float speed) { asimuthStepper.setSpeed(speed); }
 
-  void setArmPosition(float height, float radius, float theta, bool relative, bool calibrate = true);
+  void setArmPosition(float height, float radius, float theta, bool relative,
+                      bool calibrate = true);
 
   void setArmAngles(float asimuthTheta, float shoulderTheta, float elbowTheta);
 
@@ -45,7 +46,8 @@ public:
   /**
    * This function does not change the theta axis
    */
-  void armMoveSmooth(float m_height, float m_radius, int32_t numberOfSteps, int32_t milliseconds);
+  void armMoveSmooth(float m_height, float m_radius, int32_t numberOfSteps,
+                     int32_t milliseconds);
 
   int getTapeFollowingError();
 
@@ -55,9 +57,7 @@ public:
 
   void scanForPet(float height, float theta1, float theta2);
 
-  inline void calibrateArm(void) {
-    arm.calibrate();
-  }
+  inline void calibrateArm(void) { arm.calibrate(); }
 
   inline void grabPet(void) { claw.close(); }
 
@@ -75,7 +75,9 @@ public:
     return driveBase.getDistanceTravelled();
   }
 
-  inline RobotPosition getPosition(void) {return {driveBase.getPosition() , arm.getPosition()};}
+  inline RobotPosition getPosition(void) {
+    return {driveBase.getPosition(), arm.getPosition()};
+  }
 
   void setTapeFollowing(bool tapeFollow);
 
@@ -87,9 +89,21 @@ public:
 
   int16_t getClawDistance() { return claw.getRangeFinderValue(); }
 
-  inline ScannerPoint getLastScannerPoint() {return lastScannerPoint;}
+  inline ScannerPoint getLastScannerPoint() { return lastScannerPoint; }
 
-  inline ScannerPoint getLastLastScannerPoint() {return lastLastScannerPoint;}
+  inline ScannerPoint getLastLastScannerPoint() { return lastLastScannerPoint; }
+
+  inline void dumpLog(void) {
+    scanner.print_log();
+  }
+
+  inline void startScanning(void) {
+    scanning = true;
+    scanner.reset();
+  }
+  inline void stopScanning(void) { scanning = false; }
+
+  inline void flaccid(void) { claw.flaccid(); }
 
   void update();
 
@@ -127,6 +141,8 @@ private:
   Scanner scanner;
   int16_t prev_distance = -1;
   void update_scanner();
+
+  bool scanning = false;
 };
 
 #endif

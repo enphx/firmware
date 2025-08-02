@@ -19,3 +19,7 @@ void Servo::setAngle(float angle) {
 
   ledcWrite(pwmPin, (uint32_t)(dutyCycle * 4095));
 }
+
+void Servo::flaccid(void) {
+  ledcWrite(pwmPin, 0);
+}

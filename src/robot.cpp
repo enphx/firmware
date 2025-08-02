@@ -45,9 +45,6 @@ Robot::Robot()
 void Robot::setArmPosition(float m_height, float m_radius, float m_theta,
                            bool relative, bool calibrate) {
 
-  if (calibrate) {
-    arm.calibrate();
-  }
   if (relative) {
     height += m_height;
     radius += m_radius;
@@ -56,6 +53,9 @@ void Robot::setArmPosition(float m_height, float m_radius, float m_theta,
     height = m_height;
     radius = m_radius;
     theta = m_theta;
+    if (calibrate) {
+      arm.calibrate();
+    }
   }
   arm.setArmPosition(radius, height, theta);
 }
@@ -75,12 +75,14 @@ void Robot::armFollowTrajectory(const Trajectory *trajectory,
 }
 
 void Robot::armMoveSmooth(float m_height, float m_radius, int32_t numberOfSteps,
-                   int32_t milliseconds) {
+                          int32_t milliseconds) {
   float deltaHeight = (m_height - height) / numberOfSteps;
   float deltaRadius = (m_radius - radius) / numberOfSteps;
   int32_t deltaT = milliseconds / numberOfSteps;
+
+  if (deltaT == 0) 
   for (int i = 1; i <= numberOfSteps; i++) {
-    setArmPosition(deltaHeight, deltaRadius, 0, true);
+    setArmPosition(deltaHeight, deltaRadius, 0, true, false);
     this->delay(deltaT);
   }
 }
@@ -174,7 +176,8 @@ bool Robot::receive_and_process_serial_messages() {
       radius = r;
       height = h;
       arm.setArmPosition(radius, height, theta);
-    } else if (len == 2 && serial_message[0] == CLAW && serial_message[1] == SET) {
+    } else if (len == 2 && serial_message[0] == CLAW &&
+               serial_message[1] == SET) {
       claw.toggle();
       arm.calibrate();
     }
@@ -252,46 +255,57 @@ uint32_t last_serial_message_time = 0;
 #endif
 
 void Robot::update_scanner() {
-  if (!claw.getRangeFinderDataReady()) {
+
+  if (scanning == false) {
     return;
   }
+
+  if (millis() - lastLidarUpdateTime < TOF_MEASURMENT_TIME - 10) {
+    return;
+  }
+
+  if (claw.getRangeFinderDataReady() == false) {
+    return;
+  }
+
+  lastLidarUpdateTime = millis();
+
   int16_t distance = claw.getRangeFinderValue();
 
   if (distance < 0) {
     distance = MAX_DISTANCE_VALUE;
   }
-    ScannerPoint output = scanner.push(distance, getPosition());
-    lastLastScannerPoint = lastScannerPoint;
-    lastScannerPoint = output;
+  ScannerPoint output = scanner.push(distance, getPosition());
+  lastLastScannerPoint = lastScannerPoint;
+  lastScannerPoint = output;
 
-    ESP_LOGI(TAG, "LIDAR: %i", output.distance);
+  ESP_LOGI(TAG, "LIDAR: %i", output.distance);
 
-    send_scanner_message();
+  send_scanner_message();
 }
 
-
 void Robot::send_scanner_message() {
-  #ifdef SERIAL_OUTPUT
+#ifdef SERIAL_OUTPUT
   uint8_t message_to_send[256];
   uint32_t i = 0;
 
   copy_1(&message_to_send[i], MSG_START, &i);
   copy_1(&message_to_send[i], LIDAR, &i);
-  
+
   copy_f(&message_to_send[i], lastScannerPoint.distance, &i);
   copy_f(&message_to_send[i], lastScannerPoint.convolved, &i);
 
   copy_1(&message_to_send[i], MSG_END, &i);
 
   write_to_serial(message_to_send, i);
-  #endif
+#endif
 }
 
-
+int lastLidarUpdate = 0;
 void Robot::update() {
   driveBase.update();
   low_level_update();
-  // update_scanner();
+  update_scanner();
 
 #ifdef SERIAL_OUTPUT
   while (receive_and_process_serial_messages())

@@ -20,7 +20,7 @@ ScannerPoint Scanner::push(int16_t distance, RobotPosition robot_position) {
   };
 
   buffer[buf_index] = output;
-  buf_index = (buf_index + 1) >= BUF_SIZE ? BUF_SIZE - 1 : buf_index + 1;
+  // buf_index = (buf_index + 1) >= BUF_SIZE ? BUF_SIZE - 1 : buf_index + 1;
  
   return output;
 }

@@ -16,9 +16,9 @@ void RangeFinder::init() {
   }
   vl53.VL53L1X_SetDistanceMode(1);
 
-  vl53.VL53L1X_SetTimingBudgetInMs(20);
+  vl53.VL53L1X_SetTimingBudgetInMs(TOF_MEASURMENT_TIME - 10);
 
-  vl53.VL53L1X_SetInterMeasurementInMs(30);
+  vl53.VL53L1X_SetInterMeasurementInMs(TOF_MEASURMENT_TIME);
   if (!vl53.startRanging()) {
     while (1) {
       ESP_LOGE(TAG, "Couldn't start ranging...");
@@ -29,4 +29,8 @@ void RangeFinder::init() {
   ESP_LOGI(TAG, "Started ranging successfully!!");
 }
 
-int16_t RangeFinder::getDistance() { return vl53.distance(); }
+int16_t RangeFinder::getDistance() {
+  int distance = vl53.distance();
+  vl53.clearInterrupt();
+  return distance;
+}
