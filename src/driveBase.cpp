@@ -32,17 +32,19 @@ void DriveBase::update(void) {
   float distL = -DISTANCE_PER_TICK * deltaTicksL;
   float distR = DISTANCE_PER_TICK * deltaTicksR;
   float deltaTheta = 0;
+  float arcLength;
 
   // ESP_LOGI(TAG, "distR: %f, distL: %f", distR, distL);
 
   if (deltaTicksL == deltaTicksR) {
+    arcLength = distL;
     x += distL * fast_cos(theta);
     y += distL * fast_sin(theta);
     distanceTravelled += distL;
   } else {
     deltaTheta = ((distR - distL) / DRIVE_BASE_LENGTH);
     // float turnRadius = (distR + distL) / (2 * deltaTheta);
-    float arcLength = (distR + distL)/2;
+    arcLength = (distR + distL)/2;
     distanceTravelled += arcLength;
     x += arcLength * fast_cos(theta + deltaTheta/2);
     y += arcLength * fast_sin(theta + deltaTheta/2);
@@ -57,16 +59,28 @@ void DriveBase::update(void) {
   timeLastUpdated += deltaT;
   previousError = error;
 
-  if (lineFollow &&
-      tapeFollowingSensor->getTapeState() == tapeState::OutOfBounds) {
-    findTape();
-    return;
+
+  if (tapeFollowingSensor->getTapeState() == tapeState::OutOfBounds) {
+    // findTape();
+    // return;
+    cumError += (tapeFollowingSensor->getSide() == tapeSide::Right ? -arcLength : arcLength);
+  } else {
+    cumError += (cumError > 0 ? -arcLength : arcLength);
   }
+
+  if (tapeFollowingSensor->getSide() != previousSide) {
+  }
+
+  cumError = cumError >= 1.0/Ki ? 1.0/Ki : cumError;
+  cumError = cumError <= -1.0/Ki ? -1.0/Ki : cumError;
 
   error = tapeFollowingSensor->getError();
 
   if (previousTapeState == tapeState::OutOfBounds) {
     previousError = error;
+    if (tapeFollowingSensor->getTapeState() != tapeState::OutOfBounds) {
+      cumError = cumError * 0.5;
+    }
   }
 
   if (lineFollow) {
@@ -84,13 +98,17 @@ void DriveBase::update(void) {
 void DriveBase::setBaseSpeed(float speed) { baseSpeed = speed; }
 
 float DriveBase::calculateCorrection(void) {
-  float P = Kp * 0.001f * error;
-  float D = Kd * 0.001f * (error - previousError) / float(deltaT);
-  return (P + D) * baseSpeed;
+  P = Kp * 0.001f * error;
+  D = Kd * 0.001f * (error - previousError) / float(deltaT);
+  I = Ki * cumError;
+  float output = P + I + D;
+  output = output >  1.0 ?  1.0 : output;
+  output = output < -1.0 ? -1.0 : output;
+  return output * baseSpeed;
 }
 
 void DriveBase::findTape(void) {
-  if (tapeFollowingSensor->getSide() == tapeState::Left) {
+  if (tapeFollowingSensor->getSide() == tapeSide::Left) {
     leftMotor->setSpeed(baseSpeed);
     rightMotor->setSpeed(0.2 * baseSpeed);
     return;

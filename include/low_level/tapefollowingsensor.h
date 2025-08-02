@@ -7,10 +7,13 @@
 #define RIGHT_REFLECTANCE_SENSOR_CHANNEL 0
 #define UPPER_REFLECTANCE_READING_THRESHOLD 2930
 
-enum tapeState {
+enum class tapeState {
   Difference,
   Inversion,
   OutOfBounds,
+};
+
+enum class tapeSide {
   Left,
   Right,
 };
@@ -25,11 +28,12 @@ public:
 
   const tapeState getTapeState(void);
 
-  const tapeState getSide(void);
+  const tapeSide getSide(void);
 private:
   int error;
   uint16_t lastDifferenceReadingLeft, lastDifferenceReadingRight;
-  tapeState Distance, Side;
+  tapeState Distance;
+  tapeSide Side;
 };
 
 #endif

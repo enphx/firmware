@@ -27,16 +27,16 @@ void TapeFollowingSensor::update(void) {
 
     rightError = 3 * lastDifferenceReadingRight - 2 * reflectanceReadingLeft;
     Distance = tapeState::Inversion;
-    Side = tapeState::Left;
+    Side = tapeSide::Left;
   } else if (reflectanceReadingRight > UPPER_REFLECTANCE_READING_THRESHOLD) {
 
     leftError = 3 * lastDifferenceReadingLeft - 2 * reflectanceReadingLeft;
     Distance = tapeState::Inversion;
-    Side = tapeState::Right;
+    Side = tapeSide::Right;
   } else {
     Distance = tapeState::Difference;
-    Side = reflectanceReadingLeft > reflectanceReadingRight ? tapeState::Left
-                                                            : tapeState::Right;
+    Side = reflectanceReadingLeft > reflectanceReadingRight ? tapeSide::Left
+                                                            : tapeSide::Right;
     lastDifferenceReadingLeft = reflectanceReadingLeft;
     lastDifferenceReadingRight = reflectanceReadingRight;
   }
@@ -46,4 +46,4 @@ void TapeFollowingSensor::update(void) {
 
 const tapeState TapeFollowingSensor::getTapeState(void) { return Distance; }
 
-const tapeState TapeFollowingSensor::getSide(void) { return Side; }
+const tapeSide TapeFollowingSensor::getSide(void) { return Side; }

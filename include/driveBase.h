@@ -65,10 +65,10 @@ public:
   inline float getOdoY() {return y;}
   inline float getOdoTheta() {return theta;}
 
-  inline void resetDistanceTravelled(void) {distanceTravelled = 0;}
+  inline void resetDistanceTravelled(void) {zeroDistance = distanceTravelled;}
 
   inline float getDistanceTravelled(void) {
-    return distanceTravelled;
+    return distanceTravelled - zeroDistance;
   }
 
 
@@ -80,14 +80,18 @@ private:
 
   float Kp = 0.0f, Kd = 0.0f, Ki = 0.0f;
   int error = 0, previousError;
+  float cumError = 0;
 
   float P, I, D = 0.0;
   
-  tapeState previousTapeState, previousSide;
+  tapeState previousTapeState;
+  tapeSide previousSide;
   float baseSpeed;
   uint64_t timeLastUpdated;
   uint32_t deltaT;
   bool lineFollow = true;
+
+  float zeroDistance = 0;
 
   // Odometry tech
   float x = 0;
