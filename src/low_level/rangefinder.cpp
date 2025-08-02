@@ -6,6 +6,7 @@ static const char *TAG = "RANGEFINDER";
 RangeFinder::RangeFinder(uint8_t i2c_addr) : addr(i2c_addr) {}
 
 void RangeFinder::init() {
+
   if (!vl53.begin(I2C_RANGEFINDER_ADDR)) {
     while (1) {
       ESP_LOGE(TAG, "Couldn't start ranging...");
@@ -19,6 +20,8 @@ void RangeFinder::init() {
   vl53.VL53L1X_SetTimingBudgetInMs(TOF_MEASURMENT_TIME - 10);
 
   vl53.VL53L1X_SetInterMeasurementInMs(TOF_MEASURMENT_TIME);
+
+  vl53.VL53L1X_SetROI(4, 4);
   if (!vl53.startRanging()) {
     while (1) {
       ESP_LOGE(TAG, "Couldn't start ranging...");
@@ -30,7 +33,11 @@ void RangeFinder::init() {
 }
 
 int16_t RangeFinder::getDistance() {
-  int distance = vl53.distance();
+
+  if (!vl53.dataReady()) {
+    return lastDistanceReading;
+  }
+  lastDistanceReading = vl53.distance();
   vl53.clearInterrupt();
-  return distance;
+  return lastDistanceReading;
 }

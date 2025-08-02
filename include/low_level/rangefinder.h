@@ -22,6 +22,7 @@ public:
 private:
   const uint8_t addr;
   Adafruit_VL53L1X vl53;
+  int16_t lastDistanceReading = 0.0;
 };
 
 #endif

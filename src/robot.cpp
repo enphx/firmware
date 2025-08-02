@@ -80,7 +80,9 @@ void Robot::armMoveSmooth(float m_height, float m_radius, int32_t numberOfSteps,
   float deltaRadius = (m_radius - radius) / numberOfSteps;
   int32_t deltaT = milliseconds / numberOfSteps;
 
-  if (deltaT == 0) 
+  if (deltaT == 0) {
+    deltaT = 1;
+  }
   for (int i = 1; i <= numberOfSteps; i++) {
     setArmPosition(deltaHeight, deltaRadius, 0, true, false);
     this->delay(deltaT);
@@ -101,7 +103,7 @@ void Robot::delay(uint32_t milliseconds) {
   int32_t t0 = millis();
   for (int32_t i = 0; i < milliseconds; i++) {
     update();
-    vTaskDelay(pdMS_TO_TICKS(5));
+    vTaskDelay(5);
     if (millis() - t0 >= milliseconds) {
       return;
     }

@@ -44,8 +44,7 @@ public:
     thresholdTripped = false;
   }
 
-  inline bool thresholdTripper(void) {return thresholdTripped;}
-
+  inline bool thresholdTripper(void) { return thresholdTripped; }
 
 private:
   ScannerPoint buffer[BUF_SIZE];

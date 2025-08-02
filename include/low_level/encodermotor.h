@@ -70,6 +70,8 @@ private:
   float cumulativeError = 0;
   float maxCumError = 30000.0;
   int backwards = 1;
+  uint32_t lastSpeedReadingTime = 0;
+  int32_t lastSpeedReadingTicks = 0;
 
   float P;
   float I;

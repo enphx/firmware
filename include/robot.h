@@ -79,6 +79,13 @@ public:
     return {driveBase.getPosition(), arm.getPosition()};
   }
 
+  
+  inline void setScannerThreshold(uint16_t threshold, bool tiggerAbove) {
+    scanner.setThreshold(threshold, tiggerAbove);
+  }
+
+  inline bool scannerThresholdTripped(void) { return scanner.thresholdTripper(); }
+
   void setTapeFollowing(bool tapeFollow);
 
   void setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd);
@@ -127,6 +134,7 @@ private:
   void processSerial();
 
   const static uint MAX_SERIAL_INPUT_SIZE = 256;
+  const static TickType_t xFrequency = pdMS_TO_TICKS(5);
   uint8_t serial_message[MAX_SERIAL_INPUT_SIZE];
 
   bool receive_and_process_serial_messages();

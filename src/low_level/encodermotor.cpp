@@ -155,7 +155,7 @@ float EncoderMotor::calculatePID(void) {
   D = kD * (error - previousError)/ (deltaT);
 
   if (targetSpeed == 0) {
-    return P + D;
+    return P;
   }
   return P + I + D;
 }
