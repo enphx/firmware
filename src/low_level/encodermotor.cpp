@@ -82,15 +82,24 @@ void IRAM_ATTR EncoderMotor::handleEncoder() {
 
 
 int32_t EncoderMotor::update(void) {
-  uint64_t t = micros();
+
+    uint64_t t = micros();
   deltaT = (uint32_t)(t - timeLastUpdated);
   currentTickCount = tickCount;
   timeLastUpdated = t;
 
   int32_t deltaTicks = currentTickCount - previousTickCount;
 
-  currentSpeed = (float)(deltaTicks) / ((float)deltaT) *
-                 ticksPerRev * PI * WHEEL_DIAMETER;
+  uint32_t timeSinceLastSpeedRead = micros() - lastSpeedReadingTime;
+  if (timeSinceLastSpeedRead >= 5000) {
+
+    currentSpeed = (float)(currentTickCount - lastSpeedReadingTicks) /
+                   ((float)timeSinceLastSpeedRead) * ticksPerRev * PI *
+                   WHEEL_DIAMETER;
+    lastSpeedReadingTicks = currentTickCount;
+    lastSpeedReadingTime = micros();
+  }
+
   previousTickCount = currentTickCount;
 
   error = currentSpeed - targetSpeed;

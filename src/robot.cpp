@@ -103,7 +103,7 @@ void Robot::delay(uint32_t milliseconds) {
   int32_t t0 = millis();
   for (int32_t i = 0; i < milliseconds; i++) {
     update();
-    vTaskDelay(5);
+    vTaskDelay(0);
     if (millis() - t0 >= milliseconds) {
       return;
     }
