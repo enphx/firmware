@@ -18,13 +18,16 @@ inline const Trajectory scanOutisdeDoor[] = {
 inline const Trajectory pickupPetOne[] = {
     {6, 7, -60, 300}, {8, 7, -45, 200}, {8, 6, -30, 100}, {8, 5, 0, 100}};
 
-inline const Trajectory scorePetOne  [] = {
-  {8, 7, 30, 150},
-{8, 9, 60, 150},
-{8, 11, 90, 150}
+inline const Trajectory scorePetOne[] = {
+    {8, 7, 30, 150}, {8, 9, 60, 150}, {8, 11, 90, 150}};
+
+inline const Trajectory scanPetTwo[] = {
+    {6.3, 4, 60, 100}, {6, 4.5, 60, 100},   {5.5, 5, 60, 100},
+    {4, 5.5, 60, 100}, {3.5, 5.5, 60, 100},
 };
 inline const int scanOutisdeDoorLength = 8;
 inline const int pickupPetOneLength = 4;
 inline const int scorePetOneLength = 3;
+inline const int scanPetTwoLength = 5;
 
 #endif
