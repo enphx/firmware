@@ -13,11 +13,15 @@ Arm::Arm(PotentiometerMotor *m_shoulderMotor, Servo *m_elbowServo,
 
 void Arm::setArmPosition(float radius, float height, float theta) {
 
+  height = height < 1 ? 1 : height;
+  radius = radius > 16 ? 16 : radius;
+
   ArmAngles angles = calculateInverseKinematics(radius, height, theta);
   asimuthStepper->setAngle(angles.asimuthTheta);
 
   ESP_LOGI(TAG, "shoulderAngle: %f", angles.shoulderTheta);
   ESP_LOGI(TAG, "elbowAngle: %f", angles.elbowTheta);
+
   shoulderMotor->setAngle(angles.shoulderTheta * 180.0 / PI);
   elbowServo->setAngle(angles.elbowTheta * 180.0 / PI+10);
 }

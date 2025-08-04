@@ -5,7 +5,7 @@
 #define DEGREES_PER_TICK_SHOULDER 0.0569948186528
 #define DEGREES_PER_POT_TICK_TTBL 0.0594059405941
 #define CLAW_OPEN 180
-#define CLAW_CLOSED 100 
+#define CLAW_CLOSED 90 
 #define CLAW_MIN_PWM 2.5
 #define CLAW_MAX_PWM 12.5
 #define ELBOW_MIN_PWM 2.5
@@ -19,6 +19,6 @@
 
 
 // Comment this out for no serial output...
-#define SERIAL_OUTPUT
+// #define SERIAL_OUTPUT
 
 #endif

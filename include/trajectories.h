@@ -9,25 +9,31 @@ struct Trajectory {
 };
 
 inline const Trajectory scanOutisdeDoor[] = {
-    {6.5, 11, -5, 100}, {7.5, 11, -20, 200},  {8, 11, -45, 150},
-    {8, 8, -60, 400},   {5.5, 7, -60, 150},   {5, 6.5, -60, 100},
-    {4.5, 6, -60, 100}, {3.5, 5.5, -60, 100},
+    {13, 15, -5, 400}, {13, 13, -5, 200}, {13, 11, -20, 200},  {13, 11, -45, 150},
+    {9, 8, -60, 400},   {6.5, 8, -60, 150},   {5, 8, -60, 100},
+    {4.5, 8, -60, 100}, {3.5, 8, -60, 100},
 
 };
 
 inline const Trajectory pickupPetOne[] = {
-    {6, 7, -60, 300}, {8, 7, -45, 200}, {8, 6, -30, 100}, {8, 5, 0, 100}};
+    {11, 9, -60, 300}, {14, 8, -45, 200}, {14, 6, -30, 100}, {14, 5, 0, 100}};
 
 inline const Trajectory scorePetOne[] = {
-    {8, 7, 30, 150}, {8, 9, 60, 150}, {8, 11, 90, 150}};
+    {14, 7, 30, 150}, {14, 9, 60, 150}, {14, 11, 90, 150}};
 
 inline const Trajectory scanPetTwo[] = {
-    {6.3, 4, 60, 100}, {6, 4.5, 60, 100},   {5.5, 5, 60, 100},
-    {4, 5.5, 60, 100}, {3.5, 5.5, 60, 100},
+    {8, 4, 60, 100}, {6.5, 7, 60, 150},   {5.5, 7, 60, 100},
+    {5, 6.5, 60, 100}, {4.8, 6.5, 60, 100},
 };
-inline const int scanOutisdeDoorLength = 8;
+inline const Trajectory storePetThree[] = {
+  {13, 9, 45, 300},
+  {14, 7, 25, 200},
+  {14, 3, 5, 200},
+};
+inline const int scanOutisdeDoorLength = 9;
 inline const int pickupPetOneLength = 4;
 inline const int scorePetOneLength = 3;
 inline const int scanPetTwoLength = 5;
+inline const int storePetThreeLength = 3;
 
 #endif

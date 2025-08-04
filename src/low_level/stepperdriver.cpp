@@ -104,7 +104,6 @@ void StepperMotor::setAngle(float angle) {
     return;
   }
 
-  // ESP_LOGI(TAG, "angle: %f, steps: %i, targetPosition: %i, totalSteps: %i, stepsRemaining: %i", angle, steps, targetPosition, totalSteps, stepsRemaining);
 
   if (!timerIsRunning) {
     ESP_ERROR_CHECK(gptimer_start(gptimer));
@@ -157,7 +156,6 @@ float StepperMotor::getAngleRelative() {
 
 float StepperMotor::getAngleAbsolute() {
   return (float)((int32_t)(get_convolved_value(ADC_CH_TURNTABLE_POT)) - 1855) * DEGREES_PER_POT_TICK_TTBL;
-  // return (float)get_convolved_value(ADC_CH_TURNTABLE_POT);
 }
 
 void StepperMotor::calibrate() {
