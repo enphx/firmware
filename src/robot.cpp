@@ -43,7 +43,7 @@ Robot::Robot()
 }
 
 void Robot::setArmPosition(float m_height, float m_radius, float m_theta,
-                           bool relative, bool calibrate) {
+                           bool relative) {
 
   if (relative) {
     height += m_height;
@@ -53,9 +53,6 @@ void Robot::setArmPosition(float m_height, float m_radius, float m_theta,
     height = m_height;
     radius = m_radius;
     theta = m_theta;
-    if (calibrate) {
-      arm.calibrate();
-    }
   }
   arm.setArmPosition(radius, height, theta);
 }
@@ -84,7 +81,7 @@ void Robot::armMoveSmooth(float m_height, float m_radius, int32_t numberOfSteps,
     deltaT = 1;
   }
   for (int i = 1; i <= numberOfSteps; i++) {
-    setArmPosition(deltaHeight, deltaRadius, 0, true, false);
+    setArmPosition(deltaHeight, deltaRadius, 0, true);
     this->delay(deltaT);
   }
 }
@@ -181,7 +178,6 @@ bool Robot::receive_and_process_serial_messages() {
     } else if (len == 2 && serial_message[0] == CLAW &&
                serial_message[1] == SET) {
       claw.toggle();
-      arm.calibrate();
     }
 
     return true;

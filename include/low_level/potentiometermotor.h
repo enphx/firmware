@@ -15,8 +15,6 @@ public:
 
   void update(void);
 
-  void calibrate(void);
-
   void setAngle(float angle);
 
   float getAngle(void);

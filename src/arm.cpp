@@ -19,6 +19,9 @@ void Arm::setArmPosition(float radius, float height, float theta) {
   ArmAngles angles = calculateInverseKinematics(radius, height, theta);
   asimuthStepper->setAngle(angles.asimuthTheta);
 
+  angles.shoulderTheta = angles.shoulderTheta <= 0.0 ? 0.0 : angles.shoulderTheta;
+  angles.shoulderTheta = angles.shoulderTheta >= 90.0 ? 90.0 : angles.shoulderTheta;
+  
   ESP_LOGI(TAG, "shoulderAngle: %f", angles.shoulderTheta);
   ESP_LOGI(TAG, "elbowAngle: %f", angles.elbowTheta);
 
@@ -51,5 +54,5 @@ ArmAngles Arm::calculateInverseKinematics(float radius, float height,
 }
 
 float Arm::getTheta() {
-  return asimuthStepper->getAngleAbsolute();
+  return asimuthStepper->getAngle();
 }

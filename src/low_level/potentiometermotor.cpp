@@ -54,7 +54,6 @@ void PotentiometerMotor::update(void) {
   }
 }
 
-void PotentiometerMotor::calibrate(void) {}
 
 void PotentiometerMotor::setAngle(float angle) { targetAngle = angle; }
 

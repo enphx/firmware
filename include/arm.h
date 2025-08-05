@@ -28,8 +28,6 @@ public:
 
   float getTheta();
 
-  inline void calibrate(void) { asimuthStepper->calibrate(); }
-
   inline ArmPosition getPosition(void) {
     return {targetHeight, targetRadius, targetTheta};
   }

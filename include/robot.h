@@ -32,12 +32,9 @@ public:
   Robot();
   void init(void);
 
-  void calibrateStepper() { asimuthStepper.calibrate(); }
-
   void setStepperSpeed(float speed) { asimuthStepper.setSpeed(speed); }
 
-  void setArmPosition(float height, float radius, float theta, bool relative,
-                      bool calibrate = true);
+  void setArmPosition(float height, float radius, float theta, bool relative = false);
 
   void setArmAngles(float asimuthTheta, float shoulderTheta, float elbowTheta);
 
@@ -56,8 +53,6 @@ public:
   void findTape(bool clockwise);
 
   void scanForPet(float height, float theta1, float theta2);
-
-  inline void calibrateArm(void) { arm.calibrate(); }
 
   inline void grabPet(void) { claw.close(); }
 

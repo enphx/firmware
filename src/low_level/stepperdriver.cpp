@@ -7,11 +7,15 @@
 
 static const char *TAG = "STEPPER";
 
+static volatile uint32_t steps_to_take = 0;
+static volatile bool step_pulse_phase = false;
+static volatile uint8_t step_pin;
+
 StepperMotor::StepperMotor(ShiftRegister *m_shiftRegister, uint8_t m_stepPin,
                            uint8_t m_directionBit,
                            uint32_t m_stepsPerRevolution)
     : shiftregister(m_shiftRegister) {
-  stepPin = m_stepPin;
+  step_pin = m_stepPin;
   directionBit = m_directionBit;
   stepsPerRevolution = m_stepsPerRevolution;
   
@@ -34,131 +38,95 @@ alarm_config = {
   ESP_ERROR_CHECK(gptimer_new_timer(&timer_config, &gptimer));
 }
 
+
+
+
+static bool IRAM_ATTR stepperTimerHandler(gptimer_handle_t timer,
+                                   const gptimer_alarm_event_data_t *edata,
+                                   void *user_ctx) {
+
+  if (steps_to_take == 0) {
+    return false;
+  }
+
+  if (step_pulse_phase == false) {
+    gpio_set_level((gpio_num_t)step_pin, HIGH);
+    step_pulse_phase = true;
+  } else {
+    gpio_set_level((gpio_num_t)step_pin, LOW);
+    step_pulse_phase = false;
+    steps_to_take = steps_to_take - 1;
+  }
+
+  return false;
+}
+
 void StepperMotor::setSpeed(float speed) {
 
-  if (timerIsRunning) {
-    ESP_ERROR_CHECK(gptimer_stop(gptimer));
-
-    if (stepState == true) {
-      delayMicroseconds(8);
-      this->handleStepLow();
-    }
-    timerIsRunning = false;
-  }
+  this->speed = speed;
 
   alarm_config.alarm_count = (uint64_t)(1e6 / (float)(stepsPerRevolution) /
                           TURNTABLE_ROTATIONS_PER_SECOND * 0.5 / speed);
 
   gptimer_set_alarm_action(gptimer, &alarm_config);
+
+  ESP_LOGI(TAG, "Set stepper speed to %f", speed);
 }
 
 void StepperMotor::init() {
-  pinMode(stepPin, OUTPUT);
+
+  ESP_LOGI(TAG, "Stepper motor init. Step pin: %u", step_pin);
+  pinMode(step_pin, OUTPUT);
   ESP_ERROR_CHECK(gptimer_set_alarm_action(gptimer, &alarm_config));
 
   gptimer_event_callbacks_t cbs = {
       .on_alarm = stepperTimerHandler,
   };
 
-  ESP_ERROR_CHECK(gptimer_register_event_callbacks(gptimer, &cbs, this));
+  ESP_ERROR_CHECK(gptimer_register_event_callbacks(gptimer, &cbs, NULL));
   ESP_ERROR_CHECK(gptimer_enable(gptimer));
   ESP_ERROR_CHECK(gptimer_start(gptimer));
-  timerIsRunning = true;
 
-  stepState = false;
 }
 
 void StepperMotor::setAngle(float angle) {
 
-  if (timerIsRunning) {
-    ESP_ERROR_CHECK(gptimer_stop(gptimer));
+  ESP_LOGI(TAG, "Setting stepper motor angle to %f", angle);
 
-    if (stepState == true) {
-      delayMicroseconds(8);
-      this->handleStepLow();
-    }
-    timerIsRunning = false;
+  targetAngle = angle;
+
+  int32_t target_steps = (angle - getAngle()) / 360.0 * stepsPerRevolution;
+
+  bool directionPositive = (target_steps > 0);
+
+  target_steps = target_steps < 0 ? -target_steps : target_steps;
+
+
+  ESP_LOGI(TAG, "Target steps: %i", target_steps);
+
+  // Only move if we are being told to move more than the minimum
+  // (this is to avoid annoying oscillations due to backlash).
+  if (target_steps <= min_steps) {
+    return;
   }
 
-  if (angle < getAngleRelative()) {
-    direction = BACKWARDS;
-    angle = angle > -TTBL_MAX_ANGLE ? angle : -TTBL_MAX_ANGLE;
-    shiftregister->setBit(0, directionBit);
-  } else if (angle > getAngleRelative()) {
-    direction = FORWARDS;
-    angle = angle < TTBL_MAX_ANGLE ? angle : TTBL_MAX_ANGLE;
+
+  // Bang the bits to set the direction of the stepper.
+  if (directionPositive) {
     shiftregister->setBit(1, directionBit);
   } else {
-    totalSteps = 0;
-    stepsRemaining = 0;
-    return;
+    shiftregister->setBit(0, directionBit);
   }
-
-  int32_t targetPosition = angle / 360 * stepsPerRevolution;
-
-
-  totalSteps = abs(targetPosition - steps);
-  stepsRemaining = totalSteps;
-
-  if (stepsRemaining == 0) {
-    return;
-  }
-
-
-  if (!timerIsRunning) {
-    ESP_ERROR_CHECK(gptimer_start(gptimer));
-    timerIsRunning = true;
-  }
+  
+  ESP_LOGI(TAG, "Set steps_to_take.");
+  // This should make the steps start stepping.
+  steps_to_take = target_steps;
 }
 
-bool IRAM_ATTR StepperMotor::stepperTimerHandler(
-    gptimer_handle_t timer, const gptimer_alarm_event_data_t *edata,
-    void *user_ctx) {
+bool StepperMotor::moving() { return steps_to_take > 0; }
 
-  StepperMotor *stepperMotor = static_cast<StepperMotor *>(user_ctx);
-
-  if (!stepperMotor) {
-    return false;
-  }
-
-  if (!stepperMotor->stepState) {
-    stepperMotor->handleStepHigh();
-    return false;
-  }
-  stepperMotor->handleStepLow();
-  return false;
-}
-
-void IRAM_ATTR StepperMotor::handleStepHigh(void) {
-
-  gpio_set_level((gpio_num_t)stepPin, HIGH);
-  stepState = true;
-}
-
-void IRAM_ATTR StepperMotor::handleStepLow(void) {
-  gpio_set_level((gpio_num_t)stepPin, LOW);
-  stepState = false;
-
-  stepsRemaining -= 1;
-  steps += direction;
-
-  if (stepsRemaining <= 0) {
-    gptimer_stop(gptimer);
-    timerIsRunning = false;
-  }
-}
-
-bool StepperMotor::moving() { return stepsRemaining > 0; }
-
-float StepperMotor::getAngleRelative() {
-  return steps * 360.0 / stepsPerRevolution;
-}
-
-float StepperMotor::getAngleAbsolute() {
+float StepperMotor::getAngle() {
+  float angle = (float)((int32_t)(get_convolved_value(ADC_CH_TURNTABLE_POT)) - 1855) * DEGREES_PER_POT_TICK_TTBL;  
+  ESP_LOGI(TAG, "Stepper angle: %f", angle);
   return (float)((int32_t)(get_convolved_value(ADC_CH_TURNTABLE_POT)) - 1855) * DEGREES_PER_POT_TICK_TTBL;
-}
-
-void StepperMotor::calibrate() {
-  steps = getAngleAbsolute() / 360.0 * stepsPerRevolution;
-  ESP_LOGI(TAG, "steps: %i", steps);
 }
