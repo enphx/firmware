@@ -17,7 +17,7 @@ void Arm::setArmPosition(float radius, float height, float theta) {
   radius = radius > 16 ? 16 : radius;
 
   ArmAngles angles = calculateInverseKinematics(radius, height, theta);
-  asimuthStepper->setAngle(angles.asimuthTheta);
+  asimuthStepper->setAngle(theta);
 
   angles.shoulderTheta = angles.shoulderTheta <= 0.0 ? 0.0 : angles.shoulderTheta;
   angles.shoulderTheta = angles.shoulderTheta >= 90.0 ? 90.0 : angles.shoulderTheta;

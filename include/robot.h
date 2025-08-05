@@ -27,6 +27,9 @@ enum class PIDObject {
   SHOULDER,
 };
 
+#define SCAN_LEFT true
+#define SCAN_RIGHT false
+
 class Robot {
 public:
   Robot();
@@ -110,6 +113,82 @@ public:
   void update();
 
   void delay(uint32_t ticks_millis);
+
+
+  // Note: this assumes you are currently looking at a pet.
+  inline void scanAndGrabPet(bool direction) {
+
+    float dir_mul = -1.0;
+
+    if (direction) {
+      dir_mul = 1.0;
+    }
+
+    setBaseSpeed(0.0);
+
+    while (stepperIsMoving()) {
+      this->delay(1);
+    }
+
+    int32_t pet_distance = claw.getRangeFinderValue();
+
+    startScanning();
+
+    setStepperSpeed(.4);
+
+    delay(80);
+    
+
+    // Start sweeping one way.
+    setArmPosition(0, 0, 30.0 * dir_mul, true);
+
+
+    setScannerThreshold(200, false);
+    while (!scannerThresholdTripped()) {
+      this->delay(1);
+    }
+ 
+    setScannerThreshold(200, true);
+    while (!scannerThresholdTripped()) {
+      this->delay(1);
+    }
+    
+    // record value and start sweeping the other way.
+    float theta1 = lastScannerPoint.position.armPosition.theta;
+    arm.stopStepper();
+    setArmPosition(0, 0, -60 * dir_mul, true);
+
+    setScannerThreshold(200, false);
+    while (!scannerThresholdTripped()) {
+      this->delay(1);
+    }
+
+    setScannerThreshold(200, true);
+    while (!scannerThresholdTripped()) {
+      this->delay(1);
+    }
+
+    // Record pet edge point and stop the stepper.
+    float theta2 = lastScannerPoint.position.armPosition.theta;
+    arm.stopStepper();
+
+    // Go to arm position with unchanged height and radius,
+    // but theta which is between the two points.
+    ArmPosition current_pos = arm.getPosition();
+
+    arm.setTheta((theta1 + theta2)/2.0);
+
+    while (stepperIsMoving()) {
+      this->delay(1);
+    }
+
+    this->delay(80);
+
+    // convert to inches.
+    setArmPosition(1.5, lastLastScannerPoint.distance * 0.0393701 + 0.3, 0.0, true);
+    
+    stopScanning();
+  }
 
 private:
   EncoderMotor leftMotor, rightMotor;

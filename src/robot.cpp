@@ -48,7 +48,7 @@ void Robot::setArmPosition(float m_height, float m_radius, float m_theta,
   if (relative) {
     height += m_height;
     radius += m_radius;
-    theta += m_theta;
+    theta = getArmTheta() + m_theta;
   } else {
     height = m_height;
     radius = m_radius;

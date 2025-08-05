@@ -22,14 +22,22 @@ public:
   Arm(PotentiometerMotor *m_shoulderMotor, Servo *m_elbowServo,
       StepperMotor *m_asimuthStepper);
 
+  inline void stopStepper() {
+    asimuthStepper->stop();
+  }
+
   void setArmPosition(float radius, float height, float theta);
 
   void setArmAngles(float asimuthTheta, float shoulderTheta, float elbowTheta);
 
   float getTheta();
 
+  inline void setTheta(float theta) {
+    asimuthStepper->setAngle(theta);
+  }
+
   inline ArmPosition getPosition(void) {
-    return {targetHeight, targetRadius, targetTheta};
+    return {targetHeight, targetRadius, asimuthStepper->getAngle()};
   }
 
 private:

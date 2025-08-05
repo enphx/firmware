@@ -89,6 +89,10 @@ void StepperMotor::init() {
 
 }
 
+void StepperMotor::stop() {
+  steps_to_take = 0;
+}
+
 void StepperMotor::setAngle(float angle) {
 
   ESP_LOGI(TAG, "Setting stepper motor angle to %f", angle);
@@ -104,19 +108,20 @@ void StepperMotor::setAngle(float angle) {
 
   ESP_LOGI(TAG, "Target steps: %i", target_steps);
 
-  // Only move if we are being told to move more than the minimum
-  // (this is to avoid annoying oscillations due to backlash).
-  if (target_steps <= min_steps) {
-    return;
-  }
-
-
+ 
   // Bang the bits to set the direction of the stepper.
   if (directionPositive) {
     shiftregister->setBit(1, directionBit);
   } else {
     shiftregister->setBit(0, directionBit);
   }
+
+ // Only move if we are being told to move more than the minimum
+  // (this is to avoid annoying oscillations due to backlash).
+  if (target_steps <= min_steps) {
+    return;
+  }
+
   
   ESP_LOGI(TAG, "Set steps_to_take.");
   // This should make the steps start stepping.

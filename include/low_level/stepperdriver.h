@@ -13,6 +13,8 @@ public:
 
   void init(void);
 
+  void stop();
+
   void setAngle(float angle);
 
   void setSpeed(float speed);
