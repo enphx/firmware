@@ -3,6 +3,15 @@
 #include <Arduino.h>
 #include "include/low_level/shiftregister.h"
 
+void encoderHandler(void *arg);
+
+struct EncoderData {
+  const volatile uint8_t pin1;
+  const volatile uint8_t pin2;
+  volatile uint8_t prev_state;
+  volatile int32_t tick_count;
+};
+
 class EncoderMotor {
 public:
   EncoderMotor(ShiftRegister* m_shiftReg,
@@ -46,20 +55,18 @@ private:
 
   void setPWM(float dutycycle, uint8_t m_direction);
   float calculatePID(void); 
-  static void genericEncoderHandler(void *arg);
-  void handleEncoder();
 
   ShiftRegister* const shiftReg;
 
-  const uint8_t encoderPin1, encoderPin2, pwmPin, dirBit;
+  volatile EncoderData encoder_data;
+
+  const uint8_t  pwmPin, dirBit;
   const int ticksPerRev;
 
   const char ID;
 
   float kP = 0, kD = 0, kI = 0;
   float targetSpeed = 0, currentSpeed = 0;
-  volatile uint8_t previousState = 0;
-  volatile int32_t tickCount = 0;
   int32_t previousTickCount = 0;
   uint64_t timeLastUpdated;
   uint32_t deltaT;

@@ -19,8 +19,13 @@ EncoderMotor::EncoderMotor(ShiftRegister* m_shiftReg,
                            const float m_kD,
                            const char ID) :
                            shiftReg(m_shiftReg),
-                           encoderPin1(m_encoderPin1),
-                           encoderPin2(m_encoderPin2),
+                           encoder_data(
+                             EncoderData {
+                               .pin1 = m_encoderPin1,
+                               .pin2 = m_encoderPin2,
+                               .prev_state = 0,
+                               .tick_count = 0,
+                             }),
                            pwmPin(m_pwmPin),
                            dirBit(m_dirBit),
                            ticksPerRev(m_ticksPerRev),
@@ -37,42 +42,37 @@ EncoderMotor::EncoderMotor(ShiftRegister* m_shiftReg,
 }
 
 void EncoderMotor::init() {
-  pinMode(encoderPin1, INPUT);
-  pinMode(encoderPin2, INPUT);
+  pinMode(encoder_data.pin1, INPUT);
+  pinMode(encoder_data.pin2, INPUT);
   pinMode(pwmPin, OUTPUT);
 
   ledcAttach(pwmPin, PWM_FREQUENCY, 12);
 
-  attachInterruptArg(encoderPin1, EncoderMotor::genericEncoderHandler, this,
+  attachInterruptArg(encoder_data.pin1, encoderHandler, (void*) &encoder_data,
                      CHANGE);
-  attachInterruptArg(encoderPin2, EncoderMotor::genericEncoderHandler, this,
+  attachInterruptArg(encoder_data.pin2, encoderHandler, (void*) &encoder_data,
                      CHANGE);
-  uint8_t s1 = gpio_get_level(gpio_num_t(encoderPin1));
-  uint8_t s2 = gpio_get_level(gpio_num_t(encoderPin2));
-  previousState = (s1 << 1) | s2; 
+  uint8_t s1 = gpio_get_level(gpio_num_t(encoder_data.pin1));
+  uint8_t s2 = gpio_get_level(gpio_num_t(encoder_data.pin2));
+  encoder_data.prev_state = (s1 << 1) | s2; 
 }
 
 
 
-void IRAM_ATTR EncoderMotor::genericEncoderHandler(void *arg) {
-  EncoderMotor *motor = static_cast<EncoderMotor *>(arg);
-  if (motor) {
-    motor->handleEncoder();
-  }
-}
+void IRAM_ATTR encoderHandler(void *arg) {
+  EncoderData *data = ((EncoderData *)(arg));
 
-void IRAM_ATTR EncoderMotor::handleEncoder() {
-  uint8_t s1 = gpio_get_level(gpio_num_t(encoderPin1));
-  uint8_t s2 = gpio_get_level(gpio_num_t(encoderPin2));
+  uint8_t s1 = gpio_get_level(gpio_num_t(data->pin1));
+  uint8_t s2 = gpio_get_level(gpio_num_t(data->pin2));
 
   uint8_t currentState = (s1 << 1) | s2;
-  uint8_t combined = (previousState << 2) | currentState;
+  uint8_t combined = (data->prev_state << 2) | currentState;
 
   const int8_t lookup[16] = {0,  -1, 1, 0, 1, 0, 0,  -1,
                              -1, 0,  0, 1, 0, 1, -1, 0};
 
-  tickCount += lookup[combined & 0x0F];
-  previousState = currentState;
+  data->tick_count += lookup[combined & 0x0F];
+  data->prev_state = currentState;
 }
 
 // void EncoderMotor::setBackwards(boolean m_backwards) {
@@ -85,7 +85,7 @@ int32_t EncoderMotor::update(void) {
 
     uint64_t t = micros();
   deltaT = (uint32_t)(t - timeLastUpdated);
-  currentTickCount = tickCount;
+  currentTickCount = encoder_data.tick_count;
   timeLastUpdated = t;
 
   int32_t deltaTicks = currentTickCount - previousTickCount;
@@ -98,6 +98,7 @@ int32_t EncoderMotor::update(void) {
                    WHEEL_DIAMETER;
     lastSpeedReadingTicks = currentTickCount;
     lastSpeedReadingTime = micros();
+    ESP_LOGI(TAG, "Speed %c: %f", ID, currentSpeed);
   }
 
   previousTickCount = currentTickCount;
@@ -139,7 +140,7 @@ uint8_t EncoderMotor::getDirection() { return direction; }
 uint8_t EncoderMotor::getDirectionBit() { return dirBit; }
 
 long EncoderMotor::getTickCount() {
-  return tickCount;
+  return encoder_data.tick_count;
 }
 
 void EncoderMotor::setSpeed(float speed) { targetSpeed = speed * backwards; }
