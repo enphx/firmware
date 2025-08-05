@@ -72,10 +72,15 @@ void Robot::armFollowTrajectory(const Trajectory *trajectory,
 }
 
 void Robot::armMoveSmooth(float m_height, float m_radius, int32_t numberOfSteps,
-                          int32_t milliseconds) {
+                          int32_t milliseconds, bool relative) {
   float deltaHeight = (m_height - height) / numberOfSteps;
   float deltaRadius = (m_radius - radius) / numberOfSteps;
   int32_t deltaT = milliseconds / numberOfSteps;
+
+  if (relative) {
+    deltaHeight = (m_height) / numberOfSteps;
+    deltaRadius = (m_radius) / numberOfSteps;
+  }
 
   if (deltaT == 0) {
     deltaT = 1;
@@ -105,6 +110,19 @@ void Robot::delay(uint32_t milliseconds) {
       return;
     }
   }
+}
+
+void Robot::turnAngle(float angle) {
+    ESP_LOGI(TAG, "Turning angle %f", angle);
+    int direction = angle > 0 ? -1 : 1;
+
+    float theta0 = this->getPosition().driveBasePosition.theta;
+    this->setTurning(true, direction);
+    while (direction * ((angle + theta0) - this->getPosition().driveBasePosition.theta) < 0) {
+      this->delay(1);
+    }
+
+    this->setTurning(false, direction);
 }
 
 void Robot::findTape(bool clockwise) {

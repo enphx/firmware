@@ -60,7 +60,7 @@ void EncoderMotor::init() {
 
 
 void IRAM_ATTR encoderHandler(void *arg) {
-  EncoderData *data = ((EncoderData *)(arg));
+  volatile EncoderData *data = ((volatile EncoderData *)(arg));
 
   uint8_t s1 = gpio_get_level(gpio_num_t(data->pin1));
   uint8_t s2 = gpio_get_level(gpio_num_t(data->pin2));
@@ -98,7 +98,7 @@ int32_t EncoderMotor::update(void) {
                    WHEEL_DIAMETER;
     lastSpeedReadingTicks = currentTickCount;
     lastSpeedReadingTime = micros();
-    ESP_LOGI(TAG, "Speed %c: %f", ID, currentSpeed);
+    // ESP_LOGI(TAG, "Speed %c: %f", ID, currentSpeed);
   }
 
   previousTickCount = currentTickCount;

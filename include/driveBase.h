@@ -55,6 +55,11 @@ public:
     return {x, y, theta};
   }
 
+  inline void setTurning(bool m_turning, int direction) {
+    turning = m_turning;
+    this->turningDirection = direction < 0 ? -1 : 1;
+  }
+
   inline float getError() {return error;}
   inline float getSetPoint() {return 0.0;}
   inline float getP() {return P;}
@@ -90,6 +95,9 @@ private:
   uint64_t timeLastUpdated;
   uint32_t deltaT;
   bool lineFollow = true;
+
+  bool turning = false;
+  int turningDirection = 1; // positive for right, negative for left.
 
   float zeroDistance = 0;
 

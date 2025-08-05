@@ -83,7 +83,14 @@ void DriveBase::update(void) {
     }
   }
 
-  if (lineFollow) {
+  
+
+
+  if (turning) {
+    ESP_LOGI(TAG, "Turning with direction %i and speed %f");
+    leftMotor->setSpeed(baseSpeed * turningDirection);
+    rightMotor->setSpeed(baseSpeed * -turningDirection);
+  } else if (lineFollow) {
     float correction = calculateCorrection();
     leftMotor->setSpeed(baseSpeed + correction);
     rightMotor->setSpeed(baseSpeed - correction);

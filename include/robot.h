@@ -47,7 +47,7 @@ public:
    * This function does not change the theta axis
    */
   void armMoveSmooth(float m_height, float m_radius, int32_t numberOfSteps,
-                     int32_t milliseconds);
+                     int32_t milliseconds, bool relative = false);
 
   int getTapeFollowingError();
 
@@ -114,9 +114,23 @@ public:
 
   void delay(uint32_t ticks_millis);
 
+  inline void setTurning(bool turning, int direction) {
+    driveBase.setTurning(turning, direction);
+  }
+
+  inline void moveDistance(float distance) {
+    this->resetDistanceTravelled();
+
+    while (this->getDistanceTravelled() < distance) {
+      this->delay(1);
+    }
+  }
+
+  void turnAngle(float angle);
+
 
   // Note: this assumes you are currently looking at a pet.
-  inline void scanAndGrabPet(bool direction) {
+  inline void locatePet(bool direction) {
 
     float dir_mul = -1.0;
 
@@ -184,8 +198,8 @@ public:
 
     this->delay(80);
 
-    // convert to inches.
-    setArmPosition(1.5, lastLastScannerPoint.distance * 0.0393701 + 0.3, 0.0, true);
+    // // convert to inches.
+    // setArmPosition(1.5, lastLastScannerPoint.distance * 0.0393701 + 0.3, 0.0, true);
     
     stopScanning();
   }

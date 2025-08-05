@@ -70,12 +70,12 @@ void StepperMotor::setSpeed(float speed) {
 
   gptimer_set_alarm_action(gptimer, &alarm_config);
 
-  ESP_LOGI(TAG, "Set stepper speed to %f", speed);
+  // ESP_LOGI(TAG, "Set stepper speed to %f", speed);
 }
 
 void StepperMotor::init() {
 
-  ESP_LOGI(TAG, "Stepper motor init. Step pin: %u", step_pin);
+  // ESP_LOGI(TAG, "Stepper motor init. Step pin: %u", step_pin);
   pinMode(step_pin, OUTPUT);
   ESP_ERROR_CHECK(gptimer_set_alarm_action(gptimer, &alarm_config));
 
@@ -95,7 +95,7 @@ void StepperMotor::stop() {
 
 void StepperMotor::setAngle(float angle) {
 
-  ESP_LOGI(TAG, "Setting stepper motor angle to %f", angle);
+  // ESP_LOGI(TAG, "Setting stepper motor angle to %f", angle);
 
   targetAngle = angle;
 
@@ -106,7 +106,7 @@ void StepperMotor::setAngle(float angle) {
   target_steps = target_steps < 0 ? -target_steps : target_steps;
 
 
-  ESP_LOGI(TAG, "Target steps: %i", target_steps);
+  // ESP_LOGI(TAG, "Target steps: %i", target_steps);
 
  
   // Bang the bits to set the direction of the stepper.
@@ -123,7 +123,7 @@ void StepperMotor::setAngle(float angle) {
   }
 
   
-  ESP_LOGI(TAG, "Set steps_to_take.");
+  // ESP_LOGI(TAG, "Set steps_to_take.");
   // This should make the steps start stepping.
   steps_to_take = target_steps;
 }
@@ -132,6 +132,6 @@ bool StepperMotor::moving() { return steps_to_take > 0; }
 
 float StepperMotor::getAngle() {
   float angle = (float)((int32_t)(get_convolved_value(ADC_CH_TURNTABLE_POT)) - 1855) * DEGREES_PER_POT_TICK_TTBL;  
-  ESP_LOGI(TAG, "Stepper angle: %f", angle);
+  // ESP_LOGI(TAG, "Stepper angle: %f", angle);
   return (float)((int32_t)(get_convolved_value(ADC_CH_TURNTABLE_POT)) - 1855) * DEGREES_PER_POT_TICK_TTBL;
 }
