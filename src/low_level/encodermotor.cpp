@@ -7,6 +7,10 @@
 
 static const char* TAG = "ENCODER MOTOR";
 
+
+static volatile const int8_t lookup[16] = {0,  -1, 1, 0, 1, 0, 0,  -1,
+                             -1, 0,  0, 1, 0, 1, -1, 0};
+
 EncoderMotor::EncoderMotor(ShiftRegister* m_shiftReg,
                            const bool m_backwards,
                            const uint8_t m_encoderPin1,
@@ -68,8 +72,6 @@ void IRAM_ATTR encoderHandler(void *arg) {
   uint8_t currentState = (s1 << 1) | s2;
   uint8_t combined = (data->prev_state << 2) | currentState;
 
-  const int8_t lookup[16] = {0,  -1, 1, 0, 1, 0, 0,  -1,
-                             -1, 0,  0, 1, 0, 1, -1, 0};
 
   data->tick_count += lookup[combined & 0x0F];
   data->prev_state = currentState;

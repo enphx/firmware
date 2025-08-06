@@ -116,6 +116,8 @@ void Robot::turnAngle(float angle) {
     ESP_LOGI(TAG, "Turning angle %f", angle);
     int direction = angle > 0 ? -1 : 1;
 
+    angle = angle * PI / 360.0;
+
     float theta0 = this->getPosition().driveBasePosition.theta;
     this->setTurning(true, direction);
     while (direction * ((angle + theta0) - this->getPosition().driveBasePosition.theta) < 0) {
@@ -125,16 +127,16 @@ void Robot::turnAngle(float angle) {
     this->setTurning(false, direction);
 }
 
-void Robot::findTape(bool clockwise) {
-  updateHighLevel = false;
-
-  if (clockwise) {
-    leftMotor.setSpeed(-0.5);
-    rightMotor.setSpeed(0.5);
-  } else {
-    leftMotor.setSpeed(0.5);
-    rightMotor.setSpeed(-0.5);
+void Robot::findTape() {
+  while (tapeFollowingSensor.getTapeState() == tapeState::OutOfBounds) {
+    this->delay(1);
+    if (tapeFollowingSensor.getSide() == tapeSide::Left) {
+      this->setTurning(true, 1);
+    } else {
+      this->setTurning(true, -1);
+    }
   }
+  this->setTurning(false, 1);
 }
 
 #ifdef SERIAL_OUTPUT

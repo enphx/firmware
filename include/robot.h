@@ -53,7 +53,7 @@ public:
 
   void setBaseSpeed(float speed);
 
-  void findTape(bool clockwise);
+  void findTape();
 
   void scanForPet(float height, float theta1, float theta2);
 
@@ -130,7 +130,7 @@ public:
 
 
   // Note: this assumes you are currently looking at a pet.
-  inline void locatePet(bool direction) {
+  inline void locatePet(bool direction, int distance_threshold = 200) {
 
     float dir_mul = -1.0;
 
@@ -157,12 +157,12 @@ public:
     setArmPosition(0, 0, 30.0 * dir_mul, true);
 
 
-    setScannerThreshold(200, false);
+    setScannerThreshold(distance_threshold, false);
     while (!scannerThresholdTripped()) {
       this->delay(1);
     }
  
-    setScannerThreshold(200, true);
+    setScannerThreshold(distance_threshold, true);
     while (!scannerThresholdTripped()) {
       this->delay(1);
     }
@@ -172,12 +172,12 @@ public:
     arm.stopStepper();
     setArmPosition(0, 0, -60 * dir_mul, true);
 
-    setScannerThreshold(200, false);
+    setScannerThreshold(distance_threshold, false);
     while (!scannerThresholdTripped()) {
       this->delay(1);
     }
 
-    setScannerThreshold(200, true);
+    setScannerThreshold(distance_threshold, true);
     while (!scannerThresholdTripped()) {
       this->delay(1);
     }
@@ -201,6 +201,7 @@ public:
     // // convert to inches.
     // setArmPosition(1.5, lastLastScannerPoint.distance * 0.0393701 + 0.3, 0.0, true);
     
+    setStepperSpeed(1);
     stopScanning();
   }
 

@@ -1,0 +1,243 @@
+#include "low_level/core0.h"
+#include "low_level/io.h"
+#include "robot.h"
+#include <Arduino.h>
+
+// NOTE: pet detection was being run with a kernel of [-1, 0, 1].
+
+static const char *TAG = "main";
+
+Robot robot;
+
+void statusTask(void *arg) {
+  for (;;) {
+    gpio_set_level((gpio_num_t)4, HIGH);
+    vTaskDelay(pdMS_TO_TICKS(1000));
+    gpio_set_level((gpio_num_t)4, LOW);
+    vTaskDelay(pdMS_TO_TICKS(1000));
+  }
+}
+
+#define SCAN_HEIGHT 3.7
+#define SCAN_RADIUS 5.5
+
+void robotTask(void *arg) {
+
+  ESP_LOGI(TAG, "started robot task");
+
+
+
+  // Setup initial conditions.
+  robot.setArmPosition(7.1, 14.5, 0, false);
+  robot.setBaseSpeed(0);
+  robot.setTapeFollowing(true);
+  robot.releasePet();
+  robot.delay(400);
+  robot.flaccid();
+  robot.startScanning();
+
+  // Wait for start signal from switch.
+  while (get_convolved_value(ADC_CH_IR_BEACON_R) < 1000) {
+    robot.delay(1);
+  }
+
+  robot.stopScanning();
+
+  // Start line following forwards, travelling for some distance until we hit the door.
+  robot.setArmPosition(7.1, 14.5, 0, false);
+  robot.setBaseSpeed(1.5);
+  robot.resetDistanceTravelled();
+  while (robot.getDistanceTravelled() <= 1.5) {
+    robot.delay(1);
+  }
+
+  // We are now through the door
+  robot.releasePet();
+  robot.setBaseSpeed(0.5);
+  robot.armFollowTrajectory(scanOutisdeDoor, scanOutisdeDoorLength);
+  robot.startScanning();
+  robot.delay(100);
+
+  // Scan for first pet
+  robot.setScannerThreshold(200, false);
+  while (robot.scannerThresholdTripped() == false) {
+    robot.delay(1);
+  }
+
+  // Locate and grab it.
+  robot.locatePet(SCAN_LEFT);
+  // robot.setArmPosition(1.5, robot.getLastScannerPoint().distance * 0.0393701 + 0.3, 0, true);
+  robot.armMoveSmooth(1.5, robot.getLastScannerPoint().distance * 0.0393701 + 0.3, 40, 200, true);
+  robot.grabPet();
+  robot.delay(500);
+
+ 
+
+  // // Stop and grab first pet when it is detected.
+  // robot.stopScanning();
+  // robot.resetDistanceTravelled();
+  // robot.setBaseSpeed(0);
+  // robot.armMoveSmooth(3.5 + 1, 8 + 5, 10, 400);
+  // robot.grabPet();
+  // robot.delay(700);
+
+
+  // Raise pet up, and move up the ramp.
+  robot.resetDistanceTravelled();
+  robot.setBaseSpeed(1.5);
+  robot.armFollowTrajectory(pickupPetOne, pickupPetOneLength);
+  while (robot.getDistanceTravelled() < 0.8) {
+    robot.delay(1);
+  }
+
+  // Score the pet as we move up the ramp.
+  robot.armFollowTrajectory(scorePetOne, scorePetOneLength);
+  robot.releasePet();
+
+  // Set arm in position to scan for second pet.
+  robot.delay(500);
+  robot.setArmPosition(8, 3, 60, false);
+  robot.flaccid();
+  while (robot.getDistanceTravelled() < 1.4) {
+    robot.delay(1);
+  }
+  robot.delay(300);
+  robot.startScanning();
+  robot.delay(100);
+
+  // Scan for window wall.
+  robot.setScannerThreshold(200, false);
+  while (!robot.scannerThresholdTripped()) {
+    robot.delay(1);
+  }
+
+  float petTwoAngle = 15;
+
+  robot.setBaseSpeed(1);
+  robot.setTapeFollowing(false);
+  robot.turnAngle(-petTwoAngle);
+
+
+  robot.resetDistanceTravelled();
+  while (robot.getDistanceTravelled() < 0.12){
+    robot.delay(1);
+  }
+
+  robot.setBaseSpeed(0.0);
+
+  robot.armMoveSmooth(7, 6.5, 30, 300);
+  robot.armMoveSmooth(3.5, 8, 10, 200);
+
+  robot.resetDistanceTravelled();
+  robot.setBaseSpeed(0.4);
+  robot.setScannerThreshold(150, false);
+
+  robot.delay(80);
+
+  while (!robot.scannerThresholdTripped() && robot.getDistanceTravelled() < 0.2) {
+    robot.delay(1);
+  }
+
+  robot.setBaseSpeed(0.0);
+
+
+  // New stuff
+  
+  robot.startScanning();
+
+  robot.locatePet(SCAN_RIGHT, 150);
+
+
+  robot.armMoveSmooth(1.5, robot.getLastScannerPoint().distance * 0.0393701, 40, 200, true);
+
+  robot.grabPet();
+  robot.delay(500);
+  robot.armMoveSmooth(8.5, 8, 30, 200);
+  robot.setArmPosition(8.5, 8, 0);
+
+  robot.setBaseSpeed(-1);
+  robot.resetDistanceTravelled();
+  robot.delay(10);
+  while (robot.getDistanceTravelled() > -0.12) {
+    robot.delay(1);
+  }
+
+
+  
+  robot.setBaseSpeed(1);
+  robot.setTapeFollowing(false);
+  robot.turnAngle(petTwoAngle);
+  robot.setBaseSpeed(0.0);
+
+  robot.setBaseSpeed(-1.0);
+  robot.resetDistanceTravelled();
+  robot.delay(10);
+  while (robot.getDistanceTravelled() > -0.5) {
+    robot.delay(1);
+  }
+
+  
+  robot.setBaseSpeed(0.0);
+
+
+  // Drop pet 2, find tape, and keep going!
+  robot.setArmPosition(9, 11, 90);
+  robot.delay(1500);
+  robot.releasePet();
+  robot.delay(400);
+  robot.flaccid();
+  robot.setArmPosition(9, 9, 30);
+  robot.setBaseSpeed(1);
+  robot.findTape();
+  robot.setBaseSpeed(0);
+
+  
+  robot.setTapeFollowing(true);
+  robot.setArmPosition(9, 11, 30);
+  robot.delay(500);
+  robot.armMoveSmooth(8.3, 6.5, 30, 300);
+
+  robot.setBaseSpeed(1);
+
+  robot.resetDistanceTravelled();
+  robot.delay(80);
+  while (robot.getDistanceTravelled() < 0.75){
+    robot.delay(1);
+  }
+
+  robot.setArmPosition(8.3, 6.5, 45);
+
+  robot.setBaseSpeed(0.4);
+
+  // Detect Pet 3.
+  robot.startScanning();
+  robot.delay(100);
+  robot.setScannerThreshold(200, false);
+  while (!robot.scannerThresholdTripped()) {
+    robot.delay(1);
+  }
+
+  
+  robot.locatePet(SCAN_RIGHT, 150);
+
+  
+
+  
+  while (1) {
+    robot.delay(1);
+  }
+
+  
+}
+
+void setup() {
+  pinMode(4, OUTPUT);
+
+  robot.init();
+  ESP_LOGI(TAG, "robot initialized");
+  xTaskCreatePinnedToCore(statusTask, "statusLed task", 4096, NULL, 3, NULL, 1);
+  delay(100);
+  xTaskCreatePinnedToCore(robotTask, "robot task", 8192, NULL, 1, NULL, 1);
+}
+
+void loop() {}

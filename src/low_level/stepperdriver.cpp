@@ -50,10 +50,10 @@ static bool IRAM_ATTR stepperTimerHandler(gptimer_handle_t timer,
   }
 
   if (step_pulse_phase == false) {
-    gpio_set_level((gpio_num_t)step_pin, HIGH);
+    gpio_set_level((volatile gpio_num_t)step_pin, HIGH);
     step_pulse_phase = true;
   } else {
-    gpio_set_level((gpio_num_t)step_pin, LOW);
+    gpio_set_level((volatile gpio_num_t)step_pin, LOW);
     step_pulse_phase = false;
     steps_to_take = steps_to_take - 1;
   }

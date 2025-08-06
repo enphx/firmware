@@ -40,16 +40,16 @@ void DriveBase::update(void) {
     arcLength = distL;
     x += distL * fast_cos(theta);
     y += distL * fast_sin(theta);
-    distanceTravelled += distL;
   } else {
     deltaTheta = ((distR - distL) / DRIVE_BASE_LENGTH);
     // float turnRadius = (distR + distL) / (2 * deltaTheta);
     arcLength = (distR + distL)/2;
-    distanceTravelled += arcLength;
     x += arcLength * fast_cos(theta + deltaTheta/2);
     y += arcLength * fast_sin(theta + deltaTheta/2);
     theta += deltaTheta;
   }
+
+  distanceTravelled += arcLength;
   
 
   // Update tape following shenanigans.
