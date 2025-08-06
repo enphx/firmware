@@ -1,0 +1,67 @@
+
+CRASH 1:
+
+[  3150][I][robot.cpp:300] update_scanner(): [ROBOT] LIDAR: 498
+Guru Meditation Error: Core  1 panic'ed (InstrFetchProhibited). Exception was unhandled.
+
+Core  1 register dump:
+PC      : 0x00022088  PS      : 0x00060330  A0      : 0x800d3ed0  A1      : 0x3ffd56b0
+A2      : 0xfffffffb  A3      : 0x4bc00000  A4      : 0x00000000  A5      : 0xbfc00000
+A6      : 0xfffed45a  A7      : 0x3ffc1e58  A8      : 0x800d4783  A9      : 0x3ffd56a0
+A10     : 0x00000000  A11     : 0xc011e1c3  A12     : 0x54442d18  A13     : 0x400921fb
+A14     : 0x38000000  A15     : 0x00060023  SAR     : 0x00000001  EXCCAUSE: 0x00000014
+EXCVADDR: 0x00022088  LBEG    : 0x40084401  LEND    : 0x40084409  LCOUNT  : 0x00000027
+
+
+Backtrace: 0x00022085:0x3ffd56b0 0x400d3ecd:0x3ffd56e0 0x400d5ee1:0x3ffd5710 0x400d5f05:0x3ffd5730 0x400d5f3d:0x3ffd5750 0x400d5859:0x3ffd5770 0x4008978e:0x3ffd5790
+0x00022085 0x400d3ecd 0x400d5ee1 0x400d5f05 0x400d5f3d 0x400d5859 0x4008978e
+
+0x00022085: ?? ??:0
+0x400d3ecd: DriveBase::update() at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/driveBase.cpp:30
+0x400d5ee1: Robot::update() at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/robot.cpp:324
+0x400d5f05: Robot::delay(unsigned long) at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/robot.cpp:107
+0x400d5f3d: Robot::armFollowTrajectory(Trajectory const*, int) at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/robot.cpp:70
+0x400d5859: robotTask(void*) at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/main.cpp:57
+0x4008978e: vPortTaskWrapper at /home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:139
+
+
+
+
+ELF file SHA256: de997680f
+
+Rebooting...
+[     7][D][esp32-hal-cpu.c:273] setCpuFrequencyMhz(): PLL: 480 / 2 = 240 Mhz, APB: 80000000 Hz
+=========== Before Setup Start ===========
+Chip Info:
+------------------------------------------
+  Model             : ESP32
+  Package           : PICO-D4
+
+
+
+CRASH 2:
+
+[   182][E][esp32-hal-periman.c:180] perimanGetPinBus(): Invalid pin: 255
+[   188][E][esp32-hal-gpio.c:176] __digitalWrite(): IO 255 is not set as GPIO. Execute digitalMode(255, OUTPUT) first.
+Guru Meditation Error: Core  1 panic'ed (LoadProhibited). Exception was unhandled.
+
+Core  1 register dump:
+PC      : 0x400dbddc  PS      : 0x00060031  A0      : 0x800812de  A1      : 0x3ffbfd1c
+A2      : 0x0000000e  A3      : 0x3dde9bd4  A4      : 0x3ffd56f0  A5      : 0x3ffd56c0
+A6      : 0x3ffc1f38  A7      : 0x3a92cd00  A8      : 0x0000001f  A9      : 0xbfbbd37a
+A10     : 0x8ba40d90  A11     : 0x3f7f134d  A12     : 0x3ffd56c0  A13     : 0x3ffd5690
+A14     : 0x3ffc1f38  A15     : 0x3e9b111e  SAR     : 0x00000012  EXCCAUSE: 0x0000001c
+EXCVADDR: 0x0000001f  LBEG    : 0x400843d9  LEND    : 0x400843e1  LCOUNT  : 0x00000027
+
+
+Backtrace: 0x400dbdd9:0x3ffbfd1c |<-CORRUPTED
+
+
+
+
+ELF file SHA256: 1b6dd8fcd
+
+Rebooting...
+[   144][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
+[   151][E][esp32-hal-periman.c:180] perimanGetPinBus(): Invalid pin: 255
+[   159][E][esp32-hal-gpio.c:176] __digitalWrite(): IO 255 is not set as GPIO.

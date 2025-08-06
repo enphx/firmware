@@ -1,0 +1,461 @@
+0x400e821a 0x400d8c1a 0x400d4665 0x400d47a9 0x400d3f21 0x400d5dad 0x400d5dd1 0x400d5e0d 0x400d57d5 0x400897b6 
+
+
+
+-pfiaC -e ./.pio/build/pico32/firmware.elf <magic_nums>
+/home/el_Ronito/.platformio/packages/toolchain-xtensa-esp-elf/bin/xtensa-esp32-elf-addr2line
+
+
+
+====================================================================================
+====================================================================================
+====================================================================================
+
+
+ERROR DUMP 1:
+
+[ 15031][I][stepperdriver.cpp:163] calibrate(): [STEPPER] steps: -585
+[ 15038][I][arm.cpp:22] setArmPosition(): [ARM] shoulderAngle: 1.952989
+[ 15046][I][arm.cpp:23] setArmPosition(): [ARM] elbowAngle: 2.005058
+Guru Meditation Error: Core  1 panic'ed (IllegalInstruction). Exception was unhandled.
+Memory dump at 0x400d3f14: 20402a01 00f01dfa a8006136
+Core  1 register dump:
+PC      : 0x400d3f19  PS      : 0x00060530  A0      : 0x00000000  A1      : 0x3ffd5500
+A2      : 0xba313d05  A3      : 0xbf0d2ba8  A4      : 0x00000000  A5      : 0xbfc00000
+A6      : 0x7ff00000  A7      : 0x00cd2ba8  A8      : 0xbf800000  A9      : 0x3ffd54f0
+A10     : 0x00000000  A11     : 0x447ac000  A12     : 0x54442d18  A13     : 0x400921fb
+A14     : 0x7ff00000  A15     : 0x7fd6a303  SAR     : 0x0000001f  EXCCAUSE: 0x00000000
+EXCVADDR: 0x00000000  LBEG    : 0x400029ac  LEND    : 0x400029cb  LCOUNT  : 0x00000000
+
+
+(previous backtrace)
+0x400e821a 0x400d8c1a 0x400d4665 0x400d47a9 0x400d3f21 0x400d5dad 0x400d5dd1 0x400d5e0d 0x400d57d5 0x400897b6 
+
+Backtrace: 0x400d3f16:0x3ffd5500
+
+0x400d3f16: DriveBase::calculateCorrection() at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/driveBase.cpp:108
+
+
+
+ELF file SHA256: 65f32093a
+
+Rebooting...
+E (194) esp_core_dump_flash: Corf␆"յ��data check failed:
+Calculated checksum='e74c1848'
+Image checksum='7efc5d07'
+[    28][D][esp32-hal-cpu.c:273] setCpuFrequencyMhz(): PLL: 480 / 2 = 240 Mhz, APB: 80000000 Hz
+=========== Before Setup Start ===========
+Chip Info:
+------------------------------------------
+  Model             : ESP32
+  Package           : PICO-D4
+  Revision          : 3.01
+  Cores             : 2
+
+
+
+/home/el_Ronito/.platformio/packages/toolchain-xtensa-esp-elf/bin/xtensa-esp32-elf-addr2line -pfiaC -e ./.pio/build/pico32/firmware.elf 0x400e821a 0x400d8c1a 0x400d4665 0x400d47a9 0x400d3f21 0x400d5dad 0x400d5dd1 0x400d5e0d 0x400d57d5 0x400897b6
+0x400e821a: ledc_set_duty at /home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/esp_driver_ledc/src/ledc.c:1062
+0x400d8c1a: ledcWrite at /home/el_Ronito/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-ledc.c:339
+0x400d4665: EncoderMotor::setPWM(float, unsigned char) at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/low_level/encodermotor.cpp:158
+0x400d47a9: EncoderMotor::update() at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/low_level/encodermotor.cpp:118
+0x400d3f21: DriveBase::update() at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/driveBase.cpp:30
+0x400d5dad: Robot::update() at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/robot.cpp:308
+0x400d5dd1: Robot::delay(unsigned long) at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/robot.cpp:105
+0x400d5e0d: Robot::armFollowTrajectory(Trajectory const*, int) at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/robot.cpp:73
+0x400d57d5: robotTask(void*) at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/main.cpp:66
+0x400897b6: vPortTaskWrapper at /home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:139
+
+
+
+
+====================================================================================
+====================================================================================
+====================================================================================
+
+
+ERROR DUMP 2:
+
+[  7884][I][stepperdriver.cpp:163] calibrate(): [STEPPER] steps: -80
+[  7890][I][arm.cpp:22] setArmPosition(): [ARM] shoulderAngle: 0.443439
+[  7899][I][arm.cpp:23] setArmPosition(): [ARM] elbowAngle: 0.873074
+Guru Meditation Error: Core  1 panic'ed (LoadProhibited). Exception was unhandled.
+
+Core  1 register dump:
+PC      : 0x400dbf00  PS      : 0x00060031  A0      : 0x800812e2  A1      : 0x3ffbfcdc
+A2      : 0x8689f0fd  A3      : 0x0000abab  A4      : 0x3ffd5760  A5      : 0x3ffd5740
+A6      : 0x3ffc1e50  A7      : 0x00000001  A8      : 0x0681de1b  A9      : 0x0000001f
+A10     : 0x00002b3d  A11     : 0x00000000  A12     : 0x3ffd5740  A13     : 0x3ffd5720
+A14     : 0x00000000  A15     : 0x0000000c  SAR     : 0x0000000d  EXCCAUSE: 0x0000001c
+EXCVADDR: 0x8008130a  LBEG    : 0x40086a3d  LEND    : 0x40086a4d  LCOUNT  : 0xffffffff
+
+
+Backtrace: 0x400dbefd:0x3ffbfcdc |<-CORRUPTED
+
+0x400dbefd: gpio_get_level at /home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/esp_driver_gpio/src/gpio.c:246
+
+
+
+ELF file SHA256: 65f32093a
+
+Rebooting...
+Guru Meditation Error: Core  1 panic'ed (LoadProhibited). Exception was unhandled.
+
+Core  1 register dump:
+PC      : 0x400e05de  PS      : 0x00060f33  A0      : 0x3ffb664c  A1      : 0x3ffe7c90
+A2      : 0x00000019  A3      : 0x0000040e  A4      : 0x00000000  A5      : 0x00000001
+A6      : 0x3ffbc36c  A7      : 0xffffffff  A8      : 0x3ffcad08  A9      : 0x3ffe7c80
+A10     : 0x3f41016c  A11     : 0x00000000  A12     : 0x00000004  A13     : 0x3ffe7ce4
+A14     : 0x0000abab  A15     : 0x00000000  SAR     : 0x0000001b  EXCCAUSE: 0x0000001c
+EXCVADDR: 0x0000001b  LBEG    : 0x400865cc  LEND    : 0x400865d7  LCOUNT  : 0xffffffff
+
+
+Backtrace: 0x400e05db:0x3ffe7c90 0x3ffb6649:0x3ffe7d10 |<-CORRUPTED
+
+Backtrace (no colons): 0x400e05db 0x3ffb6649 |<-CORRUPTED
+
+0x400e05db: find_desc_for_source at /home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/esp_hw_support/intr_alloc.c:182
+ (inlined by) get_available_int at /home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/esp_hw_support/intr_alloc.c:351
+ (inlined by) esp_intr_alloc_intrstatus at /home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/esp_hw_support/intr_alloc.c:572
+0x3ffb6649: ?? ??:0
+
+
+
+
+ELF file SHA256: 65f32093a
+
+Rebooting...
+[    38][D][esp32-hal-cpu.c:273] setCpuFrequencyMhz(): PLL: 480 / 2 = 240 Mhz, APB: 80000000 Hz
+=========== Before Setup Start ===========
+Chip Info:
+------------------------------------------
+  Model             : ESP32
+  Package           : PICO-D4
+  Revision          : 3.01
+  Cores             : 2
+
+
+
+
+
+====================================================================================
+====================================================================================
+====================================================================================
+
+
+ERROR DUMP 3:
+
+[ 35288][I][stepperdriver.cpp:163] calibrate(): [STEPPER] steps: -532
+[ 35295][I][arm.cpp:22] setArmPosition(): [ARM] shoulderAngle: 1.952989
+[ 35303][I][arm.cpp:23] setArmPosition(): [ARM] elbowAngle: 2.005058
+Guru Meditation Error: Core  1 panic'ed (IllegalInstruction). Exception was unhandled.
+Memory dump at 0x400e8218: 2882a082 02880200 a0a68065
+Core  1 register dump:
+PC      : 0x400e821d  PS      : 0x00060930  A0      : 0x800d8c1d  A1      : 0x3ffd5640
+A2      : 0x00000000  A3      : 0x00000000  A4      : 0x00000aa8  A5      : 0x3ffbfd0c
+A6      : 0x3ffc1ec0  A7      : 0x00000002  A8      : 0x0000000c  A9      : 0x0000000c
+A10     : 0x4032d780  A11     : 0x00000000  A12     : 0x0000000a  A13     : 0x3ffc2084
+A14     : 0x3ffc9f41  A15     : 0x3ffc1e50  SAR     : 0x00000014  EXCCAUSE: 0x00000000
+EXCVADDR: 0x00000000  LBEG    : 0x40084429  LEND    : 0x40084431  LCOUNT  : 0x00000027
+
+
+Backtrace: 0x400e821a:0x3ffd5640 0x400d8c1a:0x3ffd5670 0x400d4665:0x3ffd5690 0x400d47a9:0x3ffd56c0 0x400d3f21:0x3ffd56f0 0x400d5dad:0x3ffd5720 0x400d5dd1:0x3ffd5740 0x400d5a0e:0x3ffd5760 0x400897b6:0x3ffd5790
+
+
+Backtrace: 0x400e821a 0x400d8c1a 0x400d4665 0x400d47a9 0x400d3f21 0x400d5dad 0x400d5dd1 0x400d5a0e 0x400897b6
+
+0x400e821a: ledc_set_duty at /home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/esp_driver_ledc/src/ledc.c:1062
+0x400d8c1a: ledcWrite at /home/el_Ronito/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-ledc.c:339
+0x400d4665: EncoderMotor::setPWM(float, unsigned char) at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/low_level/encodermotor.cpp:158
+0x400d47a9: EncoderMotor::update() at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/low_level/encodermotor.cpp:118
+0x400d3f21: DriveBase::update() at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/driveBase.cpp:30
+0x400d5dad: Robot::update() at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/robot.cpp:308
+0x400d5dd1: Robot::delay(unsigned long) at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/robot.cpp:105
+0x400d5a0e: robotTask(void*) at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/main.cpp:69
+0x400897b6: vPortTaskWrapper at /home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:139
+
+
+
+
+ELF file SHA256: 65f32093a
+
+Rebooting...
+[    38][D][esp32-hal-cpu.c:273] setCpuFrequencyMhz(): PLL: 480 / 2 = 240 Mhz, APB: 80000000 Hz
+=========== Before Setup Start ===========
+Chip Info:
+------------------------------------------
+  Model             : ESP32
+  Package           : PICO-D4
+  Revision          : 3.01
+  Cores             : 2
+
+
+
+====================================================================================
+====================================================================================
+====================================================================================
+
+
+ERROR DUMP 4:
+
+[ 13434][I][arm.cpp:23] setArmPosition(): [ARM] elbowAngle: 1.686813
+Guru Meditation Error: Core  1 panic'ed (LoadProhibited). Exception was unhandled.
+
+Core  1 register dump:
+PC      : 0x400d3f1c  PS      : 0x00060130  A0      : 0x800d5dd4  A1      : 0x3ffd5700
+A2      : 0x3ffc1e50  A3      : 0x00ccfe02  A4      : 0x40000000  A5      : 0x3ffafd2f
+A6      : 0x60000000  A7      : 0x3ff8fe66  A8      : 0x800d5db0  A9      : 0x3ffd56e0
+A10     : 0x3ffc2000  A11     : 0x00000000  A12     : 0x0000350b  A13     : 0x00006fc0
+A14     : 0x41000000  A15     : 0xb9024d32  SAR     : 0x0000000a  EXCCAUSE: 0x0000001c
+EXCVADDR: 0x800d5dd4  LBEG    : 0x40084429  LEND    : 0x40084431  LCOUNT  : 0x00000027
+
+
+Backtrace: 0x400d3f19:0x3ffd5700 0x400d5dd1:0x3ffd5720 0x400d5e0d:0x3ffd5740 0x400d57d5:0x3ffd5760 0x400897b6:0x3ffd5790
+Backtrace: 0x400d3f19 0x400d5dd1 0x400d5e0d 0x400d57d5 0x400897b6
+
+0x400d3f19: DriveBase::update() at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/driveBase.cpp:86
+0x400d5dd1: __analogRead at /home/el_Ronito/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-adc.c:272 (discriminator 1)
+0x400d5e0d: __analogRead at /home/el_Ronito/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-adc.c:275 (discriminator 1)
+0x400d57d5: HardwareSerial::HardwareSerial(unsigned char) at /home/el_Ronito/.platformio/packages/framework-arduinoespressif32/cores/esp32/HardwareSerial.cpp:134 (discriminator 1)
+0x400897b6: _frxt_dispatch at /home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/portasm.S:496
+
+
+
+
+ELF file SHA256
+
+Rebooting...
+[    38][D][esp32-hal-cpu.c:273] setCpuFrequencyMhz(): PLL: 480 / 2 = 240 Mhz, APB: 80000000 Hz
+=========== Before Setup Start ===========
+Chip Info:
+------------------------------------------
+  Model             : ESP32
+  Package           : PICO-D4
+  Revision          : 3.01
+
+
+  
+
+====================================================================================
+====================================================================================
+====================================================================================
+
+
+ERROR DUMP 5:
+
+[  9965][I][arm.cpp:22] setArmPosition(): [ARM] shoulderAngle: 0.443439
+[  9973][I][arm.cpp:23] setArmPosition(): [ARM] elbowAngle: 0.873074
+Guru Meditation Error: Core  1 panic'ed (LoadProhibited). Exception was unhandled.
+
+Core  1 register dump:
+PC      : 0x400d3efe  PS      : 0x00060330  A0      : 0x00000000  A1      : 0x3ffdb6c0
+A2      : 0x000000fc  A3      : 0x00000000  A4      : 0x00000000  A5      : 0xbfc00000
+A6      : 0x7ff00000  A7      : 0xffa0938a  A8      : 0x0000007f  A9      : 0x3ffdb6b0
+A10     : 0xbaeee45c  A11     : 0x447d4000  A12     : 0x54442d18  A13     : 0x400921fb
+A14     : 0x7ff00000  A15     : 0x001e30c6  SAR     : 0x0000001f  EXCCAUSE: 0x0000001c
+EXCVADDR: 0x0000000e  LBEG    : 0x400029ac  LEND    : 0x400029cb  LCOUNT  : 0x00000000
+
+
+Backtrace: 0x400d3efb:0x3ffdb6c0
+
+0x400d3efb: DriveBase::calculateCorrection() at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/driveBase.cpp:106
+
+
+
+
+ELF file SHA256: 02280ad8a
+
+Rebooting...
+[    38][D][esp32-hal-cpu.c:273] setCpuFrequencyMhz(): PLL: 480 / 2 = 240 Mhz, APB: 80000000 Hz
+=========== Before Setup Start ===========
+Chip Info:
+------------------------------------------
+  Model             : ESP32
+  Package           : PICO-D4
+
+====================================================================================
+====================================================================================
+====================================================================================
+
+
+ERROR DUMP 6:
+
+
+[  4874][I][arm.cpp:22] setArmPosition(): [ARM] shoulderAngle: 0.443439
+[  4883][I][arm.cpp:23] setArmPosition(): [ARM] elbowAngle: 0.873074
+Guru Meditation Error: Core  1 panic'ed (LoadProhibited). Exception was unhandled.
+
+Core  1 register dump:
+PC      : 0x400e81b7  PS      : 0x00060b33  A0      : 0x800d8b79  A1      : 0x3ffd5650
+A2      : 0x00000000  A3      : 0x00000000  A4      : 0x00000996  A5      : 0x3f40f96c
+A6      : 0x3ffc1e50  A7      : 0x00000002  A8      : 0x00000000  A9      : 0x3ffd5620
+A10     : 0x00000001  A11     : 0xffffffff  A12     : 0x0000000a  A13     : 0x00060b23
+A14     : 0x00000000  A15     : 0x0000abab  SAR     : 0x00000014  EXCCAUSE: 0x0000001c
+EXCVADDR: 0x00000001  LBEG    : 0x40084429  LEND    : 0x40084431  LCOUNT  : 0x00000027
+
+
+Backtrace: 0x400e81b4:0x3ffd5650 0x400d8b76:0x3ffd5680 0x400d4655:0x3ffd56a0 0x400d4799:0x3ffd56d0 0x400d3f11:0x3ffd5700 0x400d5d09:0x3ffd5730 0x400d5d2d:0x3ffd5750 0x400d595e:0x3ffd5770 0x400897b6:0x3ffd5790
+Backtrace: 0x400e81b4 0x400d8b76 0x400d4655 0x400d4799 0x400d3f11 0x400d5d09 0x400d5d2d 0x400d595e 0x400897b6
+
+0x400e81b4: vPortEnterCritical at /home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/include/freertos/portmacro.h:567
+ (inlined by) ledc_set_duty at /home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/esp_driver_ledc/src/ledc.c:1065
+0x400d8b76: ledcWrite at /home/el_Ronito/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-ledc.c:339
+0x400d4655: EncoderMotor::setPWM(float, unsigned char) at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/low_level/encodermotor.cpp:158
+0x400d4799: EncoderMotor::update() at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/low_level/encodermotor.cpp:118
+0x400d3f11: DriveBase::update() at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/driveBase.cpp:30
+0x400d5d09: Robot::update() at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/robot.cpp:308
+0x400d5d2d: Robot::delay(unsigned long) at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/robot.cpp:105
+0x400d595e: robotTask(void*) at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/main.cpp:44
+0x400897b6: vPortTaskWrapper at /home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:139
+
+
+
+
+ELF file SHA256: 80c3588ef
+
+Rebooting...
+[    38][D][esp32-hal-cpu.c:273] setCpuFrequencyMhz(): PLL: 480 / 2 = 240 Mhz, APB: 80000000 Hz
+=========== Before Setup Start ===========
+Chip Info:
+------------------------------------------
+  Model             : ESP32
+  Package           : PICO-D4
+  Revision          : 3.01
+
+  
+
+====================================================================================
+====================================================================================
+====================================================================================
+
+
+ERROR DUMP 6:
+
+[  1563][I][arm.cpp:22] setArmPosition(): [ARM] shoulderAngle: 0.443439
+[  1572][I][arm.cpp:23] setArmPosition(): [ARM] elbowAngle: 0.873074
+Guru Meditation Error: Core  1 panic'ed (LoadProhibited). Exception was unhandled.
+
+Core  1 register dump:
+PC      : 0x400e81b0  PS      : 0x00060d30  A0      : 0x800d8b79  A1      : 0x3ffd5650
+A2      : 0x00000000  A3      : 0x00000000  A4      : 0x000009e0  A5      : 0x3f40f96c
+A6      : 0x3ffc1e50  A7      : 0x00000002  A8      : 0x800e81ad  A9      : 0x3ffd5630
+A10     : 0x003a06b4  A11     : 0x00000000  A12     : 0x0000000a  A13     : 0x40e33333
+A14     : 0x00000000  A15     : 0x3ffc1e50  SAR     : 0x00000014  EXCCAUSE: 0x0000001c
+EXCVADDR: 0x003a06dc  LBEG    : 0x40084429  LEND    : 0x40084431  LCOUNT  : 0x00000027
+
+
+Backtrace: 0x400e81ad:0x3ffd5650 0x400d8b76:0x3ffd5680 0x400d4655:0x3ffd56a0 0x400d4799:0x3ffd56d0 0x400d3f11:0x3ffd5700 0x400d5d09:0x3ffd5730 0x400d5d2d:0x3ffd5750 0x400d595e:0x3ffd5770 0x400897b6:0x3ffd5790
+Backtrace: 0x400e81ad 0x400d8b76 0x400d4655 0x400d4799 0x400d3f11 0x400d5d09 0x400d5d2d 0x400d595e 0x400897b6
+
+
+0x400e81ad: vPortEnterCritical at /home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/include/freertos/portmacro.h:567
+ (inlined by) ledc_set_duty at /home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/esp_driver_ledc/src/ledc.c:1065
+0x400d8b76: ledcWrite at /home/el_Ronito/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-ledc.c:339
+0x400d4655: EncoderMotor::setPWM(float, unsigned char) at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/low_level/encodermotor.cpp:158
+0x400d4799: EncoderMotor::update() at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/low_level/encodermotor.cpp:118
+0x400d3f11: DriveBase::update() at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/driveBase.cpp:30
+0x400d5d09: Robot::update() at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/robot.cpp:308
+0x400d5d2d: Robot::delay(unsigned long) at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/robot.cpp:105
+0x400d595e: robotTask(void*) at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/main.cpp:44
+0x400897b6: vPortTaskWrapper at /home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:139
+
+
+ELF file SHA256: 80c3588ef
+
+Rebooting...
+[    38][D][esp32-hal-cpu.c:273] setCpuFrequencyMhz(): PLL: 480 / 2 = 240 Mhz, APB: 80000000 Hz
+=========== Before Setup Start ===========
+Chip Info:
+------------------------------------------
+  Model             : ESP32
+  Package           : PICO-D4
+  Revision          : 3.01
+
+  
+
+====================================================================================
+====================================================================================
+====================================================================================
+
+
+ERROR DUMP 6:
+
+[ 12355][I][arm.cpp:22] setArmPosition(): [ARM] shoulderAngle: 1.274120
+[ 12363][I][arm.cpp:23] setArmPosition(): [ARM] elbowAngle: 2.057998
+Guru Meditation Error: Core  0 panic'ed (LoadProhibited). Exception was unhandled.
+
+Core  0 register dump:
+PC      : 0x400d41d6  PS      : 0x00060830  A0      : 0x800897b9  A1      : 0x3ffd1a60
+A2      : 0x00000000  A3      : 0x00000000  A4      : 0x00000001  A5      : 0x0009f5d9
+A6      : 0x00000000  A7      : 0x3ffd1a6c  A8      : 0x800d41f2  A9      : 0x3ffd1a20
+A10     : 0x00000107  A11     : 0x3ffd1a70  A12     : 0x00000400  A13     : 0x3ffd1a6c
+A14     : 0x3ffd1a3c  A15     : 0x00000000  SAR     : 0x00000004  EXCCAUSE: 0x0000001c
+EXCVADDR: 0x800d421e  LBEG    : 0x40086460  LEND    : 0x40086476  LCOUNT  : 0x00000000
+
+
+Backtrace: 0x400d41d3:0x3ffd1a60 0x400897b6:0x3ffd1e90
+
+0x400d41d3: core0_task(void*) at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/low_level/core0.cpp:19
+0x400897b6: vPortTaskWrapper at /home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:139
+
+
+
+
+ELF file SHA256: 80c3588ef
+
+Rebooting...
+[    38][D][esp32-hal-cpu.c:273] setCpuFrequencyMhz(): PLL: 480 / 2 = 240 Mhz, APB: 80000000 Hz
+=========== Before Setup Start ===========
+Chip Info:
+------------------------------------------
+  Model             : ESP32
+  Package           : PICO-D4
+
+  
+
+
+====================================================================================
+====================================================================================
+====================================================================================
+
+
+ERROR DUMP 7:
+
+[  5278][I][arm.cpp:22] setArmPosition(): [ARM] shoulderAngle: 0.443439
+[  5286][I][arm.cpp:23] setArmPosition(): [ARM] elbowAngle: 0.873074
+Guru Meditation Error: Core  1 panic'ed (IllegalInstruction). Exception was unhandled.
+Memory dump at 0x400d4a1c: 424283b4 00002020 022aa082
+Core  1 register dump:
+PC      : 0x400d4a21  PS      : 0x00060d30  A0      : 0x800d4b7c  A1      : 0x3ffb2180
+A2      : 0x3ffc1ea0  A3      : 0x3c0d3800  A4      : 0x00000001  A5      : 0x38b7ec5d
+A6      : 0x00000000  A7      : 0x000003f1  A8      : 0x00000001  A9      : 0x3ffbde70
+A10     : 0x3ffc1fd8  A11     : 0x00000001  A12     : 0x00000002  A13     : 0x3ffbfd5c
+A14     : 0x3ffca144  A15     : 0x00000000  SAR     : 0x0000001d  EXCCAUSE: 0x00000000
+EXCVADDR: 0x00000000  LBEG    : 0x400e9ad2  LEND    : 0x400e9adb  LCOUNT  : 0x00000000
+
+
+Backtrace: 0x400d4a1e:0x3ffb2180 0x400d4b79:0x3ffb21b0 0x400d49b8:0x3ffb21e0 0x400d5980:0x3ffb2200 0x400d59a1:0x3ffb2220 0x400d563e:0x3ffb2240 0x400daab3:0x3ffb2270 0x40089462:0x3ffb2290
+Backtrace: 0x400d4a1e 0x400d4b79 0x400d49b8 0x400d5980 0x400d59a1 0x400d563e 0x400daab3 0x40089462
+
+0x400d4a1e: PotentiometerMotor::setPWM(float, unsigned char) at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/low_level/potentiometermotor.cpp:68
+0x400d4b79: PotentiometerMotor::update() at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/low_level/potentiometermotor.cpp:53
+0x400d49b8: low_level_update() at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/low_level/low_level.cpp:64
+0x400d5980: Robot::update() at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/robot.cpp:309
+0x400d59a1: Robot::delay(unsigned long) at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/robot.cpp:105
+0x400d563e: setup() at /home/el_Ronito/UBC/Y2S3/ENPH253/code/firmware/src/main.cpp:56
+0x400daab3: loopTask(void*) at /home/el_Ronito/.platformio/packages/framework-arduinoespressif32/cores/esp32/main.cpp:59
+0x40089462: vPortTaskWrapper at /home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:139
+
+
+
+
+ELF file SHA256: c82b8699b
+
+Rebooting...
+[    38][D][esp32-hal-cpu.c:273] setCpuFrequencyMhz(): PLL: 480 / 2 = 240 Mhz, APB: 80000000 Hz
+=========== Before Setup Start ===========
+Chip Info:
+------------------------------------------
+  Model             : ESP32
+  Package           : PICO-D4
+  Revision          : 3.01

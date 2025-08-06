@@ -5,4 +5,3 @@ compile_commands.json
 CMakeLists.txt
 src/main.cpp
 .DS_Store
-errors*.txt
