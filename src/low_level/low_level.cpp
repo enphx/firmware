@@ -44,7 +44,7 @@ void low_level_init() {
   elbowServo->init();
 }
 
-void set_speed(float speed) {
+void set_speed(double speed) {
   leftMotor->setSpeed(speed);
   rightMotor->setSpeed(speed);
 }

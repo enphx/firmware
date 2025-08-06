@@ -21,9 +21,9 @@ public:
                const uint8_t m_pwmPin,
                const uint8_t m_dirBit,
                const int m_ticksPerRev,
-               const float m_kP,
-               const float m_kI,
-               const float m_kD,
+               const double m_kP,
+               const double m_kI,
+               const double m_kD,
                const char ID
               );
 
@@ -37,24 +37,24 @@ public:
 
   uint8_t getDirectionBit(void);
 
-  void setSpeed(float speed);
+  void setSpeed(double speed);
 
-  float getCurrentSpeed(void);
+  double getCurrentSpeed(void);
 
   long getTickCount(void);
 
-  void setPID(float m_kP, float m_kI, float m_kD, float max_cum_error = -1);
+  void setPID(double m_kP, double m_kI, double m_kD, double max_cum_error = -1);
 
-  inline float getError() {return error;}
-  inline float getSetPoint() {return targetSpeed;}
-  inline float getP() {return P;}
-  inline float getI() {return I;}
-  inline float getD() {return D;}
+  inline double getError() {return error;}
+  inline double getSetPoint() {return targetSpeed;}
+  inline double getP() {return P;}
+  inline double getI() {return I;}
+  inline double getD() {return D;}
 
 private:
 
-  void setPWM(float dutycycle, uint8_t m_direction);
-  float calculatePID(void); 
+  void setPWM(double dutycycle, uint8_t m_direction);
+  double calculatePID(void); 
 
   ShiftRegister* const shiftReg;
 
@@ -65,24 +65,24 @@ private:
 
   const char ID;
 
-  float kP = 0, kD = 0, kI = 0;
-  float targetSpeed = 0, currentSpeed = 0;
+  double kP = 0, kD = 0, kI = 0;
+  double targetSpeed = 0, currentSpeed = 0;
   int32_t previousTickCount = 0;
   uint64_t timeLastUpdated;
   uint32_t deltaT;
   uint8_t direction = 0;
   int32_t currentTickCount = 0;
-  float previousError = 0;
-  float error = 0;
-  float cumulativeError = 0;
-  float maxCumError = 30000.0;
+  double previousError = 0;
+  double error = 0;
+  double cumulativeError = 0;
+  double maxCumError = 30000.0;
   int backwards = 1;
   uint32_t lastSpeedReadingTime = 0;
   int32_t lastSpeedReadingTicks = 0;
 
-  float P;
-  float I;
-  float D;
+  double P;
+  double I;
+  double D;
 
 };
 

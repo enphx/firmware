@@ -7,11 +7,11 @@
 #define LONG_PI 3.141592653589793238462643383279
 
 
-float atan_knots[ATAN_KNOTS] = {
+double atan_knots[ATAN_KNOTS] = {
   0., 0.3, 0.9, 1.2, 1.5, 2.3, 3., 5., 8., 14.
 };
 
-float atan_coeffs[4][ATAN_KNOTS - 1] = {
+double atan_coeffs[4][ATAN_KNOTS - 1] = {
   {-0.3258231769116426, -0.0037021723206767, 0.1162314179300622, 0.0660867003138992, 0.0342290868197962, 0.012894021139794, 0.0035098208956045, 0.0004300072919106, 0.0000923455120127},
   {0.0000000000000019, -0.2932408592204764, -0.2999047693976952, -0.1952964932606373, -0.135818462978129, -0.0536686546106179, -0.0265912102170505, -0.0055322848434237, -0.0016622192162285},
   {1.0008467341816043, 0.9128744764154618, 0.5569870992445592, 0.408426720447059, 0.3090922335754294, 0.1575025395044317, 0.1013206341250638, 0.0370736440041155, 0.0154901318251591},
@@ -23,13 +23,13 @@ float atan_coeffs[4][ATAN_KNOTS - 1] = {
 
 #define ACOS_KNOTS 15
 
-float acos_knots[ACOS_KNOTS] = {
+double acos_knots[ACOS_KNOTS] = {
 -1., -0.99, -0.985, -0.95, -0.9, -0.85355339
 , -0.62940952, 0., 0.62940952, 0.85355339, 0.9, 0.95
 , 0.985, 0.99, 1.
 };
 
-float acos_coeffs[4][ACOS_KNOTS - 1] = {
+double acos_coeffs[4][ACOS_KNOTS - 1] = {
   {
     -23231.66938671725, -23231.66938671686, -389.2182930764321,
     -52.833833235137604, -18.42959663610892, -3.0412728328315914,
@@ -63,11 +63,11 @@ float acos_coeffs[4][ACOS_KNOTS - 1] = {
 
 #define SIN_KNOTS 3
 
-float sin_knots[SIN_KNOTS] = {
+double sin_knots[SIN_KNOTS] = {
   0.0, 0.7853981633974483, 1.5707963267948966
 };
 
-float sin_cooeffs[4][SIN_KNOTS - 1] = {
+double sin_cooeffs[4][SIN_KNOTS - 1] = {
   {-0.1551478172758809, -0.0663318154478009},
   {-0.0050683974900504, -0.3706268297208494},
   {1., 0.704929658551372},
@@ -79,23 +79,23 @@ CubicSpline<ATAN_KNOTS> cs_atan = CubicSpline<ATAN_KNOTS>(atan_knots, atan_coeff
 CubicSpline<ACOS_KNOTS> cs_acos = CubicSpline<ACOS_KNOTS>(acos_knots, acos_coeffs);
 CubicSpline<SIN_KNOTS> cs_sin = CubicSpline<SIN_KNOTS>(sin_knots, sin_cooeffs);
 
-float atan_spl(float x) {
+double atan_spl(double x) {
   int sign = 1;
   if (x < 0) {
     x = -x;
     sign = -1;
   }
 
-  return (float)sign * cs_atan.eval(x);
+  return (double)sign * cs_atan.eval(x);
 }
 
-float acos_spl(float x) {
+double acos_spl(double x) {
   return cs_acos.eval(x);
 }
 
-float fast_sin(float x) {
-  float mod_2_pi = fmod(x, 2 * LONG_PI);
-  float mod_pi = fmod(x, LONG_PI);
+double fast_sin(double x) {
+  double mod_2_pi = fmod(x, 2 * LONG_PI);
+  double mod_pi = fmod(x, LONG_PI);
 
   mod_2_pi = mod_2_pi < 0 ? mod_2_pi + 2 * LONG_PI : mod_2_pi;
   mod_pi = mod_pi < 0 ? mod_pi + LONG_PI : mod_pi;
@@ -106,6 +106,6 @@ float fast_sin(float x) {
   return cs_sin.eval(x) * (mod_2_pi < LONG_PI ? 1 : -1);
 }
 
-float fast_cos(float x) {
+double fast_cos(double x) {
   return fast_sin(x + LONG_PI/2);
 }

@@ -1,6 +1,6 @@
 #include "low_level/pid.h"
 
-PID::PID(float m_Kp, float m_Ki, float m_Kd, float m_cumulativeErrorMax) {
+PID::PID(double m_Kp, double m_Ki, double m_Kd, double m_cumulativeErrorMax) {
   Kp = m_Kp;
   Ki = m_Ki;
   Kd = m_Kd;
@@ -8,15 +8,15 @@ PID::PID(float m_Kp, float m_Ki, float m_Kd, float m_cumulativeErrorMax) {
   timeLastUpdated = micros();
 }
 
-void PID::updateConstants(float m_Kp, float m_Ki, float m_Kd,
-                          float m_cumulativeErrorMax) {
+void PID::updateConstants(double m_Kp, double m_Ki, double m_Kd,
+                          double m_cumulativeErrorMax) {
   Kp = m_Kp;
   Ki = m_Ki;
   Kd = m_Kd;
   cumulativeErrorMax = m_cumulativeErrorMax;
 }
 
-float PID::update(float m_currentValue) {
+double PID::update(double m_currentValue) {
   deltaT = micros() - timeLastUpdated;
   timeLastUpdated += deltaT;
   currentValue = m_currentValue;

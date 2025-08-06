@@ -1,9 +1,9 @@
 #ifndef FAST_FUNCTION_H
 #define FAST_FUNCTION_H
 
-float atan_spl(float x);
-float acos_spl(float x);
-float fast_sin(float x);
-float fast_cos(float x);
+double atan_spl(double x);
+double acos_spl(double x);
+double fast_sin(double x);
+double fast_cos(double x);
 
 #endif

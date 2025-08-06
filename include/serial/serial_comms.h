@@ -11,12 +11,12 @@ void setup_serial_uart();
 int write_to_serial(const void * data, uint32_t size);
 
 int write_b_to_serial(uint8_t b);
-int write_f_to_serial(float f);
+int write_f_to_serial(double f);
 int write_u_to_serial(uint32_t u);
 int write_i_to_serial(int32_t i);
 
-inline float bits_to_f32(uint8_t *bits) {
-  float f;
+inline double bits_to_f32(uint8_t *bits) {
+  double f;
   memcpy(&f, bits, 4);
   return f;
 }
@@ -33,7 +33,7 @@ inline void copy_1(uint8_t *target, uint8_t source, uint32_t *index) {
   target[0] = source;
 }
 
-inline void copy_f(uint8_t *target, float f, uint32_t *index) {
+inline void copy_f(uint8_t *target, double f, uint32_t *index) {
   copy_1(target, FLOAT_AHEAD, index);
   copy_4(&target[1], &f, index);
 }

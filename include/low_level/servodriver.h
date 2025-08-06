@@ -5,15 +5,15 @@
 
 class Servo {
 public:
-  Servo(uint8_t m_pwmPin, float m_minDutyCycle, float m_maxDutyCycle);
+  Servo(uint8_t m_pwmPin, double m_minDutyCycle, double m_maxDutyCycle);
   void init(void);
 
-  void setAngle(float angle);
+  void setAngle(double angle);
 
   void flaccid(void);
 private:
   uint16_t pwmPin;
-  float minDutyCycle, maxDutyCycle;
+  double minDutyCycle, maxDutyCycle;
 };
 
 #endif

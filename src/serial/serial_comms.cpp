@@ -38,10 +38,10 @@ int write_b_to_serial(uint8_t b) {
   return uart_write_bytes(uart_num, &b, 1);
 }
 
-int write_f_to_serial(float f) {
+int write_f_to_serial(double f) {
   uint8_t tag = FLOAT_AHEAD;
   uart_write_bytes(uart_num, &tag, 1);
-  return uart_write_bytes(uart_num,(uint8_t *)&f, sizeof(float));
+  return uart_write_bytes(uart_num,(uint8_t *)&f, sizeof(double));
 }
 
 int write_u_to_serial(uint32_t u) {

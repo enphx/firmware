@@ -8,19 +8,19 @@ public:
   /**
    *  @param dont give input for cumulativeErrorMax for it to be uncapped
    */
-  PID(float m_Kp, float m_Ki, float m_Kd, float m_cumulativeErrorMax = -1);
-  void updateConstants(float m_Kp, float m_Ki, float m_Kd,
-                       float m_cumulativeErrorMax = -1);
-  float update(float m_currentValue);
-  inline void setTargetValue(float m_target) { targetValue = m_target; }
-  inline float getError(void) { return error; }
-  inline float getTargetValue() {return targetValue; }
-  inline float getP(void) { return P; }
-  inline float getI(void) { return I; }
-  inline float getD(void) { return D; }
+  PID(double m_Kp, double m_Ki, double m_Kd, double m_cumulativeErrorMax = -1);
+  void updateConstants(double m_Kp, double m_Ki, double m_Kd,
+                       double m_cumulativeErrorMax = -1);
+  double update(double m_currentValue);
+  inline void setTargetValue(double m_target) { targetValue = m_target; }
+  inline double getError(void) { return error; }
+  inline double getTargetValue() {return targetValue; }
+  inline double getP(void) { return P; }
+  inline double getI(void) { return I; }
+  inline double getD(void) { return D; }
 
 
-  inline void getPIDVals(float *err, float *setpoint, float *p_out, float *i_out, float *d_out) {
+  inline void getPIDVals(double *err, double *setpoint, double *p_out, double *i_out, double *d_out) {
     *err = getError();
     *setpoint = getTargetValue();
     *p_out = getP();
@@ -29,11 +29,11 @@ public:
   }
 
 private:
-  float currentValue, targetValue;
-  float cumulativeError, previousError, error;
-  float cumulativeErrorMax = -1;
-  float Kp, Ki, Kd;
-  float P, I, D;
+  double currentValue, targetValue;
+  double cumulativeError, previousError, error;
+  double cumulativeErrorMax = -1;
+  double Kp, Ki, Kd;
+  double P, I, D;
   uint32_t timeLastUpdated, deltaT;
 };
 

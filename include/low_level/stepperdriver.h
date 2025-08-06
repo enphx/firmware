@@ -15,11 +15,11 @@ public:
 
   void stop();
 
-  void setAngle(float angle);
+  void setAngle(double angle);
 
-  void setSpeed(float speed);
+  void setSpeed(double speed);
 
-  float getAngle();
+  double getAngle();
 
   bool moving(void);
 
@@ -35,8 +35,8 @@ private:
   // volatile bool timerIsRunning = false;
   volatile bool stepState = false;
 
-  float targetAngle = 0.0;
-  float speed = 0.0;
+  double targetAngle = 0.0;
+  double speed = 0.0;
 
   ShiftRegister *const shiftregister;
 

@@ -22,13 +22,13 @@ StepperMotor::StepperMotor(ShiftRegister *m_shiftRegister, uint8_t m_stepPin,
   timer_config = {
       .clk_src = GPTIMER_CLK_SRC_DEFAULT,
       .direction = GPTIMER_COUNT_UP,
-      .resolution_hz = 1 * 1000 * 1000,
+      .resolution_hz = 1 * 100 * 1000,
   };
 
 
 alarm_config = {
-    .alarm_count = (uint64_t)(1e6 / (float)(stepsPerRevolution) /
-                          TURNTABLE_ROTATIONS_PER_SECOND),
+    .alarm_count = (uint64_t)(1e5 / (double)(stepsPerRevolution) /
+                          TURNTABLE_ROTATIONS_PER_SECOND * 0.5),
     .flags = {
       .auto_reload_on_alarm = true,
     },
@@ -61,12 +61,12 @@ static bool IRAM_ATTR stepperTimerHandler(gptimer_handle_t timer,
   return false;
 }
 
-void StepperMotor::setSpeed(float speed) {
+void StepperMotor::setSpeed(double speed) {
 
   this->speed = speed;
 
-  alarm_config.alarm_count = (uint64_t)(1e6 / (float)(stepsPerRevolution) /
-                          TURNTABLE_ROTATIONS_PER_SECOND / speed);
+  alarm_config.alarm_count = (uint64_t)(1e5 / (double)(stepsPerRevolution) /
+                          TURNTABLE_ROTATIONS_PER_SECOND / speed * 0.5);
 
   gptimer_set_alarm_action(gptimer, &alarm_config);
 
@@ -93,7 +93,7 @@ void StepperMotor::stop() {
   steps_to_take = 0;
 }
 
-void StepperMotor::setAngle(float angle) {
+void StepperMotor::setAngle(double angle) {
 
   // ESP_LOGI(TAG, "Setting stepper motor angle to %f", angle);
 
@@ -101,7 +101,12 @@ void StepperMotor::setAngle(float angle) {
 
   int32_t target_steps = (angle - getAngle()) / 360.0 * stepsPerRevolution;
 
-  bool directionPositive = (target_steps > 0);
+  // Bang the bits to set the direction of the stepper.
+  if (target_steps > 0) {
+    shiftregister->setBit(1, directionBit);
+  } else {
+    shiftregister->setBit(0, directionBit);
+  }
 
   target_steps = target_steps < 0 ? -target_steps : target_steps;
 
@@ -109,12 +114,6 @@ void StepperMotor::setAngle(float angle) {
   // ESP_LOGI(TAG, "Target steps: %i", target_steps);
 
  
-  // Bang the bits to set the direction of the stepper.
-  if (directionPositive) {
-    shiftregister->setBit(1, directionBit);
-  } else {
-    shiftregister->setBit(0, directionBit);
-  }
 
  // Only move if we are being told to move more than the minimum
   // (this is to avoid annoying oscillations due to backlash).
@@ -130,8 +129,8 @@ void StepperMotor::setAngle(float angle) {
 
 bool StepperMotor::moving() { return steps_to_take > 0; }
 
-float StepperMotor::getAngle() {
-  // float angle = (float)((int32_t)(get_convolved_value(ADC_CH_TURNTABLE_POT)) - 1855) * DEGREES_PER_POT_TICK_TTBL;  
+double StepperMotor::getAngle() {
+  // double angle = (double)((int32_t)(get_convolved_value(ADC_CH_TURNTABLE_POT)) - 1855) * DEGREES_PER_POT_TICK_TTBL;  
   // ESP_LOGI(TAG, "Stepper angle: %f", angle);
-  return (float)((int32_t)(get_convolved_value(ADC_CH_TURNTABLE_POT)) - 1855) * DEGREES_PER_POT_TICK_TTBL;
+  return (double)((int32_t)(get_convolved_value(ADC_CH_TURNTABLE_POT)) - 1855) * DEGREES_PER_POT_TICK_TTBL;
 }

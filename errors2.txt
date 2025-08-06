@@ -65,3 +65,140 @@ Rebooting...
 [   144][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
 [   151][E][esp32-hal-periman.c:180] perimanGetPinBus(): Invalid pin: 255
 [   159][E][esp32-hal-gpio.c:176] __digitalWrite(): IO 255 is not set as GPIO.
+
+
+
+CRASH 3:
+
+[196965][I][robot.cpp:300] update_scanner(): [ROBOT] LIDAR: 0
+[197004][I][robot.cpp:300] update_scanner(): [ROBOT] LIDAR: 0
+[197062][I][robot.cpp:300] update_scanner(): [ROBOT] LIDAR: 0
+Guru Meditation Error: Core  1 panic'ed (LoadProhibited). Exception was unhandled.
+
+Core  1 register dump:
+PC      : 0x400ffca7  PS      : 0x00060330  A0      : 0x00000400  A1      : 0x3ffd56f0
+A2      : 0x00000001  A3      : 0x41133333  A4      : 0x78fba509  A5      : 0xbfbbd37a
+A6      : 0x7ff00000  A7      : 0x00000000  A8      : 0x3fa00000  A9      : 0x000007fe
+A10     : 0x001bd37a  A11     : 0x78fba509  A12     : 0x54442d18  A13     : 0x400921fb
+A14     : 0x7ff00000  A15     : 0x001f7c1d  SAR     : 0x0000001f  EXCCAUSE: 0x0000001c
+EXCVADDR: 0x00000428  LBEG    : 0x400029ac  LEND    : 0x400029cb  LCOUNT  : 0x00000000
+
+
+Backtrace: 0x400ffca4:0x3ffd56f0 0x000003fd:0x3ffd5700 |<-CORRUPTED
+Backtrace: 0x400ffca4 0x000003fd |<-CORRUPTED
+
+x400ffca4 0x000003fd
+0x400ffca4: __divsf3 at /builds/idf/crosstool-NG/.build/xtensa-esp-elf/src/gcc/libgcc/config/xtensa/ieee754-sf.S:943
+0x000003fd: ?? ??:0
+
+
+
+ELF file SHA256: 54d78de64
+
+Rebooting...
+[     7][D][esp32-hal-cpu.c:273] setCpuFrequencyMhz(): PLL: 480 / 2 = 240 Mhz, APB: 80000000 Hz
+=========== Before Setup Start ===========
+Chip Info:
+------------------------------------------
+  Model             : ESP32
+  Package           : PICO-D4
+
+
+CRASH 4:
+
+[   180][E][esp32-hal-gpio.c:176] __digitalWrite(): IO 255 is not set as GPIO. Execute digitalMode(255, OUTPUT) first.
+Guru Meditation Error: Core  1 panic'ed (LoadProhibited). Exception was unhandled.
+
+Core  1 register dump:
+PC      : 0x400d413a  PS      : 0x00060730  A0      : 0x800d52d8  A1      : 0x3ffd54f0
+A2      : 0x00354b67  A3      : 0x3ff04773  A4      : 0x54442d18  A5      : 0x400921fb
+A6      : 0x7ff00000  A7      : 0x7ff96688  A8      : 0x3ffc1c25  A9      : 0x3ffc1c22
+A10     : 0x000003fe  A11     : 0x80000000  A12     : 0x00000000  A13     : 0x00000000
+A14     : 0x7ff00000  A15     : 0xbfcc9e4e  SAR     : 0x0000001d  EXCCAUSE: 0x0000001c
+EXCVADDR: 0x800d5300  LBEG    : 0x400029ac  LEND    : 0x400029cb  LCOUNT  : 0x00000000
+
+
+Backtrace: 0x400d4137:0x3ffd54f0 0x400d52d5:0x3ffd5510 0x400d3e61:0x3ffd5530 0x400d5fe1:0x3ffd5560 0x400d6005:0x3ffd5580 0x400d5512:0x3ffd55a0 0x400d5b7f:0x3ffd55d0 0x40089766:0x3ffd55f0
+
+
+
+
+ELF file SHA256: a76c55140
+
+Rebooting...
+[   136][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
+[   143][E][esp32-hal-periman.c:180] perimanGetPinBus(): Invalid pin: 255
+
+
+CRASH 5:
+
+--- Quit: Ctrl+C | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H
+Guru Meditation Error: Core  1 panic'ed (LoadProhibited). Exception was unhandled.
+
+Core  1 register dump:
+PC      : 0x400dc13c  PS      : 0x00060031  A0      : 0x2ce69aa9  A1      : 0x3ffbff6c
+  #0  0x400dc13c in gpio_ll_set_level at /home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/hal/esp32/include/hal/gpio_ll.h:517
+      (inlined by) gpio_set_level at /home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/esp_driver_gpio/src/gpio.c:239
+
+A2      : 0x00000008  A3      : 0x00000001  A4      : 0x00060021  A5      : 0x3f40f1e0
+A6      : 0x0666f170  A7      : 0x3fec9286  A8      : 0x800dc10d  A9      : 0x3ffbff5c
+A10     : 0x030effff  A11     : 0x00000000  A12     : 0x00000008  A13     : 0x00060023
+A14     : 0x383a4a67  A15     : 0x0000abab  SAR     : 0x00000008  EXCCAUSE: 0x0000001c
+EXCVADDR: 0x800dc135  LBEG    : 0x400029ac  LEND    : 0x400029cb  LCOUNT  : 0x00000000
+
+
+Backtrace: 0x400dc139:0x3ffbff6c |<-CORRUPTED
+  #0  0x400dc139 in gpio_set_level at /home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/esp_driver_gpio/src/gpio.c:239
+  #1  0x3ffbff6c in _xt_exception_table at ??:?
+
+
+
+
+
+ELF file SHA256: a11014130
+
+Rebooting...
+[   136][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
+[   143][E][esp32-hal-periman.c:180] perimanGetPinBus(): Invalid pin: 255
+
+
+
+CRASH 6:
+
+
+[   174][E][esp32-hal-periman.c:180] perimanGetPinBus(): Invalid pin: 255
+[   181][E][esp32-hal-gpio.c:176] __digitalWrite(): IO 255 is not set as GPIO. Execute digitalMode(255, OUTPUT) first.
+Guru Meditation Error: Core  1 panic'ed (InstrFetchProhibited). Exception was unhandled.
+
+Core  1 register dump:
+PC      : 0x00002800  PS      : 0x00060130  A0      : 0x800d48cc  A1      : 0x3ffdb990
+A2      : 0xcaa85900  A3      : 0x3f8641ec  A4      : 0x00000000  A5      : 0x3ffc2258
+A6      : 0xd916872b  A7      : 0xbeaff7ce  A8      : 0x800d475c  A9      : 0x3ffdb980
+A10     : 0xd916872b  A11     : 0xbeaff7ce  A12     : 0x00000000  A13     : 0x408f4000
+A14     : 0x32000000  A15     : 0x00000000  SAR     : 0x0000000a  EXCCAUSE: 0x00000014
+EXCVADDR: 0x00002800  LBEG    : 0x400843dd  LEND    : 0x400843e5  LCOUNT  : 0x00000027
+
+
+Backtrace: 0x000027fd:0x3ffdb990 0x400d48c9:0x3ffdb9c0 0x400d3e74:0x3ffdb9f0 0x400d6395:0x3ffdba30 0x400d63b9:0x3ffdba50 0x400d63f1:0x3ffdba70 0x400d5953:0x3ffdba90 0x4008976a:0x3ffdbab0
+  #0  0x400d48c9 in EncoderMotor::update() at src/low_level/encodermotor.cpp:114
+  #1  0x400d3e74 in DriveBase::update() at src/driveBase.cpp:37
+  #2  0x400d6395 in Robot::update() at src/robot.cpp:324
+  #3  0x400d63b9 in Robot::delay(unsigned long) at src/robot.cpp:107
+  #4  0x400d63f1 in Robot::armFollowTrajectory(Trajectory const*, int) at src/robot.cpp:70
+  #5  0x400d5953 in robotTask(void*) at src/main.cpp:57
+  #6  0x4008976a in vPortTaskWrapper at /home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:139
+
+
+
+
+
+ELF file SHA256: a11014130
+
+Rebooting...
+[   136][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
+[   143][E][esp32-hal-periman.c:180] perimanGetPinBus(): Invalid pin: 255
+
+
+CRASH 7:
+
+

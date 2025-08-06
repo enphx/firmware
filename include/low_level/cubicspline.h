@@ -8,18 +8,18 @@
 template <uint32_t N>
 class CubicSpline {
 public:
-  CubicSpline(float m_knots[N], float m_coeffs[4][N - 1]);
-  float eval(float x);
-  int knots_bin_search(float x);
+  CubicSpline(double m_knots[N], double m_coeffs[4][N - 1]);
+  double eval(double x);
+  int knots_bin_search(double x);
   
 private:
-  float knots[N];
-  float coeffs[4][N - 1];
+  double knots[N];
+  double coeffs[4][N - 1];
   
 };
 
 template <uint32_t N>
-CubicSpline<N>::CubicSpline(float m_knots[N], float m_coeffs[4][N - 1]) {
+CubicSpline<N>::CubicSpline(double m_knots[N], double m_coeffs[4][N - 1]) {
   for (int i = 0; i < N; i++) {
     knots[i] = m_knots[i];
   }
@@ -32,7 +32,7 @@ CubicSpline<N>::CubicSpline(float m_knots[N], float m_coeffs[4][N - 1]) {
 }
 
 template <uint32_t N>
-int CubicSpline<N>::knots_bin_search(float x) {
+int CubicSpline<N>::knots_bin_search(double x) {
 
   if (x > knots[N - 1]) {
     // Return N if out of bounds upwards.
@@ -67,7 +67,7 @@ int CubicSpline<N>::knots_bin_search(float x) {
 }
 
 template <uint32_t N>
-float CubicSpline<N>::eval(float x) {
+double CubicSpline<N>::eval(double x) {
   int section = knots_bin_search(x);
   if (section == -1) {
     section = 0;

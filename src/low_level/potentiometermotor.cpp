@@ -7,8 +7,8 @@ PotentiometerMotor::PotentiometerMotor(ShiftRegister *m_shiftRegister,
                                        const uint8_t m_pwmPin,
                                        const uint8_t m_adcChannel,
                                        const uint8_t m_directionBit,
-                                       const float m_Kp, const float m_Ki,
-                                       const float m_Kd, const char m_ID)
+                                       const double m_Kp, const double m_Ki,
+                                       const double m_Kd, const char m_ID)
     : shiftRegister(m_shiftRegister), pwmPin(m_pwmPin),
       adcChannel(m_adcChannel), directionBit(m_directionBit), Kp(m_Kp),
       Ki(m_Ki), Kd(m_Kd), ID(m_ID) {
@@ -45,7 +45,7 @@ void PotentiometerMotor::update(void) {
   cumulativeError = cumulativeError < -maxCE ? -maxCE
                                                           : cumulativeError;
 
-  float power = calculatePID() * backwards;
+  double power = calculatePID() * backwards;
 
   if (power >= 0) {
     setPWM(power, 1);
@@ -55,11 +55,11 @@ void PotentiometerMotor::update(void) {
 }
 
 
-void PotentiometerMotor::setAngle(float angle) { targetAngle = angle; }
+void PotentiometerMotor::setAngle(double angle) { targetAngle = angle; }
 
-float PotentiometerMotor::getAngle(void) { return currentAngle; }
+double PotentiometerMotor::getAngle(void) { return currentAngle; }
 
-void PotentiometerMotor::setPWM(float dutyCycle, uint8_t m_direction) {
+void PotentiometerMotor::setPWM(double dutyCycle, uint8_t m_direction) {
   if (direction != m_direction) {
     ledcWrite(pwmPin, 0);
     vTaskDelay(pdMS_TO_TICKS(1));
@@ -72,7 +72,7 @@ void PotentiometerMotor::setPWM(float dutyCycle, uint8_t m_direction) {
   ledcWrite(pwmPin, (uint32_t)(dutyCycle * 4095));
 }
 
-float PotentiometerMotor::calculatePID(void) {
+double PotentiometerMotor::calculatePID(void) {
   P = Kp * error;
   I = Ki * cumulativeError;
   D = Kd * 1000.0f * (error - previousError) / (deltaT);

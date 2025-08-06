@@ -18,9 +18,9 @@ EncoderMotor::EncoderMotor(ShiftRegister* m_shiftReg,
                            const uint8_t m_pwmPin,
                            const uint8_t m_dirBit,
                            const int m_ticksPerRev,
-                           const float m_kP,
-                           const float m_kI,
-                           const float m_kD,
+                           const double m_kP,
+                           const double m_kI,
+                           const double m_kD,
                            const char ID) :
                            shiftReg(m_shiftReg),
                            encoder_data(
@@ -69,7 +69,7 @@ void IRAM_ATTR encoderHandler(void *arg) {
   uint8_t s1 = gpio_get_level(gpio_num_t(data->pin1));
   uint8_t s2 = gpio_get_level(gpio_num_t(data->pin2));
 
-  uint8_t currentState = (s1 << 1) | s2;
+  uint8_t currentState = ((s1 & 1) << 1) | (s2 & 1);
   uint8_t combined = (data->prev_state << 2) | currentState;
 
 
@@ -95,8 +95,8 @@ int32_t EncoderMotor::update(void) {
   uint32_t timeSinceLastSpeedRead = micros() - lastSpeedReadingTime;
   if (timeSinceLastSpeedRead >= 5000) {
 
-    currentSpeed = (float)(currentTickCount - lastSpeedReadingTicks) /
-                   ((float)timeSinceLastSpeedRead) * ticksPerRev * PI *
+    currentSpeed = (double)(currentTickCount - lastSpeedReadingTicks) /
+                   ((double)timeSinceLastSpeedRead) * ticksPerRev * PI *
                    WHEEL_DIAMETER;
     lastSpeedReadingTicks = currentTickCount;
     lastSpeedReadingTime = micros();
@@ -111,7 +111,7 @@ int32_t EncoderMotor::update(void) {
   cumulativeError = cumulativeError > maxCumError ? maxCumError : cumulativeError;
   cumulativeError = cumulativeError < -maxCumError ? -maxCumError : cumulativeError;
 
-  float power = calculatePID();
+  double power = calculatePID();
 
   // ESP_LOGI(TAG, "Id: %c, error: %f, cum error: %f, power: %f currentSpeed: %f, kP: %f, kI: %f, kD: %f", ID, error, cumulativeError, power, currentSpeed, kP, kI, kD);
 
@@ -125,9 +125,9 @@ int32_t EncoderMotor::update(void) {
   return deltaTicks;
 }
 
-float EncoderMotor::getCurrentSpeed(void) { return currentSpeed; }
+double EncoderMotor::getCurrentSpeed(void) { return currentSpeed; }
 
-void EncoderMotor::setPID(float m_kP, float m_kI, float m_kD, float max_cum_error) {
+void EncoderMotor::setPID(double m_kP, double m_kI, double m_kD, double max_cum_error) {
   kP = m_kP;
   kI = m_kI;
   kD = m_kD;
@@ -145,9 +145,9 @@ long EncoderMotor::getTickCount() {
   return encoder_data.tick_count;
 }
 
-void EncoderMotor::setSpeed(float speed) { targetSpeed = speed * backwards; }
+void EncoderMotor::setSpeed(double speed) { targetSpeed = speed * backwards; }
 
-void EncoderMotor::setPWM(float dutyCycle, uint8_t m_direction) {
+void EncoderMotor::setPWM(double dutyCycle, uint8_t m_direction) {
   if (direction != m_direction) {
     ledcWrite(pwmPin, 0);
     vTaskDelay(pdMS_TO_TICKS(1));
@@ -161,7 +161,7 @@ void EncoderMotor::setPWM(float dutyCycle, uint8_t m_direction) {
   ledcWrite(pwmPin, (uint32_t)(dutyCycle * 4095));
 }
 
-float EncoderMotor::calculatePID(void) {
+double EncoderMotor::calculatePID(void) {
   P = kP * error;
   I = kI * cumulativeError;
   D = kD * (error - previousError)/ (deltaT);

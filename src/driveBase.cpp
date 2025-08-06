@@ -24,6 +24,13 @@ void DriveBase::setLineFollowingPID(float m_Kp, float m_Ki, float m_Kd) {
 void DriveBase::followLine(bool m_lineFollow) { lineFollow = m_lineFollow; }
 
 void DriveBase::update(void) {
+
+  if (!leftMotor || !rightMotor || !tapeFollowingSensor) {
+    ESP_LOGE(TAG, "Null pointer in DriveBase::update()");
+    return;
+  }
+
+  
   // Update Odometry first thing.
   
   // DOUBLE CHECK WITH YUVRAJ THAT RUNNING UPDATE BEFORE IS CHILL!
@@ -56,6 +63,12 @@ void DriveBase::update(void) {
   
   tapeFollowingSensor->update();
   deltaT = micros() - timeLastUpdated;
+
+  if (deltaT == 0 || Ki == 0.0) {
+    ESP_LOGE(TAG, "Zero value for dividing...");
+    return;
+  }
+
   timeLastUpdated += deltaT;
   previousError = error;
 
@@ -87,7 +100,7 @@ void DriveBase::update(void) {
 
 
   if (turning) {
-    ESP_LOGI(TAG, "Turning with direction %i and speed %f");
+    // ESP_LOGI(TAG, "Turning with direction %i and speed %f");
     leftMotor->setSpeed(baseSpeed * turningDirection);
     rightMotor->setSpeed(baseSpeed * -turningDirection);
   } else if (lineFollow) {
