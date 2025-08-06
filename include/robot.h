@@ -102,6 +102,10 @@ public:
     scanner.print_log();
   }
 
+  inline void clawHalfOpen() {
+    claw.halfOpen();
+  }
+
   inline void startScanning(void) {
     scanning = true;
     scanner.reset();

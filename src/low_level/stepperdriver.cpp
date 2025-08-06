@@ -28,7 +28,7 @@ StepperMotor::StepperMotor(ShiftRegister *m_shiftRegister, uint8_t m_stepPin,
 
 alarm_config = {
     .alarm_count = (uint64_t)(1e6 / (float)(stepsPerRevolution) /
-                          TURNTABLE_ROTATIONS_PER_SECOND * 0.5),
+                          TURNTABLE_ROTATIONS_PER_SECOND),
     .flags = {
       .auto_reload_on_alarm = true,
     },
@@ -66,7 +66,7 @@ void StepperMotor::setSpeed(float speed) {
   this->speed = speed;
 
   alarm_config.alarm_count = (uint64_t)(1e6 / (float)(stepsPerRevolution) /
-                          TURNTABLE_ROTATIONS_PER_SECOND * 0.5 / speed);
+                          TURNTABLE_ROTATIONS_PER_SECOND / speed);
 
   gptimer_set_alarm_action(gptimer, &alarm_config);
 
@@ -131,7 +131,7 @@ void StepperMotor::setAngle(float angle) {
 bool StepperMotor::moving() { return steps_to_take > 0; }
 
 float StepperMotor::getAngle() {
-  float angle = (float)((int32_t)(get_convolved_value(ADC_CH_TURNTABLE_POT)) - 1855) * DEGREES_PER_POT_TICK_TTBL;  
+  // float angle = (float)((int32_t)(get_convolved_value(ADC_CH_TURNTABLE_POT)) - 1855) * DEGREES_PER_POT_TICK_TTBL;  
   // ESP_LOGI(TAG, "Stepper angle: %f", angle);
   return (float)((int32_t)(get_convolved_value(ADC_CH_TURNTABLE_POT)) - 1855) * DEGREES_PER_POT_TICK_TTBL;
 }

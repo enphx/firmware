@@ -22,6 +22,8 @@ public:
     servo.flaccid();
   }
 
+  void halfOpen();
+
   int16_t getRangeFinderValue(void);
 
   inline bool getRangeFinderDataReady() {

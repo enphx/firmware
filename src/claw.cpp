@@ -33,6 +33,11 @@ void Claw::open(void) {
   servo.setAngle(CLAW_OPEN);
 }
 
+void Claw::halfOpen() {
+  // Larger is more open.
+  servo.setAngle(130);
+}
+
 void Claw::close(void) {
   clawState = true;
   servo.setAngle(CLAW_CLOSED);
