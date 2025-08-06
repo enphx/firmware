@@ -56,7 +56,7 @@ EXCVADDR: 0x0000001f  LBEG    : 0x400843d9  LEND    : 0x400843e1  LCOUNT  : 0x00
 
 Backtrace: 0x400dbdd9:0x3ffbfd1c |<-CORRUPTED
 
-
+0x400dbdd9: gpio_get_level at /home/runner/work/esp32-arduino-lib-builder/esp32-arduino-lib-builder/esp-idf/components/esp_driver_gpio/src/gpio.c:245
 
 
 ELF file SHA256: 1b6dd8fcd
