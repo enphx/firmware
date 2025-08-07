@@ -136,9 +136,28 @@ public:
 
   void turnAngle(float angle);
 
+  inline void waitForAngle(float angle) {
+
+    angle = angle / 180.0 * PI;
+    
+    float angle0 = driveBase.getOdoTheta();
+
+    if (angle > 0) {
+      while (angle > driveBase.getOdoTheta() - angle0) {
+        this->delay(1);
+      }
+    } else if (angle < 0) {
+      while (angle < driveBase.getOdoTheta() - angle0) {
+        this->delay(1);
+      }
+    }
+  }
+
 
   // Note: this assumes you are currently looking at a pet.
-  inline void locatePet(bool direction, int distance_threshold = 200, float stepperSpeed = 0.4) {
+  inline void locatePet(bool direction, int distance_threshold = 200, float stepperSpeed = 0.4, uint32_t timeout = 4000) {
+
+    int32_t t0 = millis();
 
     float dir_mul = -1.0;
 
@@ -148,7 +167,7 @@ public:
 
     setBaseSpeed(0.0);
 
-    while (stepperIsMoving()) {
+    while (stepperIsMoving() && millis() - t0 < timeout) {
       this->delay(1);
     }
 
@@ -162,16 +181,16 @@ public:
     
 
     // Start sweeping one way.
-    setArmPosition(0, 0, 30.0 * dir_mul, true);
+    setArmPosition(0, 0, 50.0 * dir_mul, true);
 
 
     setScannerThreshold(distance_threshold, false);
-    while (!scannerThresholdTripped()) {
+    while (!scannerThresholdTripped() && millis() - t0 < timeout) {
       this->delay(1);
     }
  
     setScannerThreshold(distance_threshold, true);
-    while (!scannerThresholdTripped()) {
+    while (!scannerThresholdTripped() && millis() - t0 < timeout) {
       this->delay(1);
     }
     
@@ -181,12 +200,12 @@ public:
     setArmPosition(0, 0, -60 * dir_mul, true);
 
     setScannerThreshold(distance_threshold, false);
-    while (!scannerThresholdTripped()) {
+    while (!scannerThresholdTripped() && millis() - t0 < timeout) {
       this->delay(1);
     }
 
     setScannerThreshold(distance_threshold, true);
-    while (!scannerThresholdTripped()) {
+    while (!scannerThresholdTripped() && millis() - t0 < timeout) {
       this->delay(1);
     }
 

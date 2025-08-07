@@ -38,7 +38,7 @@ Robot::Robot()
   low_levelAssignMotors(&leftMotor, &rightMotor, &shoulderMotor,
                         &asimuthStepper, &elbowServo);
   low_levelAssignLowestLevelObjects(&shiftRegister);
-  driveBase.setLineFollowingPID(0.07, 9.2, 700);
+  driveBase.setLineFollowingPID(0.07, 10.5, 700);
   driveBase.followLine(true);
 }
 
