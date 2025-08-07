@@ -40,6 +40,10 @@ public:
     return {targetHeight, targetRadius, asimuthStepper->getAngle()};
   }
 
+  inline void rotateRelative(float angle) {
+    asimuthStepper->setAngle(angle, true);
+  }
+
 private:
   ArmAngles calculateInverseKinematics(float radius, float height, float theta);
 

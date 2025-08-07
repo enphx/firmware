@@ -26,7 +26,7 @@ void Arm::setArmPosition(float radius, float height, float theta) {
   // ESP_LOGI(TAG, "elbowAngle: %f", angles.elbowTheta);
 
   shoulderMotor->setAngle(angles.shoulderTheta * 180.0 / PI);
-  elbowServo->setAngle(angles.elbowTheta * 180.0 / PI+10);
+  elbowServo->setAngle(angles.elbowTheta * 180.0 / PI+3);
 }
 
 void Arm::setArmAngles(float asimuthTheta, float shoulderTheta, float elbowTheta) {

@@ -93,13 +93,18 @@ void StepperMotor::stop() {
   steps_to_take = 0;
 }
 
-void StepperMotor::setAngle(float angle) {
+void StepperMotor::setAngle(float angle, bool relative) {
 
   // ESP_LOGI(TAG, "Setting stepper motor angle to %f", angle);
 
   targetAngle = angle;
 
-  int32_t target_steps = (angle - getAngle()) / 360.0 * stepsPerRevolution;
+  int32_t target_steps;
+  if (relative) {
+    target_steps = (angle) / 360.0 * stepsPerRevolution;
+  } else {
+    target_steps = (angle - getAngle()) / 360.0 * stepsPerRevolution;
+  }
 
   bool directionPositive = (target_steps > 0);
 

@@ -130,6 +130,10 @@ public:
     }
   }
 
+  inline void rotateArmRelative(float angle) {
+    arm.rotateRelative(angle);
+  }
+
   void turnAngle(float angle);
 
 

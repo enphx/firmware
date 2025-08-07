@@ -15,7 +15,7 @@ public:
 
   void stop();
 
-  void setAngle(float angle);
+  void setAngle(float angle, bool relative = false);
 
   void setSpeed(float speed);
 
