@@ -28,7 +28,7 @@ StepperMotor::StepperMotor(ShiftRegister *m_shiftRegister, uint8_t m_stepPin,
 
 alarm_config = {
     .alarm_count = (uint64_t)(1e6 / (float)(stepsPerRevolution) /
-                          TURNTABLE_ROTATIONS_PER_SECOND),
+                          TURNTABLE_ROTATIONS_PER_SECOND * 0.5),
     .flags = {
       .auto_reload_on_alarm = true,
     },
@@ -66,7 +66,7 @@ void StepperMotor::setSpeed(float speed) {
   this->speed = speed;
 
   alarm_config.alarm_count = (uint64_t)(1e6 / (float)(stepsPerRevolution) /
-                          TURNTABLE_ROTATIONS_PER_SECOND / speed);
+                          TURNTABLE_ROTATIONS_PER_SECOND / speed * 0.5);
 
   gptimer_set_alarm_action(gptimer, &alarm_config);
 
