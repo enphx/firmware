@@ -134,7 +134,7 @@ public:
 
 
   // Note: this assumes you are currently looking at a pet.
-  inline void locatePet(bool direction, int distance_threshold = 200) {
+  inline void locatePet(bool direction, int distance_threshold = 200, float stepperSpeed = 0.4) {
 
     float dir_mul = -1.0;
 
@@ -152,7 +152,7 @@ public:
 
     startScanning();
 
-    setStepperSpeed(.4);
+    setStepperSpeed(stepperSpeed);
 
     delay(80);
     
