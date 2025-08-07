@@ -117,7 +117,7 @@ void robotTask(void *arg) {
 
 
   // Turn off the tape
-  float petTwoAngle = 18;
+  float petTwoAngle = 9;
   robot.setBaseSpeed(1);
   robot.setTapeFollowing(false);
   robot.turnAngle(-petTwoAngle);
@@ -236,7 +236,7 @@ void robotTask(void *arg) {
   robot.armMoveSmooth(2, robot.getLastScannerPoint().distance * 0.0393701 + 0.3, 40, 500, true);
 
   robot.grabPet();
-  robot.delay(300);
+  robot.delay(600);
 
   robot.armMoveSmooth(15, 6, 30, 600);
 
@@ -338,14 +338,17 @@ void robotTask(void *arg) {
 
 
   // Cross Debris
-  robot.delay(3000);
+  robot.delay(4500);
 
   robot.setBaseSpeed(0.0);
 
   robot.armMoveSmooth(4.8, 6.5, 40, 350);
 
-  robot.turnAngle(-180);
+  robot.delay(20);
 
+  robot.setBaseSpeed(1.0);
+  robot.turnAngle(-180);
+  robot.setBaseSpeed(0.0);
     
   while (1) {
     robot.delay(5);

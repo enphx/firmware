@@ -116,7 +116,7 @@ void Robot::turnAngle(float angle) {
     ESP_LOGI(TAG, "Turning angle %f", angle);
     int direction = angle > 0 ? -1 : 1;
 
-    angle = angle * PI / 360.0;
+    angle = angle * PI / 180.0;
 
     float theta0 = this->getPosition().driveBasePosition.theta;
     this->setTurning(true, direction);
