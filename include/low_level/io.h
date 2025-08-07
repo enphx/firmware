@@ -11,20 +11,25 @@
 #define PIN_M2_ENC1           12
 #define PIN_M2_ENC2           13
 #define PIN_M3_ENC1           15
-#define PIN_M3_ENC2           2
-#define PIN_M4_ENC1           4
-#define PIN_M4_ENC2           0
+// #define PIN_M3_ENC2           2
+// #define PIN_M4_ENC1           4
+// #define PIN_M4_ENC2           0
 
 
-#define PIN_LIMIT_SWITCH_MUX      20
+// #define PIN_LIMIT_SWITCH_MUX      20
 #define PIN_SHIFT_REG_DATA        21
 #define PIN_SHIFT_REG_CLK         22
-#define PIN_SHIFT_REG_STRB        19
-#define PIN_TTBL_STEPPER_PULSE    8
-#define PIN_SHOULDER_DC_PWM       7
+// #define PIN_SHIFT_REG_STRB        19
+#define PIN_SHIFT_REG_STRB        0
+// #define PIN_TTBL_STEPPER_PULSE    8
+#define PIN_TTBL_STEPPER_PULSE    19
+// #define PIN_SHOULDER_DC_PWM       7
+#define PIN_SHOULDER_DC_PWM       4
 #define PIN_ELBOW_SERVO_PWM       5
-#define PIN_M1_PWM                10
-#define PIN_M2_PWM                9
+// #define PIN_M1_PWM                10
+#define PIN_M1_PWM                20
+// #define PIN_M2_PWM                9
+#define PIN_M2_PWM                2
 #define PIN_M3_PWM                PIN_M3_ENC1
 #define PIN_M4_PWM                1
 #define PIN_IR_BEAC_L             35
