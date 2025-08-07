@@ -130,6 +130,10 @@ public:
     }
   }
 
+  inline void setTapeSide(tapeSide side) {
+    tapeFollowingSensor.setTapeFollowingSide(side);
+  }
+
   inline void rotateArmRelative(float angle) {
     arm.rotateRelative(angle);
   }

@@ -29,6 +29,11 @@ public:
   const tapeState getTapeState(void);
 
   const tapeSide getSide(void);
+
+  inline void setTapeFollowingSide(tapeSide side) {
+    this->Side = side;
+  }
+  
 private:
   int error;
   uint16_t lastDifferenceReadingLeft, lastDifferenceReadingRight;
